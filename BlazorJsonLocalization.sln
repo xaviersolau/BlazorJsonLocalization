@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{0FC256E5-C6D1-47EB-A1E0-BC25756D6788}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization", "src\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj", "{C1801439-B5CF-4C0E-9329-6C1257C42C1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{04B1389F-9BC9-4D7D-93CE-675F982A16F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Tests", "src\tests\SoloX.BlazorJsonLocalization.Tests\SoloX.BlazorJsonLocalization.Tests.csproj", "{741A6837-FDD0-4C49-877F-5BE891AE6901}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example", "src\examples\SoloX.BlazorJsonLocalization.Example\SoloX.BlazorJsonLocalization.Example.csproj", "{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1801439-B5CF-4C0E-9329-6C1257C42C1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1801439-B5CF-4C0E-9329-6C1257C42C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1801439-B5CF-4C0E-9329-6C1257C42C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1801439-B5CF-4C0E-9329-6C1257C42C1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741A6837-FDD0-4C49-877F-5BE891AE6901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741A6837-FDD0-4C49-877F-5BE891AE6901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741A6837-FDD0-4C49-877F-5BE891AE6901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741A6837-FDD0-4C49-877F-5BE891AE6901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C1801439-B5CF-4C0E-9329-6C1257C42C1A} = {0FC256E5-C6D1-47EB-A1E0-BC25756D6788}
+		{741A6837-FDD0-4C49-877F-5BE891AE6901} = {04B1389F-9BC9-4D7D-93CE-675F982A16F4}
+		{4C2ABA2E-4A00-421D-9C5A-E86C3CC510C8} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}
+	EndGlobalSection
+EndGlobal
