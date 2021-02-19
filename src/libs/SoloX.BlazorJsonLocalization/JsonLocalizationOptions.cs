@@ -6,6 +6,6 @@ namespace SoloX.BlazorJsonLocalization
 {
     public class JsonLocalizationOptions
     {
-        public string Resources { get; set; }
+        public string ResourcesPath { get; set; }
     }
 }

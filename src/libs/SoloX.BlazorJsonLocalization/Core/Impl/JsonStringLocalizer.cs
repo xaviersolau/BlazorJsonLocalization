@@ -2,23 +2,22 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 
-namespace SoloX.BlazorJsonLocalization.Core
+namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     public class JsonStringLocalizer : IStringLocalizer
     {
         public IFileProvider FileProvider { get; }
         public string Name { get; }
-        public string Resources { get; }
+        public string ResourcesPath { get; }
 
-        public JsonStringLocalizer(IFileProvider fileProvider, string resources, string name)
+        public JsonStringLocalizer(IFileProvider fileProvider, string resourcesPath, string name)
         {
             FileProvider = fileProvider;
-            Resources = resources;
+            ResourcesPath = resourcesPath;
             Name = name;
         }
 
@@ -55,13 +54,13 @@ namespace SoloX.BlazorJsonLocalization.Core
 
             var fileInfo =
                 FileProvider.GetFileInfo(
-                    Path.Combine(Resources, $"{Name}-{cultureName}.json"));
+                    Path.Combine(ResourcesPath, $"{Name}-{cultureName}.json"));
 
             if (!fileInfo.Exists)
             {
                 fileInfo =
                     FileProvider.GetFileInfo(
-                        Path.Combine(Resources, $"{Name}.json"));
+                        Path.Combine(ResourcesPath, $"{Name}.json"));
             }
 
             using var stream = fileInfo.CreateReadStream();

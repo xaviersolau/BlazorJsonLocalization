@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.FileProviders;
 using Moq;
 using SoloX.BlazorJsonLocalization.Core;
+using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
 
 namespace SoloX.BlazorJsonLocalization.Tests.Core
@@ -18,7 +19,7 @@ namespace SoloX.BlazorJsonLocalization.Tests.Core
             var localizer = new JsonStringLocalizer(fileProvider, resources, name);
 
             Assert.Same(fileProvider, localizer.FileProvider);
-            Assert.Same(resources, localizer.Resources);
+            Assert.Same(resources, localizer.ResourcesPath);
             Assert.Same(name, localizer.Name);
         }
     }
