@@ -20,7 +20,8 @@ namespace SoloX.BlazorJsonLocalization.Example
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            builder.Services.AddJsonLocalization();
+            builder.Services.AddJsonLocalization(
+                builder => builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources"));
 
             await builder.Build().RunAsync();
         }

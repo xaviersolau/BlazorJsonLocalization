@@ -1,0 +1,4 @@
+{
+  "Test": "This is a test...",
+  "TestWithArg": "This is a test with an argument: {0}..."
+}

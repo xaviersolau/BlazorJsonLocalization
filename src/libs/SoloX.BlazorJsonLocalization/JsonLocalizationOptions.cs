@@ -1,11 +1,10 @@
-﻿using System;
+﻿using SoloX.BlazorJsonLocalization.Core;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SoloX.BlazorJsonLocalization
 {
-    public class JsonLocalizationOptions
+    public sealed class JsonLocalizationOptions
     {
-        public string ResourcesPath { get; set; }
+        public IEnumerable<IJsonLocalizationOptionsExtension> OptionsExtensions { get; internal set; }
     }
 }
