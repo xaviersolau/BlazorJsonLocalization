@@ -6,26 +6,31 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
+using SoloX.BlazorJsonLocalization.Services;
+using SoloX.BlazorJsonLocalization.Services.Impl;
 
 namespace SoloX.BlazorJsonLocalization
 {
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddJsonLocalization(this IServiceCollection services)
-        {
-            services.AddLocalization();
+            => services.AddJsonLocalization(builder => builder.UseEmbeddedJson());
 
-            services.TryAddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>();
-            services.TryAddScoped<ILocalizerFileProviderFactory, LocalizerEmbeddedFileProviderFactory>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptions> setupAction)
+        public static IServiceCollection AddJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptionsBuilder> setupAction)
         {
             services
-                .AddJsonLocalization()
-                .Configure(setupAction);
+                .AddLocalization()
+                .AddSingleton<ICultureInfoService, CultureInfoService>()
+                .AddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+
+            services.AddScoped<
+                IJsonLocalizationService<EmbeddedJsonLocalizationOptions>,
+                EmbeddedJsonLocalizationService>();
+
+            var builder = new JsonLocalizationOptionsBuilder();
+            setupAction.Invoke(builder);
+
+            services.Configure<JsonLocalizationOptions>(builder.Build);
 
             return services;
         }

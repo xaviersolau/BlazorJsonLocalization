@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
@@ -10,62 +11,34 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     public class JsonStringLocalizer : IStringLocalizer
     {
-        public IFileProvider FileProvider { get; }
-        public string Name { get; }
-        public string ResourcesPath { get; }
+        private IReadOnlyDictionary<string, string> _stringMap;
 
-        public JsonStringLocalizer(IFileProvider fileProvider, string resourcesPath, string name)
+        public JsonStringLocalizer(IReadOnlyDictionary<string, string> stringMap)
         {
-            FileProvider = fileProvider;
-            ResourcesPath = resourcesPath;
-            Name = name;
+            this._stringMap = stringMap;
         }
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            throw new NotImplementedException();
+            return _stringMap.Select(s => new LocalizedString(s.Key, s.Value));
         }
 
         public LocalizedString this[string name]
-        {
-            get
-            {
-                var stringMap = LoadStringMap();
-
-                return new LocalizedString(name, stringMap[name]);
-            }
-        }
+            => BuildLocalizedString(name, s => s);
 
         public LocalizedString this[string name, params object[] arguments]
+            => BuildLocalizedString(name, s => string.Format(s, arguments));
+
+        private LocalizedString BuildLocalizedString(string name, Func<string, string> format)
         {
-            get
+            if (_stringMap.TryGetValue(name, out var value))
             {
-                var stringMap = LoadStringMap();
-
-                return new LocalizedString(name, string.Format(stringMap[name], arguments));
+                return new (name, format(value));
             }
-        }
-
-        private Dictionary<string, string> LoadStringMap()
-        {
-            var cultureInfo = CultureInfo.CurrentUICulture;
-
-            var cultureName = cultureInfo.TwoLetterISOLanguageName;
-
-            var fileInfo =
-                FileProvider.GetFileInfo(
-                    Path.Combine(ResourcesPath, $"{Name}-{cultureName}.json"));
-
-            if (!fileInfo.Exists)
+            else
             {
-                fileInfo =
-                    FileProvider.GetFileInfo(
-                        Path.Combine(ResourcesPath, $"{Name}.json"));
+                return new (name, format(name), true);
             }
-
-            using var stream = fileInfo.CreateReadStream();
-
-            return JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream).Result;
         }
     }
 }

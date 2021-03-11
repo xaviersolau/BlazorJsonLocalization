@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using SoloX.BlazorJsonLocalization.Services;
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     public class JsonStringLocalizerFactory : IStringLocalizerFactory
     {
         private JsonLocalizationOptions _options;
-        private ILocalizerFileProviderFactory _fileProviderFactory;
+        private IServiceProvider _serviceProvider;
+        private ICultureInfoService _cultureInfoService;
 
-        public JsonStringLocalizerFactory(IOptions<JsonLocalizationOptions> options, ILocalizerFileProviderFactory fileProviderFactory)
+        public JsonStringLocalizerFactory(
+            IOptions<JsonLocalizationOptions> options,
+            ICultureInfoService cultureInfoService,
+            IServiceProvider serviceProvider)
         {
             _options = options.Value;
-            _fileProviderFactory = fileProviderFactory;
+            _serviceProvider = serviceProvider;
+            _cultureInfoService = cultureInfoService;
         }
 
         public IStringLocalizer Create(Type resourceSource)
@@ -34,9 +40,19 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private IStringLocalizer CreateStringLocalizer(string baseName, Assembly assembly)
         {
-            var resources = _fileProviderFactory.GetFileProvider(assembly);
+            var cultureInfo = _cultureInfoService.CurrentUICulture;
 
-            return new JsonStringLocalizer(resources, _options.ResourcesPath, baseName);
+            foreach (var optionsExtension in _options.OptionsExtensions)
+            {
+                var optionsService = optionsExtension.GetJsonLocalizationService(_serviceProvider);
+
+                if (optionsService.TryLoad(optionsExtension, assembly, baseName, cultureInfo, out var map))
+                {
+                    return new JsonStringLocalizer(map);
+                }
+            }
+
+            return new NullStringLocalizer();
         }
     }
 }

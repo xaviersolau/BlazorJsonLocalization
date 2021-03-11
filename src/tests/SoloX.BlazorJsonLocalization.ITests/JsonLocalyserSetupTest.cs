@@ -1,0 +1,49 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Moq;
+using SoloX.BlazorJsonLocalization.Services;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace SoloX.BlazorJsonLocalization.ITests
+{
+    public class JsonLocalyserSetupTest
+    {
+        [Theory]
+        [InlineData("fr-fr", "Test", null, "C'est un test...")]
+        [InlineData("en-us", "Test", null, "This is a test...")]
+        [InlineData("fr-fr", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
+        [InlineData("en-us", "TestWithArg", "arg", "This is a test with an argument: arg...")]
+        public void ItShouldSetupEmbeddedLocalizer(string cultureName, string key, string arg, string expected)
+        {
+            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
+            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
+
+            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
+
+            var services = new ServiceCollection();
+
+            services.AddJsonLocalization(
+                builder => builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources"));
+
+            services.AddSingleton<ICultureInfoService>(cultureInfoServiceMock.Object);
+
+            using var provider = services.BuildServiceProvider();
+
+            var localizer = provider.GetService<IStringLocalizer<JsonLocalyserSetupTest>>();
+
+            Assert.NotNull(localizer);
+
+            var localized = string.IsNullOrEmpty(arg)
+                ? localizer[key]
+                : localizer[key, arg];
+
+            Assert.Equal(expected, localized.Value);
+        }
+    }
+}
