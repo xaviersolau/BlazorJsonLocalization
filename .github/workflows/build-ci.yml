@@ -22,7 +22,7 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build
     - name: Pack
-      run: dotnet pack --no-restore --verbosity normal
+      run: dotnet pack --configuration Release --no-restore --no-build
     - name: Upload Packages
       uses: actions/upload-artifact@v2
       with:	
