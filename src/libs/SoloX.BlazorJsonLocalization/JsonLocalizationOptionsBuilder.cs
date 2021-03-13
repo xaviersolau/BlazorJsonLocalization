@@ -1,20 +1,41 @@
-﻿using SoloX.BlazorJsonLocalization.Core;
+﻿// ----------------------------------------------------------------------
+// <copyright file="JsonLocalizationOptionsBuilder.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SoloX.BlazorJsonLocalization
 {
+    /// <summary>
+    /// Json localization options builder.
+    /// </summary>
     public sealed class JsonLocalizationOptionsBuilder
     {
-        private IList<IJsonLocalizationOptionsExtension> _optionsExtensions = new List<IJsonLocalizationOptionsExtension>();
+        private readonly IList<IJsonLocalizationExtensionOptions> extensionOptions
+            = new List<IJsonLocalizationExtensionOptions>();
 
-        public void AddOptionsExtension<TOptions>(TOptions options)
+        /// <summary>
+        /// Add extension options.
+        /// </summary>
+        /// <typeparam name="TOptions">Type of the extension options.</typeparam>
+        /// <param name="options">The options to add.</param>
+        public void AddExtensionOptions<TOptions>(TOptions options)
         {
-            _optionsExtensions.Add(new JsonLocalizationOptionsExtension<TOptions>(options));
+            this.extensionOptions.Add(new JsonLocalizationExtensionOptions<TOptions>(options));
         }
 
-        public void Build(JsonLocalizationOptions opt) => opt.OptionsExtensions = _optionsExtensions;
+        internal void Build(JsonLocalizationOptions opt)
+        {
+            if (opt != null)
+            {
+                opt.ExtensionOptions = this.extensionOptions;
+            }
+        }
     }
 }
