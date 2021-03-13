@@ -31,6 +31,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>

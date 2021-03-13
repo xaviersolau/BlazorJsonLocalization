@@ -1,8 +1,13 @@
-using System;
+// ----------------------------------------------------------------------
+// <copyright file="JsonStringLocalizerTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using System.Collections.Generic;
-using Microsoft.Extensions.FileProviders;
-using Moq;
-using SoloX.BlazorJsonLocalization.Core;
+using System.Globalization;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
 
@@ -32,14 +37,16 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.Equal(expectedNotFound, localized.ResourceNotFound);
         }
 
-        private static JsonStringLocalizer CreateLocalizer(string resourceKey, string resourceText)
+        private static JsonStringLocalizer CreateLocalizer(string resourceKey, string resourceText, string cultureName = "en-us")
         {
             var map = new Dictionary<string, string>
             {
                 [resourceKey] = resourceText,
             };
 
-            var localizer = new JsonStringLocalizer(map);
+            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
+
+            var localizer = new JsonStringLocalizer(map, cultureInfo);
             return localizer;
         }
     }
