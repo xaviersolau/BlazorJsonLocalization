@@ -31,8 +31,8 @@ namespace SoloX.BlazorJsonLocalization
             {
                 throw new ArgumentNullException(nameof(localizer));
             }
-
-            return new MarkupString(localizer[key, arguments]);
+            var txt = localizer[key, arguments];
+            return new MarkupString(txt ?? string.Empty);
         }
     }
 }
