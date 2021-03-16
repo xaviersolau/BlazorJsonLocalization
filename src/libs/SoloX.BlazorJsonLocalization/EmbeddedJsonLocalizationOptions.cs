@@ -6,12 +6,14 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.BlazorJsonLocalization.Core;
+
 namespace SoloX.BlazorJsonLocalization
 {
     /// <summary>
     /// JsonLocalizer Embedded extension options
     /// </summary>
-    public class EmbeddedJsonLocalizationOptions
+    public class EmbeddedJsonLocalizationOptions : AExtensionOptions
     {
         /// <summary>
         /// Gets/Sets Path where to get the resources.

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -74,12 +75,19 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {
-                var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
+                var options = extensionOptionsContainer.Options;
 
-                var map = extensionService.TryLoad(extensionOptionsContainer, assembly, baseName, cultureInfo);
-                if (map != null)
+                var noAssambliesToMatch = !options.AssemblyNames.Any();
+
+                if (noAssambliesToMatch || options.AssemblyNames.Contains(assembly.GetName().Name))
                 {
-                    return new JsonStringLocalizer(map, cultureInfo);
+                    var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
+
+                    var map = extensionService.TryLoad(options, assembly, baseName, cultureInfo);
+                    if (map != null)
+                    {
+                        return new JsonStringLocalizer(map, cultureInfo);
+                    }
                 }
             }
 

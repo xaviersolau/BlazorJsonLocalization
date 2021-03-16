@@ -26,6 +26,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <typeparam name="TOptions">Type of the extension options.</typeparam>
         /// <param name="options">The options to add.</param>
         public void AddExtensionOptions<TOptions>(TOptions options)
+            where TOptions : AExtensionOptions
         {
             this.extensionOptions.Add(new ExtensionOptionsContainer<TOptions>(options));
         }

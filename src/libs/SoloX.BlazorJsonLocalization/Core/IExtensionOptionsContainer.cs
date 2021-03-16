@@ -24,5 +24,10 @@ namespace SoloX.BlazorJsonLocalization.Core
         /// Get the extension service type.
         /// </summary>
         Type ExtensionServiceType { get; }
+
+        /// <summary>
+        /// Gets the generic options.
+        /// </summary>
+        AExtensionOptions Options { get; }
     }
 }

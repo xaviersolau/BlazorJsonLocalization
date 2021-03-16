@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
-using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -22,13 +21,13 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <summary>
         /// Try to load Json resources from the given parameters.
         /// </summary>
-        /// <param name="extensionOptionsContainer">The agnostic extension options.</param>
+        /// <param name="extensionOptions">The agnostic extension options.</param>
         /// <param name="assembly">The resource assembly.</param>
         /// <param name="baseName">The resource base name.</param>
         /// <param name="cultureInfo">The target culture info.</param>
         /// <returns>The resource map loaded if fund. Null otherwise.</returns>
         IReadOnlyDictionary<string, string>? TryLoad(
-            IExtensionOptionsContainer extensionOptionsContainer,
+            AExtensionOptions extensionOptions,
             Assembly assembly,
             string baseName,
             CultureInfo cultureInfo);
@@ -39,17 +38,18 @@ namespace SoloX.BlazorJsonLocalization.Services
     /// </summary>
     /// <typeparam name="TOptions">The extension options type</typeparam>
     public interface IJsonLocalizationExtensionService<TOptions> : IJsonLocalizationExtensionService
+        where TOptions : AExtensionOptions
     {
         ///<inheritdoc/>
         IReadOnlyDictionary<string, string>? IJsonLocalizationExtensionService.TryLoad(
-            IExtensionOptionsContainer extensionOptionsContainer,
+            AExtensionOptions extensionOptions,
             Assembly assembly,
             string baseName,
             CultureInfo cultureInfo)
         {
-            var typedExtensionOptions = (ExtensionOptionsContainer<TOptions>)extensionOptionsContainer;
+            var typedExtensionOptions = (TOptions)extensionOptions;
 
-            return TryLoad(typedExtensionOptions.Options, assembly, baseName, cultureInfo);
+            return TryLoad(typedExtensionOptions, assembly, baseName, cultureInfo);
         }
 
         /// <summary>
