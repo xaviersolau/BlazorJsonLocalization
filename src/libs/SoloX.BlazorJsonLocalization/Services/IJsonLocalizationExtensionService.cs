@@ -22,18 +22,16 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <summary>
         /// Try to load Json resources from the given parameters.
         /// </summary>
-        /// <param name="extensionOptions">The agnostic extension options.</param>
+        /// <param name="extensionOptionsContainer">The agnostic extension options.</param>
         /// <param name="assembly">The resource assembly.</param>
         /// <param name="baseName">The resource base name.</param>
         /// <param name="cultureInfo">The target culture info.</param>
-        /// <param name="map">The resource map loaded if fund.</param>
-        /// <returns>True if the resources have been located successfully.</returns>
-        bool TryLoad(
-            IJsonLocalizationExtensionOptions extensionOptions,
+        /// <returns>The resource map loaded if fund. Null otherwise.</returns>
+        IReadOnlyDictionary<string, string>? TryLoad(
+            IExtensionOptionsContainer extensionOptionsContainer,
             Assembly assembly,
             string baseName,
-            CultureInfo cultureInfo,
-            out IReadOnlyDictionary<string, string> map);
+            CultureInfo cultureInfo);
     }
 
     /// <summary>
@@ -42,16 +40,16 @@ namespace SoloX.BlazorJsonLocalization.Services
     /// <typeparam name="TOptions">The extension options type</typeparam>
     public interface IJsonLocalizationExtensionService<TOptions> : IJsonLocalizationExtensionService
     {
-        bool IJsonLocalizationExtensionService.TryLoad(
-            IJsonLocalizationExtensionOptions extensionOptions,
+        ///<inheritdoc/>
+        IReadOnlyDictionary<string, string>? IJsonLocalizationExtensionService.TryLoad(
+            IExtensionOptionsContainer extensionOptionsContainer,
             Assembly assembly,
             string baseName,
-            CultureInfo cultureInfo,
-            out IReadOnlyDictionary<string, string> map)
+            CultureInfo cultureInfo)
         {
-            var typedExtensionOptions = (JsonLocalizationExtensionOptions<TOptions>)extensionOptions;
+            var typedExtensionOptions = (ExtensionOptionsContainer<TOptions>)extensionOptionsContainer;
 
-            return TryLoad(typedExtensionOptions.Options, assembly, baseName, cultureInfo, out map);
+            return TryLoad(typedExtensionOptions.Options, assembly, baseName, cultureInfo);
         }
 
         /// <summary>
@@ -61,13 +59,11 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <param name="assembly">The resource assembly.</param>
         /// <param name="baseName">The resource base name.</param>
         /// <param name="cultureInfo">The target culture info.</param>
-        /// <param name="map">The resource map loaded if fund.</param>
-        /// <returns>True if the resources have been located successfully.</returns>
-        bool TryLoad(
+        /// <returns>The resource map loaded if fund. Null otherwise.</returns>
+        IReadOnlyDictionary<string, string>? TryLoad(
             TOptions options,
             Assembly assembly,
             string baseName,
-            CultureInfo cultureInfo,
-            out IReadOnlyDictionary<string, string> map);
+            CultureInfo cultureInfo);
     }
 }
