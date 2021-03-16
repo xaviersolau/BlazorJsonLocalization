@@ -6,9 +6,11 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.BlazorJsonLocalization.Core;
+
 namespace SoloX.BlazorJsonLocalization.UTests.Samples.Extension
 {
-    public class MyOptions
+    public class MyOptions : AExtensionOptions
     {
 
     }

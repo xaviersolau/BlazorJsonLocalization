@@ -16,6 +16,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// </summary>
     /// <typeparam name="TOptions">The extension options type.</typeparam>
     public sealed class ExtensionOptionsContainer<TOptions> : IExtensionOptionsContainer
+        where TOptions : AExtensionOptions
     {
         /// <summary>
         /// Setup the ExtensionOptionsContainer with the given options.
@@ -36,5 +37,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// Get the typed extension options.
         /// </summary>
         public TOptions Options { get; }
+
+        ///<inheritdoc/>
+        AExtensionOptions IExtensionOptionsContainer.Options => Options;
     }
 }
