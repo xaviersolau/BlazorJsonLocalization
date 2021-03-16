@@ -20,7 +20,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <summary>
         /// Get extension options collection. (set is used by the builder)
         /// </summary>
-        public IEnumerable<IJsonLocalizationExtensionOptions> ExtensionOptions { get; internal set; }
-            = Array.Empty<IJsonLocalizationExtensionOptions>();
+        public IEnumerable<IExtensionOptionsContainer> ExtensionOptions { get; internal set; }
+            = Array.Empty<IExtensionOptionsContainer>();
     }
 }

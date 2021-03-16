@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     public class JsonStringLocalizerFactory : IStringLocalizerFactory
     {
         private readonly JsonLocalizationOptions options;
-        private readonly IServiceProvider serviceProvider;
+        private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
 
         /// <summary>
@@ -29,12 +29,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// </summary>
         /// <param name="options">The JsonLocalization options.</param>
         /// <param name="cultureInfoService">Service providing the current culture.</param>
-        /// <param name="serviceProvider">The service provider used to get the JsonLocalization
+        /// <param name="extensionResolverService">The service resolver to get the JsonLocalization
         /// extension service.</param>
         public JsonStringLocalizerFactory(
             IOptions<JsonLocalizationOptions> options,
             ICultureInfoService cultureInfoService,
-            IServiceProvider serviceProvider)
+            IExtensionResolverService extensionResolverService)
         {
             if (options == null)
             {
@@ -42,7 +42,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
 
             this.options = options.Value;
-            this.serviceProvider = serviceProvider;
+            this.extensionResolverService = extensionResolverService;
             this.cultureInfoService = cultureInfoService;
         }
 
@@ -72,11 +72,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             var cultureInfo = this.cultureInfoService.CurrentUICulture;
 
-            foreach (var optionsExtension in this.options.ExtensionOptions)
+            foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {
-                var optionsService = optionsExtension.GetJsonLocalizationExtensionService(this.serviceProvider);
+                var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
 
-                if (optionsService.TryLoad(optionsExtension, assembly, baseName, cultureInfo, out var map))
+                var map = extensionService.TryLoad(extensionOptionsContainer, assembly, baseName, cultureInfo);
+                if (map != null)
                 {
                     return new JsonStringLocalizer(map, cultureInfo);
                 }

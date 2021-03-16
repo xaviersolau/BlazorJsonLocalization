@@ -21,15 +21,12 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     /// </summary>
     public class EmbeddedJsonLocalizationExtensionService : IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>
     {
-        private static readonly Dictionary<string, string> EmptyMap = new Dictionary<string, string>();
-
         ///<inheritdoc/>
-        public bool TryLoad(
+        public IReadOnlyDictionary<string, string>? TryLoad(
             EmbeddedJsonLocalizationOptions options,
             Assembly assembly,
             string baseName,
-            CultureInfo cultureInfo,
-            out IReadOnlyDictionary<string, string> map)
+            CultureInfo cultureInfo)
         {
             if (options == null)
             {
@@ -41,11 +38,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
 
             var embeddedFileProvider = GetFileProvider(assembly);
-            map = LoadStringMap(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo);
-            return map != null;
+            return LoadStringMap(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo);
         }
 
-        private static Dictionary<string, string> LoadStringMap(
+        private static Dictionary<string, string>? LoadStringMap(
             IFileProvider fileProvider,
             string resourcesPath,
             string baseName,
@@ -66,7 +62,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             if (!fileInfo.Exists)
             {
-                return EmptyMap;
+                return null;
             }
 
             using var stream = fileInfo.CreateReadStream();

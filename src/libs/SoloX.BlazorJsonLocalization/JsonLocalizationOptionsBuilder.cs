@@ -17,8 +17,8 @@ namespace SoloX.BlazorJsonLocalization
     /// </summary>
     public sealed class JsonLocalizationOptionsBuilder
     {
-        private readonly IList<IJsonLocalizationExtensionOptions> extensionOptions
-            = new List<IJsonLocalizationExtensionOptions>();
+        private readonly IList<IExtensionOptionsContainer> extensionOptions
+            = new List<IExtensionOptionsContainer>();
 
         /// <summary>
         /// Add extension options.
@@ -27,7 +27,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <param name="options">The options to add.</param>
         public void AddExtensionOptions<TOptions>(TOptions options)
         {
-            this.extensionOptions.Add(new JsonLocalizationExtensionOptions<TOptions>(options));
+            this.extensionOptions.Add(new ExtensionOptionsContainer<TOptions>(options));
         }
 
         internal void Build(JsonLocalizationOptions opt)
