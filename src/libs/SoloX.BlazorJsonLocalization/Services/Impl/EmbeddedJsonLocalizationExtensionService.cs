@@ -49,15 +49,19 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         {
             var cultureName = cultureInfo.TwoLetterISOLanguageName;
 
+            Func<string, string> pathBuilder = string.IsNullOrEmpty(resourcesPath)
+                ? s => s
+                : s => Path.Combine(resourcesPath, s);
+
             var fileInfo =
                 fileProvider.GetFileInfo(
-                    Path.Combine(resourcesPath, $"{baseName}-{cultureName}.json"));
+                    pathBuilder($"{baseName}-{cultureName}.json"));
 
             if (!fileInfo.Exists)
             {
                 fileInfo =
                     fileProvider.GetFileInfo(
-                        Path.Combine(resourcesPath, $"{baseName}.json"));
+                        pathBuilder($"{baseName}.json"));
             }
 
             if (!fileInfo.Exists)
