@@ -122,12 +122,51 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.Equal(value2, localizer[key]);
         }
 
+        [Fact]
+        public void ItShouldCreateAnAsynchronousLocalizerIfTheExtensionServiceIsAsynchronous()
+        {
+            var key = "key";
+            var value = "value";
+            var map = new Dictionary<string, string>
+            {
+                [key] = value,
+            };
+
+            // Setup CultureInfo service mock.
+            var cultureInfoServiceMock = SetupCultureInfoServiceMock();
+
+            var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
+
+            // Setup extension service
+            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            extensionServiceMock
+                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
+                .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+
+            // Setup extension resolver service.
+            var extensionResolverServiceMock = SetupResolverServiceMock(
+                (extensionOptionsContainer, extensionServiceMock.Object));
+
+            var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
+
+            var factory = new JsonStringLocalizerFactory(
+                optionsMock.Object,
+                cultureInfoServiceMock.Object,
+                extensionResolverServiceMock.Object);
+
+            var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
+
+            Assert.NotNull(localizer);
+
+            Assert.IsType<JsonStringLocalizerAsync>(localizer);
+        }
+
         private static Mock<IJsonLocalizationExtensionService> SetupExtensionServiceMock(Dictionary<string, string> map, ExtensionOptionsContainer<MyOptions> extensionOptionsContainer)
         {
             var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
             extensionServiceMock
-                .Setup(s => s.TryLoad(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                .Returns(map);
+                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
+                .ReturnsAsync(map);
             return extensionServiceMock;
         }
 
