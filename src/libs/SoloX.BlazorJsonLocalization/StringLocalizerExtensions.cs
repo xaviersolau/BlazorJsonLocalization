@@ -7,8 +7,10 @@
 // ----------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Core.Impl;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -33,6 +35,22 @@ namespace SoloX.BlazorJsonLocalization
             }
             var txt = localizer[key, arguments];
             return new MarkupString(txt ?? string.Empty);
+        }
+
+        /// <summary>
+        /// Make sure all asynchronous localizer loading is completed.
+        /// </summary>
+        /// <typeparam name="T">Localizer type.</typeparam>
+        /// <param name="localizer">Localizer to load.</param>
+        /// <returns>The value task to await.</returns>
+        public static ValueTask LoadAsync<T>(this IStringLocalizer<T> localizer)
+        {
+            if (localizer == null)
+            {
+                throw new ArgumentNullException(nameof(localizer));
+            }
+
+            return JsonStringLocalizerAsync.LoadAsync(localizer);
         }
     }
 }

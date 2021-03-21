@@ -10,6 +10,7 @@ using SoloX.BlazorJsonLocalization.Core;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Services
 {
@@ -26,7 +27,7 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <param name="baseName">The resource base name.</param>
         /// <param name="cultureInfo">The target culture info.</param>
         /// <returns>The resource map loaded if fund. Null otherwise.</returns>
-        IReadOnlyDictionary<string, string>? TryLoad(
+        ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
             AExtensionOptions extensionOptions,
             Assembly assembly,
             string baseName,
@@ -41,7 +42,7 @@ namespace SoloX.BlazorJsonLocalization.Services
         where TOptions : AExtensionOptions
     {
         ///<inheritdoc/>
-        IReadOnlyDictionary<string, string>? IJsonLocalizationExtensionService.TryLoad(
+        ValueTask<IReadOnlyDictionary<string, string>?> IJsonLocalizationExtensionService.TryLoadAsync(
             AExtensionOptions extensionOptions,
             Assembly assembly,
             string baseName,
@@ -49,7 +50,7 @@ namespace SoloX.BlazorJsonLocalization.Services
         {
             var typedExtensionOptions = (TOptions)extensionOptions;
 
-            return TryLoad(typedExtensionOptions, assembly, baseName, cultureInfo);
+            return TryLoadAsync(typedExtensionOptions, assembly, baseName, cultureInfo);
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <param name="baseName">The resource base name.</param>
         /// <param name="cultureInfo">The target culture info.</param>
         /// <returns>The resource map loaded if fund. Null otherwise.</returns>
-        IReadOnlyDictionary<string, string>? TryLoad(
+        ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
             TOptions options,
             Assembly assembly,
             string baseName,

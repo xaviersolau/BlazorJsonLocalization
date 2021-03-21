@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -22,7 +23,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     public class EmbeddedJsonLocalizationExtensionService : IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>
     {
         ///<inheritdoc/>
-        public IReadOnlyDictionary<string, string>? TryLoad(
+        public async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
             EmbeddedJsonLocalizationOptions options,
             Assembly assembly,
             string baseName,
@@ -38,10 +39,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
 
             var embeddedFileProvider = GetFileProvider(assembly);
-            return LoadStringMap(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo);
+            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo)
+                .ConfigureAwait(false);
         }
 
-        private static Dictionary<string, string>? LoadStringMap(
+        private static async ValueTask<Dictionary<string, string>?> LoadStringMapAsync(
             IFileProvider fileProvider,
             string resourcesPath,
             string baseName,
@@ -70,9 +72,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
 
             using var stream = fileInfo.CreateReadStream();
-            using var reader = new StreamReader(stream);
 
-            var map = JsonSerializer.Deserialize<Dictionary<string, string>>(reader.ReadToEnd());
+            var map = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream).ConfigureAwait(false);
 
             if (map == null)
             {

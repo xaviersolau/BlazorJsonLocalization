@@ -47,6 +47,10 @@ namespace SoloX.BlazorJsonLocalization
                 IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
                 EmbeddedJsonLocalizationExtensionService>();
 
+            services.AddScoped<
+                IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>,
+                HttpHostedJsonLocalizationExtensionService>();
+
             var builder = new JsonLocalizationOptionsBuilder();
 
             if (setupAction != null)

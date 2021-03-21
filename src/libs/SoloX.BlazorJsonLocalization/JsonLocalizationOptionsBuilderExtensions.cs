@@ -19,21 +19,66 @@ namespace SoloX.BlazorJsonLocalization
         /// Setup default embedded Json support.
         /// </summary>
         /// <param name="builder">The builder to setup.</param>
-        public static void UseEmbeddedJson(this JsonLocalizationOptionsBuilder builder)
-            => builder?.UseEmbeddedJson(null);
+        /// <returns>The given builder updated with the Json embedded options.</returns>
+        public static JsonLocalizationOptionsBuilder UseEmbeddedJson(
+            this JsonLocalizationOptionsBuilder builder)
+            => builder.UseEmbeddedJson(null);
 
         /// <summary>
         /// Setup embedded Json support with the given setup action.
         /// </summary>
         /// <param name="builder">The builder to setup.</param>
         /// <param name="setup">The setup action.</param>
-        public static void UseEmbeddedJson(this JsonLocalizationOptionsBuilder builder, Action<EmbeddedJsonLocalizationOptions>? setup)
+        /// <returns>The given builder updated with the Json embedded options.</returns>
+        public static JsonLocalizationOptionsBuilder UseEmbeddedJson(
+            this JsonLocalizationOptionsBuilder builder,
+            Action<EmbeddedJsonLocalizationOptions>? setup)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             var optExt = new EmbeddedJsonLocalizationOptions();
 
             setup?.Invoke(optExt);
 
-            builder?.AddExtensionOptions(optExt);
+            builder.AddExtensionOptions(optExt);
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Setup default Http hosted Json support.
+        /// </summary>
+        /// <param name="builder">The builder to setup.</param>
+        /// <returns>The given builder updated with the Json Http hosted options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
+            this JsonLocalizationOptionsBuilder builder)
+            => builder.UseHttpHostedJson(null);
+
+        /// <summary>
+        /// Setup Http hosted Json support with the given setup action.
+        /// </summary>
+        /// <param name="builder">The builder to setup.</param>
+        /// <param name="setup">The setup action.</param>
+        /// <returns>The given builder updated with the Json http hosted options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
+            this JsonLocalizationOptionsBuilder builder,
+            Action<HttpHostedJsonLocalizationOptions>? setup)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            var optExt = new HttpHostedJsonLocalizationOptions();
+
+            setup?.Invoke(optExt);
+
+            builder.AddExtensionOptions(optExt);
+
+            return builder;
         }
     }
 }
