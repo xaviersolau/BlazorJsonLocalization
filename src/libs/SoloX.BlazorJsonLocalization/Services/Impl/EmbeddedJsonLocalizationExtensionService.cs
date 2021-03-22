@@ -39,6 +39,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
 
             var embeddedFileProvider = GetFileProvider(assembly);
+
             return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo)
                 .ConfigureAwait(false);
         }
