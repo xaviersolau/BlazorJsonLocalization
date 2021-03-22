@@ -41,7 +41,8 @@ namespace SoloX.BlazorJsonLocalization
                 .AddLocalization()
                 .AddSingleton<ICultureInfoService, CultureInfoService>()
                 .AddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>()
-                .AddScoped<IExtensionResolverService, ExtensionResolverService>();
+                .AddScoped<IExtensionResolverService, ExtensionResolverService>()
+                .AddScoped<ICacheService, CacheService>();
 
             services.AddScoped<
                 IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,

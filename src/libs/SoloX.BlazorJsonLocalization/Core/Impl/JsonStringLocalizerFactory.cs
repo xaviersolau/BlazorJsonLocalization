@@ -27,6 +27,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         private readonly JsonLocalizationOptions options;
         private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
+        private readonly ICacheService cacheService;
 
         /// <summary>
         /// Setup the factory.
@@ -35,10 +36,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <param name="cultureInfoService">Service providing the current culture.</param>
         /// <param name="extensionResolverService">The service resolver to get the JsonLocalization
         /// extension service.</param>
+        /// <param name="cacheService">The service to cache the loaded data.</param>
         public JsonStringLocalizerFactory(
             IOptions<JsonLocalizationOptions> options,
             ICultureInfoService cultureInfoService,
-            IExtensionResolverService extensionResolverService)
+            IExtensionResolverService extensionResolverService,
+            ICacheService cacheService)
         {
             if (options == null)
             {
@@ -48,6 +51,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             this.options = options.Value;
             this.extensionResolverService = extensionResolverService;
             this.cultureInfoService = cultureInfoService;
+            this.cacheService = cacheService;
         }
 
         ///<inheritdoc/>
@@ -76,7 +80,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             var cultureInfo = this.cultureInfoService.CurrentUICulture;
 
-            // TODO use a cache.
+            // First use the cache.
+            var localizer = this.cacheService.Match(assembly, baseName, cultureInfo);
+            if (localizer != null)
+            {
+                return localizer;
+            }
 
             var task = LoadStringLocalizerAsync(assembly, baseName, cultureInfo);
 
@@ -85,17 +94,21 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 var map = task.Result;
                 if (map != null)
                 {
-                    return new JsonStringLocalizer(map, cultureInfo);
+                    localizer = new JsonStringLocalizer(map, cultureInfo);
+                    this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
                 }
                 else
                 {
-                    return new NullStringLocalizer(cultureInfo);
+                    localizer = new NullStringLocalizer(cultureInfo);
                 }
             }
             else
             {
-                return new JsonStringLocalizerAsync(task, cultureInfo);
+                localizer = new JsonStringLocalizerAsync(task, cultureInfo);
+                this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
             }
+
+            return localizer;
         }
 
         private async Task<IReadOnlyDictionary<string, string>?> LoadStringLocalizerAsync(Assembly assembly, string baseName, CultureInfo cultureInfo)
