@@ -41,7 +41,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 throw new ArgumentNullException(nameof(localizer));
             }
 
-            this.cacheMap.Add(ComputeKey(assembly, baseName, cultureInfo), localizer);
+            lock (this.cacheMap)
+            {
+                this.cacheMap.Add(ComputeKey(assembly, baseName, cultureInfo), localizer);
+            }
         }
 
         ///<inheritdoc/>
@@ -60,7 +63,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 throw new ArgumentNullException(nameof(baseName));
             }
 
-            return this.cacheMap.TryGetValue(ComputeKey(assembly, baseName, cultureInfo), out var entry) ? entry : null;
+            lock (this.cacheMap)
+            {
+                return this.cacheMap.TryGetValue(ComputeKey(assembly, baseName, cultureInfo), out var entry) ? entry : null;
+            }
         }
 
         private static string ComputeKey(Assembly assembly, string baseName, CultureInfo cultureInfo)

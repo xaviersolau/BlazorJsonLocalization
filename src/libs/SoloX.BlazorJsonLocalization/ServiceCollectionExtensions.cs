@@ -24,9 +24,10 @@ namespace SoloX.BlazorJsonLocalization
         /// Add Json localization services with the embedded Json resource files support.
         /// </summary>
         /// <param name="services">The service collection to setup.</param>
+        /// <param name="serviceLifetime">Service Lifetime to use to register the IStringLocalizerFactory. (Default is Scoped)</param>
         /// <returns>The given service collection updated with the Json localization services.</returns>
-        public static IServiceCollection AddJsonLocalization(this IServiceCollection services)
-            => services.AddJsonLocalization(builder => builder.UseEmbeddedJson());
+        public static IServiceCollection AddJsonLocalization(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            => services.AddJsonLocalization(builder => builder.UseEmbeddedJson(), serviceLifetime);
 
         /// <summary>
         /// Add Json localization services.
@@ -34,23 +35,37 @@ namespace SoloX.BlazorJsonLocalization
         /// <param name="services">The service collection to setup.</param>
         /// <param name="setupAction">The action delegate to fine tune the Json localizer behavior
         /// (Use embedded Json resource files if null).</param>
+        /// <param name="serviceLifetime">Service Lifetime to use to register the IStringLocalizerFactory. (Default is Scoped)</param>
         /// <returns>The given service collection updated with the Json localization services.</returns>
-        public static IServiceCollection AddJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptionsBuilder> setupAction)
+        public static IServiceCollection AddJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptionsBuilder> setupAction, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
         {
             services
                 .AddLocalization()
                 .AddSingleton<ICultureInfoService, CultureInfoService>()
-                .AddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>()
-                .AddScoped<IExtensionResolverService, ExtensionResolverService>()
-                .AddScoped<ICacheService, CacheService>();
+                .AddSingleton<ICacheService, CacheService>()
+                .AddSingleton<
+                    IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
+                    EmbeddedJsonLocalizationExtensionService>();
 
-            services.AddScoped<
-                IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
-                EmbeddedJsonLocalizationExtensionService>();
-
-            services.AddScoped<
-                IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>,
-                HttpHostedJsonLocalizationExtensionService>();
+            switch (serviceLifetime)
+            {
+                case ServiceLifetime.Singleton:
+                    services
+                        .AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>()
+                        .AddSingleton<IExtensionResolverService, ExtensionResolverService>();
+                    break;
+                case ServiceLifetime.Scoped:
+                    services
+                        .AddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>()
+                        .AddScoped<IExtensionResolverService, ExtensionResolverService>();
+                    break;
+                case ServiceLifetime.Transient:
+                default:
+                    services
+                        .AddTransient<IStringLocalizerFactory, JsonStringLocalizerFactory>()
+                        .AddTransient<IExtensionResolverService, ExtensionResolverService>();
+                    break;
+            }
 
             var builder = new JsonLocalizationOptionsBuilder();
 

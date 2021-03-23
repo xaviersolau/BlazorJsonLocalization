@@ -23,7 +23,7 @@ jobs:
       run: dotnet test --configuration Release --no-restore --no-build
 
     - name: Test Coverage SoloX.BlazorJsonLocalization.UTests
-      id: coverage1
+      id: coverage-utest
       run: |
         dotnet test ./src/tests/SoloX.BlazorJsonLocalization.UTests --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
         echo "::set-output name=FILE::$(find ./src/tests/SoloX.BlazorJsonLocalization.UTests -name 'coverage.info' -print)"
@@ -31,12 +31,38 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ steps.coverage1.outputs.FILE }}
-        flag-name: coverage1
+        path-to-lcov: ${{ steps.coverage-utest.outputs.FILE }}
+        flag-name: coverage-utest
+        parallel: true
+
+    - name: Test Coverage SoloX.BlazorJsonLocalization.WebAssembly.UTests
+      id: coverage-utest-wasm
+      run: |
+        dotnet test ./src/tests/SoloX.BlazorJsonLocalization.WebAssembly.UTests --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        echo "::set-output name=FILE::$(find ./src/tests/SoloX.BlazorJsonLocalization.WebAssembly.UTests -name 'coverage.info' -print)"
+    - name: Send to coverals
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ${{ steps.coverage-utest-wasm.outputs.FILE }}
+        flag-name: coverage-utest-wasm
+        parallel: true
+
+    - name: Test Coverage SoloX.BlazorJsonLocalization.ServerSide.UTests
+      id: coverage-utest-server
+      run: |
+        dotnet test ./src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        echo "::set-output name=FILE::$(find ./src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests -name 'coverage.info' -print)"
+    - name: Send to coverals
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ${{ steps.coverage-utest-server.outputs.FILE }}
+        flag-name: coverage-utest-server
         parallel: true
 
     - name: Test Coverage SoloX.BlazorJsonLocalization.ITests
-      id: coverage2
+      id: coverage-itest
       run: |
         dotnet test ./src/tests/SoloX.BlazorJsonLocalization.ITests --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
         echo "::set-output name=FILE::$(find ./src/tests/SoloX.BlazorJsonLocalization.ITests -name 'coverage.info' -print)"
@@ -44,8 +70,8 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ steps.coverage2.outputs.FILE }}
-        flag-name: coverage2
+        path-to-lcov: ${{ steps.coverage-itest.outputs.FILE }}
+        flag-name: coverage-itest
         parallel: true
 
     - name: Finish coverals

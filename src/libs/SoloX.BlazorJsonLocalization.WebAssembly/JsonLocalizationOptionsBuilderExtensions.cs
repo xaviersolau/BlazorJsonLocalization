@@ -8,7 +8,7 @@
 
 using System;
 
-namespace SoloX.BlazorJsonLocalization
+namespace SoloX.BlazorJsonLocalization.WebAssembly
 {
     /// <summary>
     /// Extension methods to setup embedded Json file support.
@@ -16,30 +16,30 @@ namespace SoloX.BlazorJsonLocalization
     public static class JsonLocalizationOptionsBuilderExtensions
     {
         /// <summary>
-        /// Setup default embedded Json support.
+        /// Setup default Http hosted Json support.
         /// </summary>
         /// <param name="builder">The builder to setup.</param>
-        /// <returns>The given builder updated with the Json embedded options.</returns>
-        public static JsonLocalizationOptionsBuilder UseEmbeddedJson(
+        /// <returns>The given builder updated with the Json Http hosted options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
             this JsonLocalizationOptionsBuilder builder)
-            => builder.UseEmbeddedJson(null);
+            => builder.UseHttpHostedJson(null);
 
         /// <summary>
-        /// Setup embedded Json support with the given setup action.
+        /// Setup Http hosted Json support with the given setup action.
         /// </summary>
         /// <param name="builder">The builder to setup.</param>
         /// <param name="setup">The setup action.</param>
-        /// <returns>The given builder updated with the Json embedded options.</returns>
-        public static JsonLocalizationOptionsBuilder UseEmbeddedJson(
+        /// <returns>The given builder updated with the Json http hosted options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
             this JsonLocalizationOptionsBuilder builder,
-            Action<EmbeddedJsonLocalizationOptions>? setup)
+            Action<HttpHostedJsonLocalizationOptions>? setup)
         {
             if (builder == null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            var optExt = new EmbeddedJsonLocalizationOptions();
+            var optExt = new HttpHostedJsonLocalizationOptions();
 
             setup?.Invoke(optExt);
 
