@@ -44,28 +44,44 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 .ConfigureAwait(false);
         }
 
-        private static async ValueTask<Dictionary<string, string>?> LoadStringMapAsync(
+        private static async ValueTask<IReadOnlyDictionary<string, string>?> LoadStringMapAsync(
             IFileProvider fileProvider,
             string resourcesPath,
             string baseName,
             CultureInfo cultureInfo)
         {
-            var cultureName = cultureInfo.TwoLetterISOLanguageName;
+            var basePath = string.IsNullOrEmpty(resourcesPath)
+                ? baseName
+                : Path.Combine(resourcesPath, baseName);
 
-            Func<string, string> pathBuilder = string.IsNullOrEmpty(resourcesPath)
-                ? s => s
-                : s => Path.Combine(resourcesPath, s);
+            IReadOnlyDictionary<string, string>? map;
+            bool done;
 
-            var fileInfo =
-                fileProvider.GetFileInfo(
-                    pathBuilder($"{baseName}-{cultureName}.json"));
-
-            if (!fileInfo.Exists)
+            do
             {
-                fileInfo =
-                    fileProvider.GetFileInfo(
-                        pathBuilder($"{baseName}.json"));
+                var cultureName = cultureInfo.Name;
+                var path = string.IsNullOrEmpty(cultureName)
+                    ? $"{basePath}.json"
+                    : $"{basePath}-{cultureName}.json";
+
+                map = await TryLoadMapAsync(fileProvider, path)
+                    .ConfigureAwait(false);
+
+                done = map != null
+                    || ReferenceEquals(cultureInfo.Parent, cultureInfo);
+
+                cultureInfo = cultureInfo.Parent;
             }
+            while (!done);
+
+            return map;
+        }
+
+        private static async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadMapAsync(
+            IFileProvider fileProvider,
+            string path)
+        {
+            var fileInfo = fileProvider.GetFileInfo(path);
 
             if (!fileInfo.Exists)
             {
@@ -74,14 +90,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             using var stream = fileInfo.CreateReadStream();
 
-            var map = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream).ConfigureAwait(false);
+            var map = await JsonSerializer
+                .DeserializeAsync<Dictionary<string, string>>(stream)
+                .ConfigureAwait(false);
 
-            if (map == null)
-            {
-                throw new FileLoadException("Null resources");
-            }
-
-            return map;
+            return map ?? throw new FileLoadException("Null resources");
         }
 
         private static IFileProvider GetFileProvider(Assembly assembly)

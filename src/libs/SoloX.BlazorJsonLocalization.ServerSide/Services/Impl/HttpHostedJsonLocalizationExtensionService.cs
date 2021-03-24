@@ -51,12 +51,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 
             var map = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream).ConfigureAwait(false);
 
-            if (map == null)
-            {
-                throw new FileLoadException("Null resources");
-            }
-
-            return map;
+            return map ?? throw new FileLoadException("Null resources");
         }
     }
 }
