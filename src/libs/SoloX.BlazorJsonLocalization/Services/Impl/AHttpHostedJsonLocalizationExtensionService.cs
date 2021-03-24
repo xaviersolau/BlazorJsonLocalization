@@ -40,8 +40,6 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 throw new ArgumentNullException(nameof(cultureInfo));
             }
 
-            var cultureName = cultureInfo.TwoLetterISOLanguageName;
-
             var path = (options.ApplicationAssembly == assembly)
                 ? string.Empty
                 : $"_content/{assembly.GetName().Name}/";
@@ -51,16 +49,27 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 path = $"{path}{options.ResourcesPath}/";
             }
 
-            var uri = new Uri($"{path}{baseName}-{cultureName}.json", UriKind.Relative);
+            var basePath = $"{path}{baseName}";
 
-            var map = await TryLoadFromUriAsync(uri).ConfigureAwait(false);
+            IReadOnlyDictionary<string, string>? map;
+            bool done;
 
-            if (map == null)
+            do
             {
-                uri = new Uri($"{path}{baseName}.json", UriKind.Relative);
+                var cultureName = cultureInfo.Name;
+
+                var uri = string.IsNullOrEmpty(cultureName)
+                    ? new Uri($"{basePath}.json", UriKind.Relative)
+                    : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
 
                 map = await TryLoadFromUriAsync(uri).ConfigureAwait(false);
+
+                done = map != null
+                    || ReferenceEquals(cultureInfo.Parent, cultureInfo);
+
+                cultureInfo = cultureInfo.Parent;
             }
+            while (!done);
 
             return map;
         }
