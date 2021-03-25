@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Resources\Index-fr.json" />
-    <Content Remove="Resources\Index.json" />
+    <Content Remove="Resources\Pages\Index-fr.json" />
+    <Content Remove="Resources\Pages\Index.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Index-fr.json" />
-    <EmbeddedResource Include="Resources\Index.json" />
+    <EmbeddedResource Include="Resources\Pages\Index-fr.json" />
+    <EmbeddedResource Include="Resources\Pages\Index.json" />
   </ItemGroup>
 
   

@@ -14,6 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using SoloX.BlazorJsonLocalization.Helpers;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -40,41 +41,32 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             var embeddedFileProvider = GetFileProvider(assembly);
 
-            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, baseName, cultureInfo)
+            var basePath = ResourcePathHelper.ComputeBasePath(assembly, baseName);
+
+            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo)
                 .ConfigureAwait(false);
         }
 
         private static async ValueTask<IReadOnlyDictionary<string, string>?> LoadStringMapAsync(
             IFileProvider fileProvider,
             string resourcesPath,
-            string baseName,
+            string basePath,
             CultureInfo cultureInfo)
         {
-            var basePath = string.IsNullOrEmpty(resourcesPath)
-                ? baseName
-                : Path.Combine(resourcesPath, baseName);
+            basePath = string.IsNullOrEmpty(resourcesPath)
+                ? basePath
+                : Path.Combine(resourcesPath, basePath);
 
-            IReadOnlyDictionary<string, string>? map;
-            bool done;
+            return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
+                cultureName =>
+                {
+                    var path = string.IsNullOrEmpty(cultureName)
+                        ? $"{basePath}.json"
+                        : $"{basePath}-{cultureName}.json";
 
-            do
-            {
-                var cultureName = cultureInfo.Name;
-                var path = string.IsNullOrEmpty(cultureName)
-                    ? $"{basePath}.json"
-                    : $"{basePath}-{cultureName}.json";
-
-                map = await TryLoadMapAsync(fileProvider, path)
-                    .ConfigureAwait(false);
-
-                done = map != null
-                    || ReferenceEquals(cultureInfo.Parent, cultureInfo);
-
-                cultureInfo = cultureInfo.Parent;
-            }
-            while (!done);
-
-            return map;
+                    return TryLoadMapAsync(fileProvider, path);
+                })
+                .ConfigureAwait(false);
         }
 
         private static async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadMapAsync(

@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.BlazorJsonLocalization.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -35,43 +36,30 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             {
                 throw new ArgumentNullException(nameof(options));
             }
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
-            }
 
-            var path = (options.ApplicationAssembly == assembly)
+            var assemblyName = assembly.GetName().Name;
+
+            var rootPath = (options.ApplicationAssembly == assembly)
                 ? string.Empty
-                : $"_content/{assembly.GetName().Name}/";
+                : $"_content/{assemblyName}/";
 
             if (!string.IsNullOrEmpty(options.ResourcesPath))
             {
-                path = $"{path}{options.ResourcesPath}/";
+                rootPath = $"{rootPath}{options.ResourcesPath}/";
             }
 
-            var basePath = $"{path}{baseName}";
+            var basePath = $"{rootPath}{ResourcePathHelper.ComputeBasePath(assembly, baseName)}";
 
-            IReadOnlyDictionary<string, string>? map;
-            bool done;
-
-            do
-            {
-                var cultureName = cultureInfo.Name;
-
-                var uri = string.IsNullOrEmpty(cultureName)
+            return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
+                cultureName =>
+                {
+                    var uri = string.IsNullOrEmpty(cultureName)
                     ? new Uri($"{basePath}.json", UriKind.Relative)
                     : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
 
-                map = await TryLoadFromUriAsync(uri).ConfigureAwait(false);
-
-                done = map != null
-                    || ReferenceEquals(cultureInfo.Parent, cultureInfo);
-
-                cultureInfo = cultureInfo.Parent;
-            }
-            while (!done);
-
-            return map;
+                    return TryLoadFromUriAsync(uri);
+                })
+                .ConfigureAwait(false);
         }
 
         /// <summary>
