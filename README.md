@@ -232,3 +232,22 @@ services.AddServerSideJsonLocalization(
         }));
 ```
 
+#### Make sure your Json resources are actually loaded
+
+Since the Json resources are static assets, they need to be loaded through HTTP to be used in your
+components. Thanks to a cache system, this will occurs only once for each of your components but it
+may be useful to override the `OnInitializedAsync` method with a `L.LoadAsync()` like this to make
+sure your refresh your localized text once the localization data are available:
+
+```csharp
+[Inject]
+private IStringLocalizer<Index> L { get; set; }
+
+protected override async Task OnInitializedAsync()
+{
+    await L.LoadAsync();
+    await base.OnInitializedAsync();
+}
+```
+
+
