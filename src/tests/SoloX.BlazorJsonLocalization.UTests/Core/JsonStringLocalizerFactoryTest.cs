@@ -24,8 +24,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
     public class JsonStringLocalizerFactoryTest
     {
         private const string CultureName = "en-us";
-        private const string BaseName = nameof(JsonStringLocalizerFactoryTest);
 
+        private static readonly string BaseName = typeof(JsonStringLocalizerFactoryTest).FullName ?? nameof(JsonStringLocalizerFactoryTest);
         private static readonly Assembly Assembly = typeof(JsonStringLocalizerFactoryTest).Assembly;
         private static readonly CultureInfo CultureInfo = CultureInfo.GetCultureInfo(CultureName);
 

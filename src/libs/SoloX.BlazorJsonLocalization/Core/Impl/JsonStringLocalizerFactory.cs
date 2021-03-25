@@ -63,7 +63,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
 
             var assembly = resourceSource.Assembly;
-            var baseName = resourceSource.Name;
+            var baseName = resourceSource.FullName ?? resourceSource.Name;
 
             return CreateStringLocalizer(baseName, assembly);
         }
