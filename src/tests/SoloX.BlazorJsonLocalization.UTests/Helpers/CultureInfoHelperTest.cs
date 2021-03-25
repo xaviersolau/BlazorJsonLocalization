@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
         {
             var cultureName = "fr-FR";
 
-            var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
+            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
             var data = await CultureInfoHelper.WalkThoughCultureInfoParentsAsync<string>(
                 cultureInfo,
@@ -38,7 +38,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
         {
             var cultureName = "fr-FR";
 
-            var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
+            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
             var list = new List<string>();
 
