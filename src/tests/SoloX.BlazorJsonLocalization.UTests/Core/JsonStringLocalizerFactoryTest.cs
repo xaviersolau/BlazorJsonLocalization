@@ -167,7 +167,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.NotNull(localizer);
 
-            Assert.IsType<JsonStringLocalizerAsync>(localizer);
+            var proxy = Assert.IsType<StringLocalizerProxy>(localizer);
+
+            Assert.IsType<JsonStringLocalizerAsync>(proxy.CurrentStringLocalizer);
         }
 
         [Fact]
@@ -199,8 +201,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.NotNull(localizer);
 
+            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, localizer), Times.Once);
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, localizer), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Once);
         }
 
         [Fact]
@@ -234,6 +238,46 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.NotNull(localizer);
 
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Never);
+
+            var proxy = Assert.IsType<StringLocalizerProxy>(localizer);
+
+            Assert.Same(cachedLocalizer, proxy.CurrentStringLocalizer);
+        }
+
+        [Fact]
+        public void ItShouldMatchTheCacheToGetLocalizerProxy()
+        {
+            // Setup CultureInfo service mock.
+            var cultureInfoServiceMock = SetupCultureInfoServiceMock();
+
+            // Setup extension service
+            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+
+            // Setup extension resolver service.
+            var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
+
+            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+
+            var cacheServiceMock = new Mock<ICacheService>();
+
+            var cachedLocalizer = Mock.Of<IStringLocalizer>();
+
+            cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, null)).Returns(cachedLocalizer);
+
+            var factory = new JsonStringLocalizerFactory(
+                optionsMock.Object,
+                cultureInfoServiceMock.Object,
+                extensionResolverServiceMock.Object,
+                cacheServiceMock.Object);
+
+            var localizer = factory.Create(BaseName, Assembly.FullName);
+
+            Assert.NotNull(localizer);
+
+            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, It.IsAny<IStringLocalizer>()), Times.Never);
+            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Never);
             cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Never);
 
             Assert.Same(cachedLocalizer, localizer);

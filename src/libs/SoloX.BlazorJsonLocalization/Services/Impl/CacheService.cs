@@ -22,15 +22,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         private readonly Dictionary<string, IStringLocalizer> cacheMap = new Dictionary<string, IStringLocalizer>();
 
         ///<inheritdoc/>
-        public void Cache(Assembly assembly, string baseName, CultureInfo cultureInfo, IStringLocalizer localizer)
+        public void Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizer localizer)
         {
             if (assembly == null)
             {
                 throw new ArgumentNullException(nameof(assembly));
-            }
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
             }
             if (baseName == null)
             {
@@ -48,15 +44,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         }
 
         ///<inheritdoc/>
-        public IStringLocalizer? Match(Assembly assembly, string baseName, CultureInfo cultureInfo)
+        public IStringLocalizer? Match(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
             if (assembly == null)
             {
                 throw new ArgumentNullException(nameof(assembly));
-            }
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
             }
             if (baseName == null)
             {
@@ -69,9 +61,9 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
         }
 
-        private static string ComputeKey(Assembly assembly, string baseName, CultureInfo cultureInfo)
+        private static string ComputeKey(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
-            return $"{assembly.GetName().Name}-{baseName}-{cultureInfo.Name}";
+            return cultureInfo == null ? $"{assembly.GetName().Name}-{baseName}" : $"{assembly.GetName().Name}-{baseName}-{cultureInfo.Name}";
         }
     }
 }

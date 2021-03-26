@@ -116,8 +116,8 @@ ISO2 language code:
 > Note that if you want to get the localization resources for your
 > component `MyComponent` and for the French `CultureInfo` (fr-FR) the
 > factory will first try to load `MyComponent-fr-FR.json`. If the file
-> is not fund, it will try to load `MyComponent-fr.json` and finally
-> if the file is still not fund, it will fall back to the file `MyComponent.json`
+> is not found, it will try to load `MyComponent-fr.json` and finally
+> if the file is still not found, it will fall back to the file `MyComponent.json`
 
 The content of the file is using a conventional Json syntax for example
 the English Json file will look like this:
@@ -235,7 +235,7 @@ services.AddServerSideJsonLocalization(
 #### Make sure your Json resources are actually loaded
 
 Since the Json resources are static assets, they need to be loaded through HTTP to be used in your
-components. Thanks to a cache system, this will occurs only once for each of your components but it
+components. Thanks to a cache system, this will occur only once for each of your components but it
 may be useful to override the `OnInitializedAsync` method with a `L.LoadAsync()` like this to make
 sure your refresh your localized text once the localization data are available:
 
