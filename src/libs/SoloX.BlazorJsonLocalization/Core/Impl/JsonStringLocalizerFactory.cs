@@ -65,7 +65,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var assembly = resourceSource.Assembly;
             var baseName = resourceSource.FullName ?? resourceSource.Name;
 
-            return CreateStringLocalizer(baseName, assembly);
+            return CreateStringLocalizerProxy(baseName, assembly);
         }
 
         ///<inheritdoc/>
@@ -73,13 +73,26 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             var assembly = Assembly.Load(location);
 
-            return CreateStringLocalizer(baseName, assembly);
+            return CreateStringLocalizerProxy(baseName, assembly);
         }
 
-        private IStringLocalizer CreateStringLocalizer(string baseName, Assembly assembly)
+        private IStringLocalizer CreateStringLocalizerProxy(string baseName, Assembly assembly)
         {
-            var cultureInfo = this.cultureInfoService.CurrentUICulture;
+            // First use the cache.
+            var localizer = this.cacheService.Match(assembly, baseName, null);
+            if (localizer != null)
+            {
+                return localizer;
+            }
 
+            localizer = new StringLocalizerProxy(this.cultureInfoService, this.CreateStringLocalizer, assembly, baseName);
+            this.cacheService.Cache(assembly, baseName, null, localizer);
+
+            return localizer;
+        }
+
+        private IStringLocalizer CreateStringLocalizer(string baseName, Assembly assembly, CultureInfo cultureInfo)
+        {
             // First use the cache.
             var localizer = this.cacheService.Match(assembly, baseName, cultureInfo);
             if (localizer != null)

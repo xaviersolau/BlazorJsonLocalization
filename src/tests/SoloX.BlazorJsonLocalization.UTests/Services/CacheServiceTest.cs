@@ -41,7 +41,22 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         }
 
         [Fact]
-        public void ItShouldNotMatchAnUnknownLocalizer()
+        public void ItShouldMatchARegisteredLocalizerNullCulture()
+        {
+            var localizer = Mock.Of<IStringLocalizer>();
+
+            var service = new CacheService();
+
+            service.Cache(Assembly, BaseName, null, localizer);
+
+            var cacheEntry = service.Match(Assembly, BaseName, null);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer, cacheEntry);
+        }
+
+        [Fact]
+        public void ItShouldNotMatchAnUnknownLocalizerWith()
         {
             var service = new CacheService();
 
@@ -50,12 +65,21 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
             Assert.Null(cacheEntry);
         }
 
+        [Fact]
+        public void ItShouldNotMatchAnUnknownLocalizerNullCulture()
+        {
+            var service = new CacheService();
+
+            var cacheEntry = service.Match(Assembly, BaseName, null);
+
+            Assert.Null(cacheEntry);
+        }
+
         [Theory]
-        [InlineData(typeof(CacheServiceTest), BaseName, null, true)]
-        [InlineData(typeof(CacheServiceTest), null, CultureName, true)]
-        [InlineData(null, BaseName, CultureName, true)]
-        [InlineData(typeof(CacheServiceTest), BaseName, CultureName, false)]
-        public void ItShouldValidateTheArgumentsOnCache(Type type, string baseName, string cultureInfoName, bool withLocalizer)
+        [InlineData(typeof(CacheServiceTest), null, false)]
+        [InlineData(typeof(CacheServiceTest), null, true)]
+        [InlineData(null, BaseName, true)]
+        public void ItShouldValidateTheArgumentsOnCache(Type type, string baseName, bool withLocalizer)
         {
             var service = new CacheService();
             var localizer = withLocalizer ? Mock.Of<IStringLocalizer>() : null;
@@ -65,16 +89,15 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                 service.Cache(
                     type?.Assembly,
                     baseName,
-                    cultureInfoName != null ? CultureInfo.GetCultureInfo(cultureInfoName) : null,
+                    CultureInfo,
                     localizer);
             });
         }
 
         [Theory]
-        [InlineData(typeof(CacheServiceTest), BaseName, null)]
-        [InlineData(typeof(CacheServiceTest), null, CultureName)]
-        [InlineData(null, BaseName, CultureName)]
-        public void ItShouldValidateTheArgumentsOnMatch(Type type, string baseName, string cultureInfoName)
+        [InlineData(typeof(CacheServiceTest), null)]
+        [InlineData(null, BaseName)]
+        public void ItShouldValidateTheArgumentsOnMatch(Type type, string baseName)
         {
             var service = new CacheService();
 
@@ -83,7 +106,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                 service.Match(
                     type?.Assembly,
                     baseName,
-                    cultureInfoName != null ? CultureInfo.GetCultureInfo(cultureInfoName) : null);
+                    CultureInfo);
             });
         }
     }
