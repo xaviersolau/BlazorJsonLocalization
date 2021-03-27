@@ -18,11 +18,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using System.Text;
+using Xunit.Abstractions;
+using SoloX.CodeQuality.Test.Helpers;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
     public class JsonLocalyserServerSideSetupTest
     {
+        private readonly ITestOutputHelper testOutputHelper;
+        public JsonLocalyserServerSideSetupTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Theory]
         [InlineData("fr-FR", "Test", null, "C'est un test...")]
         [InlineData("en-US", "Test", null, "This is a test...")]
@@ -36,6 +44,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
             cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
 
             var services = new ServiceCollection();
+            services.AddTestLogging(this.testOutputHelper);
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"This is a test...\", \"TestWithArg\": \"This is a test with an argument: {0}...\"}"));
             using var streamFr = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}"));

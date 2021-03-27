@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,18 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
     public class HttpHostedJsonLocalizationExtensionService : AHttpHostedJsonLocalizationExtensionService
     {
         private readonly HttpClient httpClient;
+        private readonly ILogger<HttpHostedJsonLocalizationExtensionService> logger;
 
         /// <summary>
         /// Setup with the HttpClient.
         /// </summary>
         /// <param name="httpClient">The Host HttpClient.</param>
-        public HttpHostedJsonLocalizationExtensionService(HttpClient httpClient)
+        /// <param name="logger">Logger where to log processing messages.</param>
+        public HttpHostedJsonLocalizationExtensionService(HttpClient httpClient, ILogger<HttpHostedJsonLocalizationExtensionService> logger)
+            : base(logger)
         {
             this.httpClient = httpClient;
+            this.logger = logger;
         }
 
         ///<inheritdoc/>
@@ -38,6 +43,8 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
         {
             try
             {
+                this.logger.LogDebug($"Loading localization data from {uri} using HTTP client");
+
                 using var stream = await this.httpClient.GetStreamAsync(uri).ConfigureAwait(false);
 
                 var map = await JsonSerializer.DeserializeAsync<IReadOnlyDictionary<string, string>>(stream).ConfigureAwait(false);
@@ -46,6 +53,8 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
             }
             catch (HttpRequestException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
+                this.logger.LogWarning(e, $"Http not found data from {uri}");
+
                 return null;
             }
         }

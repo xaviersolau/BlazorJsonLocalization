@@ -6,8 +6,10 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl;
 using SoloX.CodeQuality.Test.Helpers.Http;
+using SoloX.CodeQuality.Test.Helpers.Logger;
 using System;
 using System.Globalization;
 using System.IO;
@@ -16,6 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
 {
@@ -24,6 +27,13 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
         private const string BaseName = nameof(HttpHostedJsonLocalizationExtensionServiceTest);
 
         private static readonly Assembly Assembly = typeof(HttpHostedJsonLocalizationExtensionServiceTest).Assembly;
+
+        private ILogger<HttpHostedJsonLocalizationExtensionService> Logger { get; }
+
+        public HttpHostedJsonLocalizationExtensionServiceTest(ITestOutputHelper testOutputHelper)
+        {
+            Logger = new TestLogger<HttpHostedJsonLocalizationExtensionService>(testOutputHelper);
+        }
 
         [Theory]
         [InlineData("en-US", "Test", "English test.", true, "Resources")]
@@ -51,7 +61,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
                     request => new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"French test.\"}"))))
                 .Build();
 
-            var service = new HttpHostedJsonLocalizationExtensionService(httpClient);
+            var service = new HttpHostedJsonLocalizationExtensionService(httpClient, Logger);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {

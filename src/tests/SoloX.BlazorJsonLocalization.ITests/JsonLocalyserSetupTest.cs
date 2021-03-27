@@ -10,13 +10,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
+using SoloX.CodeQuality.Test.Helpers;
 using System.Globalization;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
     public class JsonLocalyserSetupTest
     {
+        private readonly ITestOutputHelper testOutputHelper;
+        public JsonLocalyserSetupTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Theory]
         [InlineData("fr-FR", "Test", null, "C'est un test...")]
         [InlineData("en-US", "Test", null, "This is a test...")]
@@ -30,6 +38,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
             cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
 
             var services = new ServiceCollection();
+            services.AddTestLogging(this.testOutputHelper);
 
             services.AddJsonLocalization(
                 builder => builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources"));

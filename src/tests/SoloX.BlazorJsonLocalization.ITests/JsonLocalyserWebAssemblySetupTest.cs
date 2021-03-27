@@ -11,6 +11,7 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.WebAssembly;
+using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Http;
 using System;
 using System.Globalization;
@@ -19,11 +20,18 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
     public class JsonLocalyserWebAssemblySetupTest
     {
+        private readonly ITestOutputHelper testOutputHelper;
+        public JsonLocalyserWebAssemblySetupTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Theory]
         [InlineData("fr-FR", "Test", null, "C'est un test...")]
         [InlineData("en-US", "Test", null, "This is a test...")]
@@ -37,6 +45,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
             cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
 
             var services = new ServiceCollection();
+            services.AddTestLogging(this.testOutputHelper);
 
             using var httpClient = new HttpClientMockBuilder()
                 .WithBaseAddress(new Uri("http://test.com"))

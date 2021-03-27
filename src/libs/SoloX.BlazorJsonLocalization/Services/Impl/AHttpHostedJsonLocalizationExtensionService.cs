@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Helpers;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,17 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     public abstract class AHttpHostedJsonLocalizationExtensionService
         : IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>
     {
+        private readonly ILogger<AHttpHostedJsonLocalizationExtensionService> logger;
+
+        /// <summary>
+        /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
+        /// </summary>
+        /// <param name="logger">Logger where to log processing messages.</param>
+        protected AHttpHostedJsonLocalizationExtensionService(ILogger<AHttpHostedJsonLocalizationExtensionService> logger)
+        {
+            this.logger = logger;
+        }
+
         ///<inheritdoc/>
         public async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
             HttpHostedJsonLocalizationOptions options,
@@ -56,6 +68,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                     var uri = string.IsNullOrEmpty(cultureName)
                     ? new Uri($"{basePath}.json", UriKind.Relative)
                     : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+
+                    this.logger.LogDebug($"Loading static assets data from {uri}");
 
                     return TryLoadFromUriAsync(uri);
                 })

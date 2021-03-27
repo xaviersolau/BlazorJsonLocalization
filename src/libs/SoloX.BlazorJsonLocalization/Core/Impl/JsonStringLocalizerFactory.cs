@@ -9,10 +9,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SoloX.BlazorJsonLocalization.Services;
 
@@ -28,6 +30,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
         private readonly ICacheService cacheService;
+        private readonly ILogger<JsonStringLocalizerFactory> logger;
 
         /// <summary>
         /// Setup the factory.
@@ -37,17 +40,20 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <param name="extensionResolverService">The service resolver to get the JsonLocalization
         /// extension service.</param>
         /// <param name="cacheService">The service to cache the loaded data.</param>
+        /// <param name="logger">Logger where to log processing messages.</param>
         public JsonStringLocalizerFactory(
             IOptions<JsonLocalizationOptions> options,
             ICultureInfoService cultureInfoService,
             IExtensionResolverService extensionResolverService,
-            ICacheService cacheService)
+            ICacheService cacheService,
+            ILogger<JsonStringLocalizerFactory> logger)
         {
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
+            this.logger = logger;
             this.options = options.Value;
             this.extensionResolverService = extensionResolverService;
             this.cultureInfoService = cultureInfoService;
@@ -57,6 +63,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer Create(Type resourceSource)
         {
+            this.logger.LogDebug($"Create String localizer for {resourceSource?.FullName}");
+
             if (resourceSource == null)
             {
                 throw new ArgumentNullException(nameof(resourceSource));
@@ -71,6 +79,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer Create(string baseName, string location)
         {
+            this.logger.LogDebug($"Create String localizer for {baseName} in {location}");
+
             var assembly = Assembly.Load(location);
 
             return CreateStringLocalizerProxy(baseName, assembly);
@@ -82,8 +92,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var localizer = this.cacheService.Match(assembly, baseName, null);
             if (localizer != null)
             {
+                this.logger.LogDebug($"Got String localizer proxy for {baseName} in {assembly} from cache");
+
                 return localizer;
             }
+
+            this.logger.LogDebug($"Create String localizer proxy for {baseName} in {assembly} and register in cache");
 
             localizer = new StringLocalizerProxy(this.cultureInfoService, this.CreateStringLocalizer, assembly, baseName);
             this.cacheService.Cache(assembly, baseName, null, localizer);
@@ -97,6 +111,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var localizer = this.cacheService.Match(assembly, baseName, cultureInfo);
             if (localizer != null)
             {
+                this.logger.LogDebug($"Got String localizer for {baseName} in {assembly} with culture {cultureInfo} from cache");
+
                 return localizer;
             }
 
@@ -104,6 +120,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             if (task.Status == TaskStatus.RanToCompletion)
             {
+                this.logger.LogInformation($"Loading task completed synchronously for {baseName} in {assembly} with culture {cultureInfo}");
+
                 var map = task.Result;
                 if (map != null)
                 {
@@ -117,6 +135,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
             else
             {
+                this.logger.LogInformation($"Loading data asynchronously for {baseName} in {assembly} with culture {cultureInfo}");
+
                 localizer = new JsonStringLocalizerAsync(task, cultureInfo);
                 this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
             }
@@ -128,21 +148,31 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {
-                var options = extensionOptionsContainer.Options;
-
-                var noAssambliesToMatch = !options.AssemblyNames.Any();
-
-                if (noAssambliesToMatch || options.AssemblyNames.Contains(assembly.GetName().Name))
+                try
                 {
-                    var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
+                    var options = extensionOptionsContainer.Options;
 
-                    var map = await extensionService.TryLoadAsync(options, assembly, baseName, cultureInfo).ConfigureAwait(false);
-                    if (map != null)
+                    var noAssambliesToMatch = !options.AssemblyNames.Any();
+
+                    if (noAssambliesToMatch || options.AssemblyNames.Contains(assembly.GetName().Name))
                     {
-                        return map;
+                        var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
+
+                        var map = await extensionService.TryLoadAsync(options, assembly, baseName, cultureInfo).ConfigureAwait(false);
+                        if (map != null)
+                        {
+                            this.logger.LogInformation($"Loaded localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
+                            return map;
+                        }
                     }
                 }
+                catch (FileLoadException e)
+                {
+                    this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
+                }
             }
+
+            this.logger.LogError($"Unable to load localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
             return null;
         }
     }
