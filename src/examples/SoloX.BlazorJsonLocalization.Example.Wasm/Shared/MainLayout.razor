@@ -1,17 +1,69 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Globalization
+
+@inherits LayoutComponentBase
+
+@inject IStringLocalizer<SharedResource> shared
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+    @if (reload)
+    {
+        <div class="main">
+            Loading...
+       </div>
+    }
+    else
+    {
+        <div class="sidebar">
+            <NavMenu />
         </div>
 
-        <div class="content px-4">
-            @Body
+        <div class="main">
+            <div class="top-row px-4">
+                <div class="col-auto px-4">
+                    <button class="btn btn-primary" @onclick="SetCultureInfoFr">fr-FR</button>
+                </div>
+                <div class="col-auto px-4">
+                    <button class="btn btn-primary" @onclick="SetCultureInfoEn">en-US</button>
+                </div>
+                <div class="col-auto px-4">
+                    <a href="http://blazor.net" target="_blank" class="ml-md-auto">@shared["About"]</a>
+                </div>
+            </div>
+            <div class="content px-4">
+                @Body
+            </div>
         </div>
-    </div>
+    }
+
 </div>
+
+@code
+{
+    private Task SetCultureInfoFr()
+    {
+        return SetCultureInfo("fr-FR");
+    }
+
+    private Task SetCultureInfoEn()
+    {
+        return SetCultureInfo("en-US");
+    }
+
+    bool reload = false;
+
+    private async Task SetCultureInfo(string name)
+    {
+        var ci = CultureInfo.GetCultureInfo(name);
+
+        CultureInfo.DefaultThreadCurrentUICulture = ci;
+
+        reload = true;
+        StateHasChanged();
+
+        await Task.Delay(1);
+
+        reload = false;
+        StateHasChanged();
+    }
+}

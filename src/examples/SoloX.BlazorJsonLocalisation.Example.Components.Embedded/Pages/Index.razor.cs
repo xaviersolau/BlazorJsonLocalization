@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.Components.Pages
+namespace SoloX.BlazorJsonLocalisation.Example.Components.Embedded.Pages
 {
     public partial class Index
     {

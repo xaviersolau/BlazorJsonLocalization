@@ -76,9 +76,20 @@ builder.Services.AddJsonLocalization(
         options => options.ResourcesPath = "Resources"));
 ```
 
+By default the current culture is going to be taken from the browser settings. But it can
+be easily set by code with this simple code:
+
+```csharp
+var cultureInfo = CultureInfo.GetCultureInfo(name);
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+```
+
+You can find an example in the project repository in `src/examples/SoloX.BlazorJsonLocalization.Example.Wasm`.
+
 * For Blazor Server Side:
 
-Update your `ConfigureServices` method in the `Startup.cs` file:
+First add the `using Microsoft.AspNetCore.Localization` directive and update your
+`ConfigureServices` method in the `Startup.cs` file:
 
 ```csharp
 // Here we are going to store the Json files in the project 'Resources' folder.
@@ -86,7 +97,35 @@ services.AddJsonLocalization(
     builder => builder.UseEmbeddedJson(
         options => options.ResourcesPath = "Resources"),
         ServiceLifetime.Singleton);
+
+// AspNet core standard localization setup to get culture from the
+// Browser
+var supportedCultures = new List<CultureInfo>
+{
+    new CultureInfo("en"),
+    new CultureInfo("fr")
+};
+services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en");
+    options.SupportedUICultures = supportedCultures;
+});
 ```
+
+And update your `Configure` method in the Startup.cs file:
+
+```csharp
+// AspNet core standard localization setup to get culture from the
+// Browser
+app.UseRequestLocalization();
+```
+
+With this configuration, you will be able to get the culture from the browser. If you want to
+define the culture by code you can go to the Microsoft documentation:
+[Provide UI to choose the culture](https://docs.microsoft.com/fr-fr/aspnet/core/blazor/globalization-localization?view=aspnetcore-5.0#provide-ui-to-choose-the-culture).
+You will find a nice solution for this purpose.
+In addition you can find an example in the BlazorJsonLocalizer project repository in
+`src/examples/SoloX.BlazorJsonLocalization.Example.ServerSide`.
 
 #### Enable localization support in your component
 
@@ -143,14 +182,7 @@ the Assembly. You can do it this way in your csproj file:
 
 ```xml
   <ItemGroup>
-    <Content Remove="Resources\Index-fr.json" />
-    <!-- ... -->
-    <Content Remove="Resources\Index.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Resources\Index-fr.json" />
-    <!-- ... -->
     <EmbeddedResource Include="Resources\Index.json" />
   </ItemGroup>
 ```

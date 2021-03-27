@@ -26,15 +26,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.ServerSide", "src\examples\SoloX.BlazorJsonLocalisation.Example.ServerSide\SoloX.BlazorJsonLocalisation.Example.ServerSide.csproj", "{9FF7C1B9-AE6E-43A5-AA67-97B05A40798C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.Components", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components\SoloX.BlazorJsonLocalisation.Example.Components.csproj", "{46A3DB36-D6F0-467F-8E9D-F584FA529421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.Components.Embedded", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.Embedded\SoloX.BlazorJsonLocalisation.Example.Components.Embedded.csproj", "{46A3DB36-D6F0-467F-8E9D-F584FA529421}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.ServerSide", "src\libs\SoloX.BlazorJsonLocalization.ServerSide\SoloX.BlazorJsonLocalization.ServerSide.csproj", "{5A178366-F360-42CC-99C3-78F521BA5D2E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.WebAssembly", "src\libs\SoloX.BlazorJsonLocalization.WebAssembly\SoloX.BlazorJsonLocalization.WebAssembly.csproj", "{FC6C52CB-3792-4121-B398-06E4125A2BCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.WebAssembly.UTests", "src\tests\SoloX.BlazorJsonLocalization.WebAssembly.UTests\SoloX.BlazorJsonLocalization.WebAssembly.UTests.csproj", "{3D71F37C-96E6-4FF7-999F-7EE0B1148F26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.WebAssembly.UTests", "src\tests\SoloX.BlazorJsonLocalization.WebAssembly.UTests\SoloX.BlazorJsonLocalization.WebAssembly.UTests.csproj", "{3D71F37C-96E6-4FF7-999F-7EE0B1148F26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.ServerSide.UTests", "src\tests\SoloX.BlazorJsonLocalization.ServerSide.UTests\SoloX.BlazorJsonLocalization.ServerSide.UTests.csproj", "{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.ServerSide.UTests", "src\tests\SoloX.BlazorJsonLocalization.ServerSide.UTests\SoloX.BlazorJsonLocalization.ServerSide.UTests.csproj", "{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj", "{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +84,10 @@ Global
 		{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{FC6C52CB-3792-4121-B398-06E4125A2BCF} = {0FC256E5-C6D1-47EB-A1E0-BC25756D6788}
 		{3D71F37C-96E6-4FF7-999F-7EE0B1148F26} = {04B1389F-9BC9-4D7D-93CE-675F982A16F4}
 		{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3} = {04B1389F-9BC9-4D7D-93CE-675F982A16F4}
+		{157E96C3-6B5A-4355-9051-C4B9D4EF9B94} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}
