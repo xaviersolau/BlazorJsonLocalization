@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization;
 
-namespace SoloX.BlazorJsonLocalisation.Example.Components.Pages
+namespace SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.Pages
 {
     public partial class Counter
     {

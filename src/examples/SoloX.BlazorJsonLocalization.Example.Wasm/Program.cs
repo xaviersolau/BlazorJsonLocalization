@@ -25,14 +25,16 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                 builder =>
                 {
                     builder
+                        // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
                         .UseEmbeddedJson(options =>
                         {
                             options.ResourcesPath = "Resources";
                         })
+                        // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
                         .UseHttpHostedJson(options =>
                         {
                             options.ApplicationAssembly = typeof(Program).Assembly;
-                            options.ResourcesPath = "lang";
+                            options.ResourcesPath = "Resources";
                         });
                 });
 

@@ -6,7 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization.ServerSide\SoloX.BlazorJsonLocalization.ServerSide.csproj" />
-    <ProjectReference Include="..\SoloX.BlazorJsonLocalisation.Example.Components\SoloX.BlazorJsonLocalisation.Example.Components.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalisation.Example.Components.Embedded\SoloX.BlazorJsonLocalisation.Example.Components.Embedded.csproj" />
   </ItemGroup>
 
 </Project>

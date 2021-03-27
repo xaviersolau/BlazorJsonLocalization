@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SoloX.BlazorJsonLocalisation.Example.ServerSide.Data;
 using SoloX.BlazorJsonLocalization;
 using SoloX.BlazorJsonLocalization.ServerSide;
 using System;
@@ -13,6 +12,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.JSInterop;
 
 namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
 {
@@ -31,32 +33,38 @@ namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+
+            // Need this to enable the CultureController
+            services.AddControllers();
 
             services.AddServerSideJsonLocalization(
                 builder =>
                 {
                     builder
+                        // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
                         .UseEmbeddedJson(options =>
                         {
                             options.ResourcesPath = "Resources";
                         })
+                        // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
                         .UseHttpHostedJson(options =>
                         {
                             options.ApplicationAssembly = typeof(Program).Assembly;
-                            options.ResourcesPath = "lang";
+                            options.ResourcesPath = "Resources";
                         });
                 });
 
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("fr") };
+            // AspNet core standard localization setup to get culture from the
+            // Browser
+            var supportedCultures = new List<CultureInfo>
+            {
+                new CultureInfo("en"),
+                new CultureInfo("fr")
+            };
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en");
+                options.DefaultRequestCulture = new RequestCulture("en");
                 options.SupportedUICultures = supportedCultures;
-
-                //options.AddInitialRequestCultureProvider(
-                //    new CustomRequestCultureProvider(ctx => Task.FromResult(new ProviderCultureResult("en"))));
-
             });
         }
 
@@ -74,6 +82,10 @@ namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
                 app.UseHsts();
             }
 
+            // AspNet core standard localization setup to get culture from the
+            // Browser
+            app.UseRequestLocalization();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -81,6 +93,8 @@ namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
 
             app.UseEndpoints(endpoints =>
             {
+                // Need MapControllers to enable the CultureController
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
