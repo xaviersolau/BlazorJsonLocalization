@@ -8,14 +8,17 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.BlazorJsonLocalization.ServerSide.Services.Impl;
+using SoloX.CodeQuality.Test.Helpers.Logger;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
 {
@@ -24,6 +27,13 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
         private const string BaseName = nameof(HttpHostedJsonLocalizationExtensionServiceTest);
 
         private static readonly Assembly Assembly = typeof(HttpHostedJsonLocalizationExtensionServiceTest).Assembly;
+
+        private ILogger<HttpHostedJsonLocalizationExtensionService> Logger { get; }
+
+        public HttpHostedJsonLocalizationExtensionServiceTest(ITestOutputHelper testOutputHelper)
+        {
+            Logger = new TestLogger<HttpHostedJsonLocalizationExtensionService>(testOutputHelper);
+        }
 
         [Theory]
         [InlineData("en-US", "Test", "English test.", true, "Resources")]
@@ -69,7 +79,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
             var hostEnvMock = new Mock<IWebHostEnvironment>();
             hostEnvMock.SetupGet(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
 
-            var service = new HttpHostedJsonLocalizationExtensionService(hostEnvMock.Object);
+            var service = new HttpHostedJsonLocalizationExtensionService(hostEnvMock.Object, Logger);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {

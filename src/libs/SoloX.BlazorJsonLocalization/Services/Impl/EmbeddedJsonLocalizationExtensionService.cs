@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -23,6 +24,17 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     /// </summary>
     public class EmbeddedJsonLocalizationExtensionService : IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>
     {
+        private readonly ILogger<EmbeddedJsonLocalizationExtensionService> logger;
+
+        /// <summary>
+        /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
+        /// </summary>
+        /// <param name="logger">Logger where to log processing messages.</param>
+        public EmbeddedJsonLocalizationExtensionService(ILogger<EmbeddedJsonLocalizationExtensionService> logger)
+        {
+            this.logger = logger;
+        }
+
         ///<inheritdoc/>
         public async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
             EmbeddedJsonLocalizationOptions options,
@@ -47,7 +59,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 .ConfigureAwait(false);
         }
 
-        private static async ValueTask<IReadOnlyDictionary<string, string>?> LoadStringMapAsync(
+        private async ValueTask<IReadOnlyDictionary<string, string>?> LoadStringMapAsync(
             IFileProvider fileProvider,
             string resourcesPath,
             string basePath,
@@ -64,12 +76,14 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                         ? $"{basePath}.json"
                         : $"{basePath}-{cultureName}.json";
 
+                    this.logger.LogDebug($"Loading embedded data {path}");
+
                     return TryLoadMapAsync(fileProvider, path);
                 })
                 .ConfigureAwait(false);
         }
 
-        private static async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadMapAsync(
+        private async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadMapAsync(
             IFileProvider fileProvider,
             string path)
         {
@@ -77,8 +91,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             if (!fileInfo.Exists)
             {
+                this.logger.LogWarning($"Embedded File {path} does not exist");
                 return null;
             }
+
+            this.logger.LogDebug($"Loading file {path} does not exist");
 
             using var stream = fileInfo.CreateReadStream();
 

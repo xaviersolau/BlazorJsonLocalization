@@ -13,6 +13,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 {
@@ -22,14 +23,18 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
     public class HttpHostedJsonLocalizationExtensionService : AHttpHostedJsonLocalizationExtensionService
     {
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly ILogger<HttpHostedJsonLocalizationExtensionService> logger;
 
         /// <summary>
         /// Setup with the IWebHostEnvironment.
         /// </summary>
         /// <param name="webHostEnvironment">The IWebHostEnvironment.</param>
-        public HttpHostedJsonLocalizationExtensionService(IWebHostEnvironment webHostEnvironment)
+        /// <param name="logger">Logger where to log processing messages.</param>
+        public HttpHostedJsonLocalizationExtensionService(IWebHostEnvironment webHostEnvironment, ILogger<HttpHostedJsonLocalizationExtensionService> logger)
+            : base(logger)
         {
             this.webHostEnvironment = webHostEnvironment;
+            this.logger = logger;
         }
 
         ///<inheritdoc/>
@@ -40,12 +45,17 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
                 throw new ArgumentNullException(nameof(uri));
             }
 
+            this.logger.LogDebug($"Loading localization data from {uri} using Web Host WebRootFileProvider");
+
             var fileInfo = this.webHostEnvironment.WebRootFileProvider.GetFileInfo(uri.OriginalString);
 
             if (!fileInfo.Exists)
             {
+                this.logger.LogWarning($"Web Host File {uri} does not exist");
                 return null;
             }
+
+            this.logger.LogDebug($"Loading file {uri} does not exist");
 
             using var stream = fileInfo.CreateReadStream();
 
