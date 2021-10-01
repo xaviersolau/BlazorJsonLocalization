@@ -13,11 +13,11 @@ Don't hesitate to post issues, pull requests on the project or to fork and impro
 [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/BlazorJsonLocalization/badge.svg?branch=main)](https://coveralls.io/github/xaviersolau/BlazorJsonLocalization?branch=main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-| Package                                    | Nuget.org |
-|--------------------------------------------|-----------|
-|**SoloX.BlazorJsonLocalization**            |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
-|**SoloX.BlazorJsonLocalization.WebAssembly**|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.WebAssembly.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.WebAssembly)|
-|**SoloX.BlazorJsonLocalization.ServerSide** |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.ServerSide.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.ServerSide)|
+| Package                                    | Nuget.org | Pre-release |
+|--------------------------------------------|-----------|-----------|
+|**SoloX.BlazorJsonLocalization**            |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
+|**SoloX.BlazorJsonLocalization.WebAssembly**|[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.WebAssembly.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.WebAssembly)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
+|**SoloX.BlazorJsonLocalization.ServerSide** |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.ServerSide.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.ServerSide)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
 
 ## License and credits
 
