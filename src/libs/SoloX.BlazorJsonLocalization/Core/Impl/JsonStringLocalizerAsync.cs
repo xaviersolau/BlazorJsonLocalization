@@ -24,6 +24,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private readonly Task<IReadOnlyDictionary<string, string>?> loadingTask;
         private readonly CultureInfo cultureInfo;
+        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         private bool loaded;
         private IStringLocalizer stringLocalizer;
@@ -33,11 +34,14 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// </summary>
         /// <param name="loadingTask">Asynchronous loading task.</param>
         /// <param name="cultureInfo">The associated culture info.</param>
-        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo)
+        /// <param name="localizerFactory">Localizer Internal Factory.</param>
+        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory)
         {
             this.loadingTask = loadingTask;
             this.cultureInfo = cultureInfo;
             this.loaded = false;
+
+            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
 
             if (this.loadingTask.Status == TaskStatus.RanToCompletion)
             {
@@ -45,18 +49,18 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
                 if (map != null)
                 {
-                    this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo);
+                    this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo, this.localizerFactory);
                 }
                 else
                 {
-                    this.stringLocalizer = new NullStringLocalizer(cultureInfo);
+                    this.stringLocalizer = new NullStringLocalizer(cultureInfo, this.localizerFactory);
                 }
 
                 this.loaded = true;
             }
             else
             {
-                this.stringLocalizer = new ConstStringLocalizer("...");
+                this.stringLocalizer = new ConstStringLocalizer("...", this.localizerFactory);
 
                 lock (LoadingTasks)
                 {
@@ -68,18 +72,26 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public LocalizedString this[string name] =>
             name == nameof(this.stringLocalizerGuid)
-            ? new(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
+            ? new LocalizedString(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
             : LoadingForwarder((l) => l[name]);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments] =>
             name == nameof(this.stringLocalizerGuid)
-            ? new(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
+            ? new LocalizedString(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
             : LoadingForwarder((l) => l[name, arguments]);
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) =>
             LoadingForwarder((l) => l.GetAllStrings(includeParentCultures));
+
+#if !NET
+        ///<inheritdoc/>
+        public IStringLocalizer WithCulture(CultureInfo culture)
+        {
+            return this.localizerFactory.CreateStringLocalizer(culture);
+        }
+#endif
 
         private TData LoadingForwarder<TData>(Func<IStringLocalizer, TData> handler)
         {
@@ -103,7 +115,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
                         if (map != null)
                         {
-                            this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo);
+                            this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo, this.localizerFactory);
                         }
 
                         this.loaded = true;
@@ -119,17 +131,17 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         internal static ValueTask LoadAsync(IStringLocalizer localizer)
         {
-            JsonStringLocalizerAsync? stringLocalizerAsync;
+            JsonStringLocalizerAsync? stringLocalizer;
             lock (LoadingTasks)
             {
                 var guid = localizer[nameof(stringLocalizerGuid)].Value;
-                if (!LoadingTasks.TryGetValue(guid, out stringLocalizerAsync))
+                if (!LoadingTasks.TryGetValue(guid, out stringLocalizer))
                 {
-                    return ValueTask.CompletedTask;
+                    return new ValueTask(Task.CompletedTask);
                 }
                 LoadingTasks.Remove(guid);
             }
-            return stringLocalizerAsync.LoadDataAsync();
+            return stringLocalizer.LoadDataAsync();
         }
 
         private async ValueTask LoadDataAsync()
@@ -140,7 +152,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             {
                 if (map != null)
                 {
-                    this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo);
+                    this.stringLocalizer = new JsonStringLocalizer(map, this.cultureInfo, this.localizerFactory);
                 }
 
                 this.loaded = true;

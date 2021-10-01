@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Moq;
 using Xunit;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
@@ -41,10 +42,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 };
             };
 
+            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+
             // Setup the async localizer with the loadAsync task.
             var localizer = new JsonStringLocalizerAsync(
                 loadAsync(),
-                cultureInfo);
+                cultureInfo,
+                localizerFactoryMock.Object);
 
             // Make sure the localized text is loading...
             var loading = localizer[key];

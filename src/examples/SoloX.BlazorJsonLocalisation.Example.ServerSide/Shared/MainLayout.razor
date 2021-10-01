@@ -55,7 +55,7 @@
 
     bool reload = false;
 
-    private async Task SetCultureInfo(string culture)
+    private Task SetCultureInfo(string culture)
     {
         var uri = new Uri(NavigationManager.Uri)
             .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
@@ -63,5 +63,7 @@
             $"redirectUri={Uri.EscapeDataString(uri)}";
 
         NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+
+        return Task.CompletedTask;
     }
 }

@@ -8,6 +8,7 @@
 
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Globalization;
+using Moq;
 using Xunit;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
@@ -19,7 +20,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         {
             var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
 
-            var localizer = new NullStringLocalizer(cultureInfo);
+            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+
+            var localizer = new NullStringLocalizer(cultureInfo, localizerFactoryMock.Object);
 
             Assert.Equal("SomeInput", localizer["SomeInput"]);
             Assert.Equal("SomeInput", localizer["SomeInput", "With some argument"]);

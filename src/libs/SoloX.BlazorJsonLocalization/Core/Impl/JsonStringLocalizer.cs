@@ -21,16 +21,20 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     {
         private readonly IReadOnlyDictionary<string, string> stringMap;
         private readonly CultureInfo cultureInfo;
+        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         /// <summary>
         /// Setup with the given string map.
         /// </summary>
         /// <param name="stringMap">The string map to use to resolve localization.</param>
         /// <param name="cultureInfo">The associated culture info.</param>
-        public JsonStringLocalizer(IReadOnlyDictionary<string, string> stringMap, CultureInfo cultureInfo)
+        /// <param name="localizerFactory">Localizer Internal Factory.</param>
+        public JsonStringLocalizer(IReadOnlyDictionary<string, string> stringMap, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory)
         {
             this.stringMap = stringMap;
             this.cultureInfo = cultureInfo;
+
+            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
         }
 
         ///<inheritdoc/>
@@ -51,12 +55,20 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             if (this.stringMap.TryGetValue(name, out var value))
             {
-                return new(name, format(value));
+                return new LocalizedString(name, format(value));
             }
             else
             {
-                return new(name, format(name), true);
+                return new LocalizedString(name, format(name), true);
             }
         }
+
+#if !NET
+        ///<inheritdoc/>
+        public IStringLocalizer WithCulture(CultureInfo culture)
+        {
+            return this.localizerFactory.CreateStringLocalizer(culture);
+        }
+#endif
     }
 }
