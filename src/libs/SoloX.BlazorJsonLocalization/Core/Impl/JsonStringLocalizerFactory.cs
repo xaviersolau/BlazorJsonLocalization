@@ -24,8 +24,23 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// IStringLocalizerFactory implementation that will create the IStringLocalizer instance
     /// from the extension configured in the JsonLocalization options.
     /// </summary>
-    public class JsonStringLocalizerFactory : IStringLocalizerFactory
+    public sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
     {
+        private class FactoryInternal : IJsonStringLocalizerFactoryInternal
+        {
+            private readonly Func<CultureInfo, IStringLocalizer> createHandler;
+
+            public FactoryInternal(Func<CultureInfo, IStringLocalizer> create)
+            {
+                this.createHandler = create;
+            }
+
+            public IStringLocalizer CreateStringLocalizer(CultureInfo cultureInfo)
+            {
+                return this.createHandler(cultureInfo);
+            }
+        }
+
         private readonly JsonLocalizationOptions options;
         private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
@@ -99,7 +114,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             this.logger.LogDebug($"Create String localizer proxy for {baseName} in {assembly} and register in cache");
 
-            localizer = new StringLocalizerProxy(this.cultureInfoService, this.CreateStringLocalizer, assembly, baseName);
+            localizer = new StringLocalizerProxy(this.cultureInfoService, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
             this.cacheService.Cache(assembly, baseName, null, localizer);
 
             return localizer;
@@ -125,19 +140,19 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 var map = task.Result;
                 if (map != null)
                 {
-                    localizer = new JsonStringLocalizer(map, cultureInfo);
+                    localizer = new JsonStringLocalizer(map, cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
                     this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
                 }
                 else
                 {
-                    localizer = new NullStringLocalizer(cultureInfo);
+                    localizer = new NullStringLocalizer(cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
                 }
             }
             else
             {
                 this.logger.LogInformation($"Loading data asynchronously for {baseName} in {assembly} with culture {cultureInfo}");
 
-                localizer = new JsonStringLocalizerAsync(task, cultureInfo);
+                localizer = new JsonStringLocalizerAsync(task, cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
                 this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
             }
 

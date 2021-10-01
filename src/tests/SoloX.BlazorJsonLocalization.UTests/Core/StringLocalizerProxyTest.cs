@@ -12,18 +12,14 @@ using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using Xunit;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
 {
     public class StringLocalizerProxyTest
     {
-        private static readonly string BaseName = typeof(StringLocalizerProxyTest).FullName ?? nameof(StringLocalizerProxyTest);
-        private static readonly Assembly Assembly = typeof(StringLocalizerProxyTest).Assembly;
-
         [Fact]
-        public void ItShould()
+        public void ItShouldProvideTheRightStringLocalizerDependingOnTheCurrentCulture()
         {
             var cultureInfoFr = CultureInfo.GetCultureInfo("fr-FR");
             var cultureInfoEn = CultureInfo.GetCultureInfo("en-US");
@@ -42,10 +38,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoServiceMock = new Mock<ICultureInfoService>();
             cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(() => currentCulture);
 
+            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            localizerFactoryMock
+                .Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>()))
+                .Returns<CultureInfo>(ci => map[ci.Name]);
+
             var proxy = new StringLocalizerProxy(cultureInfoServiceMock.Object,
-                (name, asm, ci) => map[ci.Name],
-                Assembly,
-                BaseName);
+                localizerFactoryMock.Object);
 
             Assert.Same(stringLocalizerEn, proxy.CurrentStringLocalizer);
 

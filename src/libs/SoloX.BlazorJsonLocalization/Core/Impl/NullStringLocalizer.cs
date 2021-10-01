@@ -19,28 +19,40 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     public class NullStringLocalizer : IStringLocalizer
     {
         private readonly CultureInfo cultureInfo;
+        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         /// <summary>
         /// Setup with target culture.
         /// </summary>
         /// <param name="cultureInfo">The target culture.</param>
-        public NullStringLocalizer(CultureInfo cultureInfo)
+        /// <param name="localizerFactory">Localizer Internal Factory.</param>
+        public NullStringLocalizer(CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory)
         {
+            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
+
             this.cultureInfo = cultureInfo;
         }
 
         ///<inheritdoc/>
         public LocalizedString this[string name]
-            => new(name, name, true);
+            => new LocalizedString(name, name, true);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => new(name, string.Format(this.cultureInfo, name, arguments), true);
+            => new LocalizedString(name, string.Format(this.cultureInfo, name, arguments), true);
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             return Array.Empty<LocalizedString>();
         }
+
+#if !NET
+        ///<inheritdoc/>
+        public IStringLocalizer WithCulture(CultureInfo culture)
+        {
+            return this.localizerFactory.CreateStringLocalizer(culture);
+        }
+#endif
     }
 }
