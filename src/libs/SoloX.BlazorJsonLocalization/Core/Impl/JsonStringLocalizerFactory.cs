@@ -185,6 +185,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 {
                     this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
                 }
+#pragma warning disable CA1031 // Ne pas intercepter les types d'exception générale
+                catch (Exception e)
+#pragma warning restore CA1031 // Ne pas intercepter les types d'exception générale
+                {
+                    this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
+                }
             }
 
             this.logger.LogError($"Unable to load localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
