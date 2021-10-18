@@ -8,7 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Services.Impl;
-using SoloX.CodeQuality.Test.Helpers.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;

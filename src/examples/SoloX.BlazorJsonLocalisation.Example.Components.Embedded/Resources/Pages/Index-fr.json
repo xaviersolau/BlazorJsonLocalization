@@ -1,4 +1,5 @@
-{
+﻿{
   "Hello": "Bonjour tout le monde!",
-  "Welcome": "Bienvenue dans votre nouvelle application."
+  "Welcome": "Bienvenue dans votre nouvelle application.",
+  "Here is an example with accents": "Voici quelques accents : é è à ô ä...."
 }

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.WebAssembly;
-using SoloX.CodeQuality.Test.Helpers;
+using SoloX.CodeQuality.Test.Helpers.XUnit;
 using SoloX.CodeQuality.Test.Helpers.Http;
 using System;
 using System.Globalization;
@@ -49,12 +49,20 @@ namespace SoloX.BlazorJsonLocalization.ITests
 
             using var httpClient = new HttpClientMockBuilder()
                 .WithBaseAddress(new Uri("http://test.com"))
-                .WithOkResponse(
-                    "/_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserWebAssemblySetupTest.json",
-                    request => new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"This is a test...\", \"TestWithArg\": \"This is a test with an argument: {0}...\"}"))))
-                .WithOkResponse(
-                    "/_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserWebAssemblySetupTest-fr.json",
-                    request => new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}"))))
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserWebAssemblySetupTest.json")
+                .Responding(request =>
+                {
+                    var response = new HttpResponseMessage();
+                    response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"This is a test...\", \"TestWithArg\": \"This is a test with an argument: {0}...\"}")));
+                    return response;
+                })
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserWebAssemblySetupTest-fr.json")
+                .Responding(request =>
+                {
+                    var response = new HttpResponseMessage();
+                    response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}")));
+                    return response;
+                })
                 .Build();
 
             services.AddSingleton(httpClient);

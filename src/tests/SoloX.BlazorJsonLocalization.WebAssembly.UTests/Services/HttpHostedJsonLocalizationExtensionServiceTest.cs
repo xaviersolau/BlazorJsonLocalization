@@ -9,7 +9,7 @@
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl;
 using SoloX.CodeQuality.Test.Helpers.Http;
-using SoloX.CodeQuality.Test.Helpers.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System;
 using System.Globalization;
 using System.IO;
@@ -53,12 +53,20 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
 
             using var httpClient = new HttpClientMockBuilder()
                 .WithBaseAddress(new Uri("http://test.com"))
-                .WithOkResponse(
-                    "/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json",
-                    request => new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"English test.\"}"))))
-                .WithOkResponse(
-                    "/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest-fr.json",
-                    request => new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"French test.\"}"))))
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json")
+                .Responding(request =>
+                {
+                    var response = new HttpResponseMessage();
+                    response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"English test.\"}")));
+                    return response;
+                })
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest-fr.json")
+                .Responding(request =>
+                {
+                    var response = new HttpResponseMessage();
+                    response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"French test.\"}")));
+                    return response;
+                })
                 .Build();
 
             var service = new HttpHostedJsonLocalizationExtensionService(httpClient, Logger);

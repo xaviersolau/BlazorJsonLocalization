@@ -19,7 +19,7 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using System.Text;
 using Xunit.Abstractions;
-using SoloX.CodeQuality.Test.Helpers;
+using SoloX.CodeQuality.Test.Helpers.XUnit;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {

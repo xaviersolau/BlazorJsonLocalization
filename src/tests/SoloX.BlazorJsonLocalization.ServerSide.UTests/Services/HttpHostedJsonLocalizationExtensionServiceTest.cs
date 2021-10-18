@@ -11,7 +11,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.BlazorJsonLocalization.ServerSide.Services.Impl;
-using SoloX.CodeQuality.Test.Helpers.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System.Globalization;
 using System.IO;
 using System.Reflection;

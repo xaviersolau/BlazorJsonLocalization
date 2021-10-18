@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
+using System.Text.Json;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -19,5 +20,10 @@ namespace SoloX.BlazorJsonLocalization
         /// Gets/Sets Path where to get the resources.
         /// </summary>
         public string ResourcesPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets/Sets JsonSerializer custom options.
+        /// </summary>
+        public JsonSerializerOptions? JsonSerializerOptions { get; set; }
     }
 }

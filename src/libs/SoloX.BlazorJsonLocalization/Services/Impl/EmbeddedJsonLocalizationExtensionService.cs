@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Helpers;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -55,7 +56,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             var basePath = ResourcePathHelper.ComputeBasePath(assembly, baseName);
 
-            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo)
+            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo, options.JsonSerializerOptions)
                 .ConfigureAwait(false);
         }
 
@@ -63,7 +64,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             IFileProvider fileProvider,
             string resourcesPath,
             string basePath,
-            CultureInfo cultureInfo)
+            CultureInfo cultureInfo,
+            JsonSerializerOptions? jsonSerializerOptions)
         {
             basePath = string.IsNullOrEmpty(resourcesPath)
                 ? basePath
@@ -78,14 +80,15 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LogDebug($"Loading embedded data {path}");
 
-                    return TryLoadMapAsync(fileProvider, path);
+                    return TryLoadMapAsync(fileProvider, path, jsonSerializerOptions);
                 })
                 .ConfigureAwait(false);
         }
 
         private async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadMapAsync(
             IFileProvider fileProvider,
-            string path)
+            string path,
+            JsonSerializerOptions? jsonSerializerOptions)
         {
             var fileInfo = fileProvider.GetFileInfo(path);
 
@@ -99,8 +102,15 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             using var stream = fileInfo.CreateReadStream();
 
+            var options = jsonSerializerOptions ?? new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Default,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                WriteIndented = true
+            };
+
             var map = await JsonSerializer
-                .DeserializeAsync<Dictionary<string, string>>(stream)
+                .DeserializeAsync<Dictionary<string, string>>(stream, options)
                 .ConfigureAwait(false);
 
             return map ?? throw new FileLoadException("Null resources");

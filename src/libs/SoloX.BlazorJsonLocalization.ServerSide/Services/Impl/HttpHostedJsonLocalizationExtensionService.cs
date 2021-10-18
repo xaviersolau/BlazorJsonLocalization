@@ -14,6 +14,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
 
 namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 {
@@ -38,7 +39,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
         }
 
         ///<inheritdoc/>
-        protected override async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri)
+        protected override async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions)
         {
             if (uri == null)
             {
@@ -59,7 +60,14 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 
             using var stream = fileInfo.CreateReadStream();
 
-            var map = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream).ConfigureAwait(false);
+            var options = jsonSerializerOptions ?? new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Default,
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                WriteIndented = true
+            };
+
+            var map = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(stream, options).ConfigureAwait(false);
 
             return map ?? throw new FileLoadException("Null resources");
         }
