@@ -31,23 +31,23 @@ You can checkout this Github repository or you can use the NuGet packages:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.BlazorJsonLocalization -version 1.0.1-alpha.1
-Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 1.0.1-alpha.1
-Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 1.0.1-alpha.1
+Install-Package SoloX.BlazorJsonLocalization -version 1.0.1-alpha.2
+Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 1.0.1-alpha.2
+Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 1.0.1-alpha.2
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.BlazorJsonLocalization --version 1.0.1-alpha.1
-dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 1.0.1-alpha.1
-dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 1.0.1-alpha.1
+dotnet add package SoloX.BlazorJsonLocalization --version 1.0.1-alpha.2
+dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 1.0.1-alpha.2
+dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 1.0.1-alpha.2
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.BlazorJsonLocalization" Version="1.0.1-alpha.1" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="1.0.1-alpha.1" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="1.0.1-alpha.1" />
+<PackageReference Include="SoloX.BlazorJsonLocalization" Version="1.0.1-alpha.2" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="1.0.1-alpha.2" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="1.0.1-alpha.2" />
 ```
 
 ## How to use it
