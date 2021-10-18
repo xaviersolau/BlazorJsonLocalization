@@ -11,9 +11,11 @@
   <ItemGroup>
     <None Remove="Resources\EmbeddedJsonLocalizationExtensionServiceTest-fr.json" />
     <None Remove="Resources\EmbeddedJsonLocalizationExtensionServiceTest.json" />
+    <None Remove="Resources\EmbeddedJsonLocalizationExtensionUsingAccentsTest.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionUsingAccentsTest.json" />
     <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionServiceTest-fr.json" />
     <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionServiceTest.json" />
   </ItemGroup>
@@ -21,8 +23,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.0.4" />
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.0.8" />
+	<PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.0.8" />
+	<PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -31,7 +34,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.0.4" />
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

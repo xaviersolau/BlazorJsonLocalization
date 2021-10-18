@@ -8,6 +8,7 @@
 
 using SoloX.BlazorJsonLocalization.Core;
 using System.Reflection;
+using System.Text.Json;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -25,5 +26,10 @@ namespace SoloX.BlazorJsonLocalization
         /// Gets/Sets the application assembly.
         /// </summary>
         public Assembly? ApplicationAssembly { get; set; }
+
+        /// <summary>
+        /// Gets/Sets JsonSerializer custom options.
+        /// </summary>
+        public JsonSerializerOptions? JsonSerializerOptions { get; set; }
     }
 }

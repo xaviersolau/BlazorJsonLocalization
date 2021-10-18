@@ -14,7 +14,7 @@ using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.UTests.Samples.Extension;
-using SoloX.CodeQuality.Test.Helpers.Logger;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

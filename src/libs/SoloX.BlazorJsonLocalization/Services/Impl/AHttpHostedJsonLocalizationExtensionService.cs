@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
@@ -71,7 +72,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 
-                    return TryLoadFromUriAsync(uri);
+                    return TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
                 })
                 .ConfigureAwait(false);
         }
@@ -80,7 +81,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// Load Http resources.
         /// </summary>
         /// <param name="uri">Resources Uri location.</param>
+        /// <param name="jsonSerializerOptions">Custom JSON serializer options.</param>
         /// <returns>The loaded Json map.</returns>
-        protected abstract ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri);
+        protected abstract ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions);
     }
 }

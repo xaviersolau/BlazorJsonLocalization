@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
-using SoloX.CodeQuality.Test.Helpers;
+using SoloX.CodeQuality.Test.Helpers.XUnit;
 using System.Globalization;
 using Xunit;
 using Xunit.Abstractions;
