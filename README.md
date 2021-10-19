@@ -112,6 +112,22 @@ services.Configure<RequestLocalizationOptions>(options =>
 });
 ```
 
+Note that it is also possible to provide custom `JsonSerializerOptions` in the `JsonSerializerOptions` options property.
+
+```csharp
+// Here we are going to store the Json files in the project 'Resources' folder
+// and we provide custom JsonSerializerOptions.
+services.AddJsonLocalization(
+    builder => builder.UseEmbeddedJson(
+        options =>
+        {
+            options.ResourcesPath = "Resources";
+            options.JsonSerializerOptions = yourCustomOptions;
+        }),
+        ServiceLifetime.Singleton);
+```
+
+
 And update your `Configure` method in the Startup.cs file:
 
 ```csharp
@@ -176,6 +192,8 @@ and the French file:
   "Welcome": "Bienvenue dans votre nouvelle application."
 }
 ```
+
+> **Warning: the Json file should use UTF8 encoding in order to easily handle accents or specific character set.**
 
 The Json file need to be declared as *Embedded resources* in order to be shipped in
 the Assembly. You can do it this way in your csproj file:
