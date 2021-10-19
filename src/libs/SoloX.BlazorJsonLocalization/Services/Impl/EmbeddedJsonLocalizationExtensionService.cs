@@ -16,7 +16,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Helpers;
 using Microsoft.Extensions.Logging;
-using System.Text.Encodings.Web;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -102,15 +101,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             using var stream = fileInfo.CreateReadStream();
 
-            var options = jsonSerializerOptions ?? new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.Default,
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                WriteIndented = true
-            };
-
-            var map = await JsonSerializer
-                .DeserializeAsync<Dictionary<string, string>>(stream, options)
+            var map = await JsonHelper
+                .DeserializeAsync<Dictionary<string, string>>(stream, jsonSerializerOptions)
                 .ConfigureAwait(false);
 
             return map ?? throw new FileLoadException("Null resources");

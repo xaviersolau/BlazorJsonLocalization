@@ -1,23 +1,23 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="EmbeddedJsonLocalizationOptions.cs" company="Xavier Solau">
+// <copyright file="AJsonExtensionOptions.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.BlazorJsonLocalization.Core;
+using System.Text.Json;
 
-namespace SoloX.BlazorJsonLocalization
+namespace SoloX.BlazorJsonLocalization.Core
 {
     /// <summary>
-    /// JsonLocalizer Embedded extension options
+    /// Base class for extension options using Json serialization.
     /// </summary>
-    public class EmbeddedJsonLocalizationOptions : AJsonExtensionOptions
+    public abstract class AJsonExtensionOptions : AExtensionOptions
     {
         /// <summary>
-        /// Gets/Sets Path where to get the resources.
+        /// Gets/Sets JsonSerializer custom options.
         /// </summary>
-        public string ResourcesPath { get; set; } = string.Empty;
+        public JsonSerializerOptions? JsonSerializerOptions { get; set; }
     }
 }
