@@ -200,8 +200,8 @@ the Assembly. You can do it this way in your csproj file:
 
 ```xml
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Index-fr.json" />
-    <EmbeddedResource Include="Resources\Index.json" />
+    <EmbeddedResource Include="Resources\Pages\Index-fr.json" />
+    <EmbeddedResource Include="Resources\Pages\Index.json" />
   </ItemGroup>
 ```
 
