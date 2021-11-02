@@ -22,10 +22,24 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
 
-            var localizer = new NullStringLocalizer(cultureInfo, localizerFactoryMock.Object);
+            var localizer = new NullStringLocalizer(cultureInfo, localizerFactoryMock.Object, true);
 
             Assert.Equal("SomeInput", localizer["SomeInput"]);
             Assert.Equal("SomeInput", localizer["SomeInput", "With some argument"]);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void IsShouldSetTheResourceNotFound(bool resourceNotFound)
+        {
+            var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
+
+            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+
+            var localizer = new NullStringLocalizer(cultureInfo, localizerFactoryMock.Object, resourceNotFound);
+
+            Assert.Equal(resourceNotFound, localizer["SomeInput"].ResourceNotFound);
         }
     }
 }

@@ -43,9 +43,7 @@ namespace SoloX.BlazorJsonLocalization
 
             setup?.Invoke(optExt);
 
-            builder.AddExtensionOptions(optExt);
-
-            return builder;
+            return builder.AddExtensionOptions(optExt);
         }
     }
 }
