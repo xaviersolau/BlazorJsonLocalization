@@ -145,14 +145,20 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 }
                 else
                 {
-                    localizer = new NullStringLocalizer(cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
+                    localizer = new NullStringLocalizer(cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)), true);
                 }
             }
             else
             {
                 this.logger.LogInformation($"Loading data asynchronously for {baseName} in {assembly} with culture {cultureInfo}");
 
-                localizer = new JsonStringLocalizerAsync(task, cultureInfo, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
+                var factory = new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci));
+
+                IStringLocalizer loadingLocalizer = this.options.IsDisplayKeysWhileLoadingAsynchronouslyEnabled
+                    ? new NullStringLocalizer(cultureInfo, factory, false)
+                    : new ConstStringLocalizer("...", factory);
+
+                localizer = new JsonStringLocalizerAsync(task, cultureInfo, factory, loadingLocalizer);
                 this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
             }
 

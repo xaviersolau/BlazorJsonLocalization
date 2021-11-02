@@ -25,6 +25,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                 builder =>
                 {
                     builder
+                        .EnableDisplayKeysWhileLoadingAsynchronously()
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
                         .UseEmbeddedJson(options =>
                         {

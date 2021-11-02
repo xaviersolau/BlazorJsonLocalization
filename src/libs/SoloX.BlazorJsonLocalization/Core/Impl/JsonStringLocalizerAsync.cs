@@ -35,7 +35,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <param name="loadingTask">Asynchronous loading task.</param>
         /// <param name="cultureInfo">The associated culture info.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
-        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory)
+        /// <param name="loadingLocalizer">Localizer to use while loading asynchronously.</param>
+        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, IStringLocalizer loadingLocalizer)
         {
             this.loadingTask = loadingTask;
             this.cultureInfo = cultureInfo;
@@ -53,14 +54,14 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 }
                 else
                 {
-                    this.stringLocalizer = new NullStringLocalizer(cultureInfo, this.localizerFactory);
+                    this.stringLocalizer = new NullStringLocalizer(cultureInfo, this.localizerFactory, true);
                 }
 
                 this.loaded = true;
             }
             else
             {
-                this.stringLocalizer = new ConstStringLocalizer("...", this.localizerFactory);
+                this.stringLocalizer = loadingLocalizer;
 
                 lock (LoadingTasks)
                 {

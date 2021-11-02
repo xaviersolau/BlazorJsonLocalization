@@ -22,5 +22,10 @@ namespace SoloX.BlazorJsonLocalization
         /// </summary>
         public IEnumerable<IExtensionOptionsContainer> ExtensionOptions { get; internal set; }
             = Array.Empty<IExtensionOptionsContainer>();
+
+        /// <summary>
+        /// Tells if the keys must be displayed while resources are loading asynchronously.
+        /// </summary>
+        public bool IsDisplayKeysWhileLoadingAsynchronouslyEnabled { get; internal set; }
     }
 }
