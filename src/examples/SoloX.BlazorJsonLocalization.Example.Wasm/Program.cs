@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization;
 using SoloX.BlazorJsonLocalization.WebAssembly;
+using Blazored.LocalStorage;
 
 namespace SoloX.BlazorJsonLocalization.Example.Wasm
 {
@@ -38,6 +39,8 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                             options.ResourcesPath = "Resources";
                         });
                 });
+
+            builder.Services.AddBlazoredLocalStorage();
 
             await builder.Build().RunAsync();
         }
