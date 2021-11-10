@@ -147,6 +147,15 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private async ValueTask LoadDataAsync()
         {
+            if (this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
+            {
+                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                if (parentLocalizer != null)
+                {
+                    await parentLocalizer.LoadAsync().ConfigureAwait(false);
+                }
+            }
+
             var map = await this.loadingTask.ConfigureAwait(false);
 
             lock (this.syncObject)

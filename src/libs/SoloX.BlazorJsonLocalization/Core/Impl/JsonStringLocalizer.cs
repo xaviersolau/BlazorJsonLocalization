@@ -40,27 +40,44 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return this.stringMap.Select(s => new LocalizedString(s.Key, s.Value));
+            var result = this.stringMap.Select(s => new LocalizedString(s.Key, s.Value));
+
+            if (includeParentCultures && this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
+            {
+                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                if (parentLocalizer != null)
+                {
+                    result = result.Concat(parentLocalizer.GetAllStrings(true));
+                }
+            }
+
+            return result;
         }
 
         ///<inheritdoc/>
         public LocalizedString this[string name]
-            => BuildLocalizedString(name, s => s);
+            => BuildLocalizedString(name, s => s, l => l[name]);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => BuildLocalizedString(name, s => string.Format(this.cultureInfo, s, arguments));
+            => BuildLocalizedString(name, s => string.Format(this.cultureInfo, s, arguments), l => l[name, arguments]);
 
-        private LocalizedString BuildLocalizedString(string name, Func<string, string> format)
+        private LocalizedString BuildLocalizedString(string name, Func<string, string> format, Func<IStringLocalizer, LocalizedString> forward)
         {
             if (this.stringMap.TryGetValue(name, out var value))
             {
                 return new LocalizedString(name, format(value));
             }
-            else
+            else if (this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
             {
-                return new LocalizedString(name, format(name), true);
+                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                if (parentLocalizer != null)
+                {
+                    return forward(parentLocalizer);
+                }
             }
+
+            return new LocalizedString(name, format(name), true);
         }
 
 #if !NET

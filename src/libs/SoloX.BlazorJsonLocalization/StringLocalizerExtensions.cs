@@ -22,12 +22,11 @@ namespace SoloX.BlazorJsonLocalization
         /// <summary>
         /// Get the localized string resource as a HTML Markup String in order to render it as HTML content.
         /// </summary>
-        /// <typeparam name="T">String localizer component type.</typeparam>
         /// <param name="localizer">The localizer instance where to get the string resource from.</param>
         /// <param name="key">The string resource key.</param>
         /// <param name="arguments">Optional arguments</param>
         /// <returns>The HTML Markup String.</returns>
-        public static MarkupString Html<T>(this IStringLocalizer<T> localizer, string key, params object[] arguments)
+        public static MarkupString Html(this IStringLocalizer localizer, string key, params object[] arguments)
         {
             if (localizer == null)
             {
@@ -40,10 +39,9 @@ namespace SoloX.BlazorJsonLocalization
         /// <summary>
         /// Make sure all asynchronous localizer loading is completed.
         /// </summary>
-        /// <typeparam name="T">Localizer type.</typeparam>
         /// <param name="localizer">Localizer to load.</param>
         /// <returns>The value task to await.</returns>
-        public static ValueTask LoadAsync<T>(this IStringLocalizer<T> localizer)
+        public static ValueTask LoadAsync(this IStringLocalizer localizer)
         {
             if (localizer == null)
             {

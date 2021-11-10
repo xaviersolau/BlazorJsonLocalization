@@ -13,12 +13,15 @@ using Moq;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
+using SoloX.BlazorJsonLocalization.Services.Impl;
 using SoloX.BlazorJsonLocalization.UTests.Samples.Extension;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -297,6 +300,88 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Never);
 
             Assert.Same(cachedLocalizer, localizer);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task ItShouldUseParentCultureLocalyzerWhenKeyNotFound(bool isAsynchronous)
+        {
+            var key = "key";
+            var value = "value";
+            var map = new Dictionary<string, string>
+            {
+                [key] = value,
+            };
+
+            var key2 = "key2";
+            var value2 = "value2";
+            var map2 = new Dictionary<string, string>
+            {
+                [key2] = value2,
+            };
+
+            // Setup CultureInfo service mock.
+            var cultureInfoServiceMock = SetupCultureInfoServiceMock();
+
+            var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
+
+            // Setup extension service
+            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+
+            if (isAsynchronous)
+            {
+                extensionServiceMock
+                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
+                    .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+                extensionServiceMock
+                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent))
+                    .ReturnsAsync(map2, TimeSpan.FromMilliseconds(100));
+            }
+            else
+            {
+                extensionServiceMock
+                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
+                    .ReturnsAsync(map);
+                extensionServiceMock
+                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent))
+                    .ReturnsAsync(map2);
+            }
+
+            // Setup extension resolver service.
+            var extensionResolverServiceMock = SetupResolverServiceMock(
+                (extensionOptionsContainer, extensionServiceMock.Object));
+
+            var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
+
+            // We need the real cache service because otherwise the asynchronous parent localizer will be created every time.
+            var cacheService = new CacheService();
+
+            var factory = new JsonStringLocalizerFactory(
+                optionsMock.Object,
+                cultureInfoServiceMock.Object,
+                extensionResolverServiceMock.Object,
+                cacheService,
+                Logger);
+
+            var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
+
+            if (isAsynchronous)
+            {
+                // make sure the localizer data are loaded.
+                await localizer.LoadAsync().ConfigureAwait(false);
+            }
+
+            Assert.NotNull(localizer);
+
+            Assert.Equal(value, localizer[key]);
+            Assert.Equal(value2, localizer[key2]);
+
+            var strings = localizer.GetAllStrings(false);
+            var allStrings = localizer.GetAllStrings(true);
+
+            Assert.Single(strings);
+            Assert.Equal(2, allStrings.Count());
         }
 
         private static Mock<IJsonLocalizationExtensionService> SetupExtensionServiceMock(Dictionary<string, string> map, ExtensionOptionsContainer<MyOptions> extensionOptionsContainer)
