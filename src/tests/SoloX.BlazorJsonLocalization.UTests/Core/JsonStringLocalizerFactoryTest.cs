@@ -321,6 +321,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 [key2] = value2,
             };
 
+            var unknownKey = "test";
+
             // Setup CultureInfo service mock.
             var cultureInfoServiceMock = SetupCultureInfoServiceMock();
 
@@ -376,6 +378,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.Equal(value, localizer[key]);
             Assert.Equal(value2, localizer[key2]);
+
+            Assert.Equal(unknownKey, localizer[unknownKey]);
 
             var strings = localizer.GetAllStrings(false);
             var allStrings = localizer.GetAllStrings(true);
