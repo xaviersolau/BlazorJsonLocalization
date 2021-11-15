@@ -34,5 +34,14 @@ namespace SoloX.BlazorJsonLocalization.Services
         /// <param name="cultureInfo">Resource CultureInfo.</param>
         /// <returns>The localizer if cached or null otherwise.</returns>
         IStringLocalizer? Match(Assembly assembly, string baseName, CultureInfo? cultureInfo);
+
+        /// <summary>
+        /// Reset the cache entry.
+        /// </summary>
+        /// <param name="assembly">Resource assembly.</param>
+        /// <param name="baseName">Resource BaseName.</param>
+        /// <param name="cultureInfo">Resource CultureInfo.</param>
+        /// <returns>True if the cache entry was found.</returns>
+        bool Reset(Assembly assembly, string baseName, CultureInfo cultureInfo);
     }
 }

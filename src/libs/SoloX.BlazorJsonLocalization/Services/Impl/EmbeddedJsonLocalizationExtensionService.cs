@@ -79,7 +79,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LogDebug($"Loading embedded data {path}");
 
-                    return TryLoadMapAsync(fileProvider, path, jsonSerializerOptions);
+                    return TryLoadMapAsync(fileProvider, path, jsonSerializerOptions).AsTask();
                 })
                 .ConfigureAwait(false);
         }

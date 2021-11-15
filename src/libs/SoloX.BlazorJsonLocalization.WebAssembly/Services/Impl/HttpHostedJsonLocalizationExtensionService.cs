@@ -40,7 +40,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
         }
 
         ///<inheritdoc/>
-        protected override async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions)
+        protected override async Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions)
         {
             try
             {

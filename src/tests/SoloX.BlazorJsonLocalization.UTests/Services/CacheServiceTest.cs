@@ -56,7 +56,65 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         }
 
         [Fact]
-        public void ItShouldNotMatchAnUnknownLocalizerWith()
+        public void ItShouldResetARegisteredLocalizer()
+        {
+            var localizer = Mock.Of<IStringLocalizer>();
+
+            var service = new CacheService();
+
+            service.Cache(Assembly, BaseName, CultureInfo, localizer);
+
+            var cacheEntry = service.Match(Assembly, BaseName, CultureInfo);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer, cacheEntry);
+
+            Assert.True(service.Reset(Assembly, BaseName, CultureInfo));
+
+            cacheEntry = service.Match(Assembly, BaseName, CultureInfo);
+
+            Assert.Null(cacheEntry);
+        }
+
+        [Fact]
+        public void ItShouldResetARegisteredLocalizerNullCulture()
+        {
+            var localizer = Mock.Of<IStringLocalizer>();
+
+            var service = new CacheService();
+
+            service.Cache(Assembly, BaseName, null, localizer);
+
+            var cacheEntry = service.Match(Assembly, BaseName, null);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer, cacheEntry);
+
+            Assert.True(service.Reset(Assembly, BaseName, null));
+
+            cacheEntry = service.Match(Assembly, BaseName, null);
+
+            Assert.Null(cacheEntry);
+        }
+
+        [Fact]
+        public void ItShouldResetAnUnRegisteredLocalizer()
+        {
+            var service = new CacheService();
+
+            Assert.False(service.Reset(Assembly, BaseName, CultureInfo));
+        }
+
+        [Fact]
+        public void ItShouldResetAnUnRegisteredLocalizerNullCulture()
+        {
+            var service = new CacheService();
+
+            Assert.False(service.Reset(Assembly, BaseName, null));
+        }
+
+        [Fact]
+        public void ItShouldNotMatchAnUnknownLocalizer()
         {
             var service = new CacheService();
 
@@ -104,6 +162,22 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
             Assert.Throws<ArgumentNullException>(() =>
             {
                 service.Match(
+                    type?.Assembly,
+                    baseName,
+                    CultureInfo);
+            });
+        }
+
+        [Theory]
+        [InlineData(typeof(CacheServiceTest), null)]
+        [InlineData(null, BaseName)]
+        public void ItShouldValidateTheArgumentsOnReset(Type type, string baseName)
+        {
+            var service = new CacheService();
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                service.Reset(
                     type?.Assembly,
                     baseName,
                     CultureInfo);
