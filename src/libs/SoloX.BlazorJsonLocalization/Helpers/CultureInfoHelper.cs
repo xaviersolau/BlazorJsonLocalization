@@ -24,7 +24,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         /// <param name="cultureInfo">The start CultureInfo to walk from.</param>
         /// <param name="loadDataAsync">Asynchronous data loader.</param>
         /// <returns>The loaded data or null if not fund/loaded.</returns>
-        public static async ValueTask<TData?> WalkThoughCultureInfoParentsAsync<TData>(CultureInfo cultureInfo, Func<string, ValueTask<TData?>> loadDataAsync) where TData : class
+        public static async ValueTask<TData?> WalkThoughCultureInfoParentsAsync<TData>(CultureInfo cultureInfo, Func<string, Task<TData?>> loadDataAsync) where TData : class
         {
             if (cultureInfo == null)
             {

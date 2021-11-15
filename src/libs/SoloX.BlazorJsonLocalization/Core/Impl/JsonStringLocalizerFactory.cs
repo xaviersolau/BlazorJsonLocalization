@@ -167,6 +167,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private async Task<IReadOnlyDictionary<string, string>?> LoadStringLocalizerAsync(Assembly assembly, string baseName, CultureInfo cultureInfo)
         {
+            var hadErrors = false;
             foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {
                 try
@@ -196,10 +197,17 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 #pragma warning restore CA1031 // Ne pas intercepter les types d'exception générale
                 {
                     this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
+                    hadErrors = true;
                 }
             }
 
             this.logger.LogError($"Unable to load localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
+
+            if (hadErrors)
+            {
+                this.cacheService.Reset(assembly, baseName, cultureInfo);
+            }
+
             return null;
         }
     }

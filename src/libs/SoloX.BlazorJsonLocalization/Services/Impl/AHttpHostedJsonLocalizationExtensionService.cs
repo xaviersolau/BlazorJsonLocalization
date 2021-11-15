@@ -26,6 +26,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         private readonly ILogger<AHttpHostedJsonLocalizationExtensionService> logger;
 
         /// <summary>
+        /// Cache to avoid Json file reload.
+        /// </summary>
+        private static readonly IDictionary<Uri, Task<IReadOnlyDictionary<string, string>?>> Cache = new Dictionary<Uri, Task<IReadOnlyDictionary<string, string>?>>();
+
+        /// <summary>
         /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
         /// </summary>
         /// <param name="logger">Logger where to log processing messages.</param>
@@ -72,7 +77,20 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 
-                    return TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
+                    lock (Cache)
+                    {
+                        if (!Cache.TryGetValue(uri, out var loadingTask))
+                        {
+                            loadingTask = TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
+                            Cache.Add(uri, loadingTask);
+                        }
+                        else if (loadingTask.IsFaulted)
+                        {
+                            loadingTask = TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
+                            Cache[uri] = loadingTask;
+                        }
+                        return loadingTask;
+                    }
                 })
                 .ConfigureAwait(false);
         }
@@ -83,6 +101,6 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <param name="uri">Resources Uri location.</param>
         /// <param name="jsonSerializerOptions">Custom JSON serializer options.</param>
         /// <returns>The loaded Json map.</returns>
-        protected abstract ValueTask<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions);
+        protected abstract Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions);
     }
 }

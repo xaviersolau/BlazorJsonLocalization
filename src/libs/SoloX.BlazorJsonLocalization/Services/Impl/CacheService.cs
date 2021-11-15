@@ -61,6 +61,24 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             }
         }
 
+        ///<inheritdoc/>
+        public bool Reset(Assembly assembly, string baseName, CultureInfo? cultureInfo)
+        {
+            if (assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+            if (baseName == null)
+            {
+                throw new ArgumentNullException(nameof(baseName));
+            }
+
+            lock (this.cacheMap)
+            {
+                return this.cacheMap.Remove(ComputeKey(assembly, baseName, cultureInfo));
+            }
+        }
+
         private static string ComputeKey(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
             return cultureInfo == null ? $"{assembly.GetName().Name}-{baseName}" : $"{assembly.GetName().Name}-{baseName}-{cultureInfo.Name}";
