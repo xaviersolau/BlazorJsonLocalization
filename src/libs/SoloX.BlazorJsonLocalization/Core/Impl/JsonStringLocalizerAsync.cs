@@ -130,7 +130,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         private static readonly IDictionary<string, JsonStringLocalizerAsync> LoadingTasks =
             new Dictionary<string, JsonStringLocalizerAsync>();
 
-        internal static ValueTask LoadAsync(IStringLocalizer localizer)
+        internal static ValueTask LoadAsync(IStringLocalizer localizer, bool loadParentCulture)
         {
             JsonStringLocalizerAsync? stringLocalizer;
             lock (LoadingTasks)
@@ -142,12 +142,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 }
                 LoadingTasks.Remove(guid);
             }
-            return stringLocalizer.LoadDataAsync();
+            return stringLocalizer.LoadDataAsync(loadParentCulture);
         }
 
-        private async ValueTask LoadDataAsync()
+        private async ValueTask LoadDataAsync(bool loadParentCulture)
         {
-            if (this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
+            if (loadParentCulture && this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
             {
                 var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
                 if (parentLocalizer != null)

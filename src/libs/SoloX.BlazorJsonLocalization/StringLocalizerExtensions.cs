@@ -41,14 +41,14 @@ namespace SoloX.BlazorJsonLocalization
         /// </summary>
         /// <param name="localizer">Localizer to load.</param>
         /// <returns>The value task to await.</returns>
-        public static ValueTask LoadAsync(this IStringLocalizer localizer)
+        public static ValueTask LoadAsync(this IStringLocalizer localizer, bool loadParentCulture = false)
         {
             if (localizer == null)
             {
                 throw new ArgumentNullException(nameof(localizer));
             }
 
-            return JsonStringLocalizerAsync.LoadAsync(localizer);
+            return JsonStringLocalizerAsync.LoadAsync(localizer, loadParentCulture);
         }
     }
 }
