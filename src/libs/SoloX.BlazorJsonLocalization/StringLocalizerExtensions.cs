@@ -40,7 +40,9 @@ namespace SoloX.BlazorJsonLocalization
         /// Make sure all asynchronous localizer loading is completed.
         /// </summary>
         /// <param name="localizer">Localizer to load.</param>
+        /// <param name="loadParentCulture">If true (false by default) the LoadAsync method will load the parent culture.</param>
         /// <returns>The value task to await.</returns>
+        /// <remarks>The parent culture is actually used as fall back if a key is not found.</remarks>
         public static ValueTask LoadAsync(this IStringLocalizer localizer, bool loadParentCulture = false)
         {
             if (localizer == null)
