@@ -14,7 +14,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.103
+        dotnet-version: 6.0.100
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -85,6 +85,6 @@ jobs:
       run: dotnet pack --configuration Release --no-restore --no-build
     - name: Upload Packages
       uses: actions/upload-artifact@v2
-      with:	
-        name: 'NugetPackages'	
+      with:
+        name: 'NugetPackages'
         path: 'src/libs/**/*.nupkg'
