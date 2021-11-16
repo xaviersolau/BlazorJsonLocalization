@@ -371,7 +371,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             if (isAsynchronous)
             {
                 // make sure the localizer data are loaded.
-                await localizer.LoadAsync().ConfigureAwait(false);
+                await localizer.LoadAsync(true).ConfigureAwait(false);
             }
 
             Assert.NotNull(localizer);

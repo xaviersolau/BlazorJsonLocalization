@@ -63,7 +63,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             waitHandler.Set();
 
             // Make the localized text is loaded.
-            await JsonStringLocalizerAsync.LoadAsync(localizer).ConfigureAwait(false);
+            await JsonStringLocalizerAsync.LoadAsync(localizer, false).ConfigureAwait(false);
 
             // Make sure the localized text is the one expected.
             var value = localizer[key];
