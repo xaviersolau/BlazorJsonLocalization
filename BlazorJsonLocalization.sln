@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{0FC256E5-C6D1-47EB-A1E0-BC25756D6788}"
 EndProject
@@ -36,7 +36,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.ServerSide.UTests", "src\tests\SoloX.BlazorJsonLocalization.ServerSide.UTests\SoloX.BlazorJsonLocalization.ServerSide.UTests.csproj", "{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj", "{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj", "{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{F5B186EB-3D14-4CF7-A9B2-2BBA712D0124}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-ci.yml = .github\workflows\build-ci.yml
+		.github\workflows\build-pr.yml = .github\workflows\build-pr.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
