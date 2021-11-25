@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
@@ -15,7 +16,25 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     /// </summary>
     public class CultureInfoService : ICultureInfoService
     {
+        private ILogger<CultureInfoService> Logger { get; }
+
+        /// <summary>
+        /// Setup with logger.
+        /// </summary>
+        /// <param name="logger">The logger to log messages.</param>
+        public CultureInfoService(ILogger<CultureInfoService> logger)
+        {
+            Logger = logger;
+        }
+
         ///<inheritdoc/>
-        public CultureInfo CurrentUICulture => CultureInfo.CurrentUICulture;
+        public CultureInfo CurrentUICulture
+        {
+            get
+            {
+                Logger.LogInformation($"Current UI culture detected: {CultureInfo.CurrentUICulture}");
+                return CultureInfo.CurrentUICulture;
+            }
+        }
     }
 }
