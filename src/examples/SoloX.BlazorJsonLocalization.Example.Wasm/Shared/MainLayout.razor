@@ -42,20 +42,6 @@
 
 @code
 {
-    private const string LanguageKey = "language";
-
-    protected override void OnInitialized()
-    {
-        if (localStorage.ContainKey(LanguageKey))
-        {
-            var ci = CultureInfo.GetCultureInfo(localStorage.GetItemAsString(LanguageKey));
-
-            CultureInfo.DefaultThreadCurrentUICulture = ci;
-        }
-
-        base.OnInitialized();
-    }
-
     private Task SetCultureInfoFr()
     {
         return SetCultureInfo("fr-FR");
@@ -74,7 +60,7 @@
 
         CultureInfo.DefaultThreadCurrentUICulture = ci;
 
-        localStorage.SetItemAsString(LanguageKey, name);
+        localStorage.SetItemAsString(Program.LanguageKey, name);
 
         reload = true;
         StateHasChanged();

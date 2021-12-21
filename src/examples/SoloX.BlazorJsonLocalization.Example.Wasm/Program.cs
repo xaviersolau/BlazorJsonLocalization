@@ -10,11 +10,14 @@ using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization;
 using SoloX.BlazorJsonLocalization.WebAssembly;
 using Blazored.LocalStorage;
+using System.Globalization;
 
 namespace SoloX.BlazorJsonLocalization.Example.Wasm
 {
     public class Program
     {
+        internal const string LanguageKey = "language";
+
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -42,7 +45,19 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
 
             builder.Services.AddBlazoredLocalStorage();
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+
+            // Get the local storage in order to get the current language (if set) as soon as possible.
+            var localStorage = host.Services.GetRequiredService<ISyncLocalStorageService>();
+
+            if (localStorage.ContainKey(LanguageKey))
+            {
+                var ci = CultureInfo.GetCultureInfo(localStorage.GetItemAsString(LanguageKey));
+
+                CultureInfo.DefaultThreadCurrentUICulture = ci;
+            }
+
+            await host.RunAsync();
         }
     }
 }
