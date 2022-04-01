@@ -14,12 +14,16 @@ namespace SoloX.BlazorJsonLocalization
     /// <summary>
     /// JsonLocalizer Http Hosted extension options
     /// </summary>
-    public class HttpHostedJsonLocalizationOptions : AJsonExtensionOptions
-    {
+    public class HttpHostedJsonLocalizationOptions : AJsonExtensionOptions {
         /// <summary>
         /// Gets/Sets Path where to get the resources.
         /// </summary>
         public string ResourcesPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets/Sets the separator for the culture. Defaults to '-'
+        /// </summary>
+        public string CultureSeparator { get; set; } = "-";
 
         /// <summary>
         /// Gets/Sets the application assembly.

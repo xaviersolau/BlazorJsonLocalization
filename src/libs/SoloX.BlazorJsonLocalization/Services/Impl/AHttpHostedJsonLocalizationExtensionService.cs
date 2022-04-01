@@ -73,7 +73,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 {
                     var uri = string.IsNullOrEmpty(cultureName)
                     ? new Uri($"{basePath}.json", UriKind.Relative)
-                    : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+                    : new Uri($"{basePath}{options.CultureSeparator}{cultureName}.json", UriKind.Relative);
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 
