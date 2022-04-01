@@ -14,7 +14,8 @@ namespace SoloX.BlazorJsonLocalization
     /// <summary>
     /// JsonLocalizer Http Hosted extension options
     /// </summary>
-    public class HttpHostedJsonLocalizationOptions : AJsonExtensionOptions {
+    public class HttpHostedJsonLocalizationOptions : AJsonExtensionOptions
+    {
         /// <summary>
         /// Gets/Sets Path where to get the resources.
         /// </summary>
