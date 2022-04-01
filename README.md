@@ -54,12 +54,12 @@ dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 1.0.2
 
 Note that you can find code examples in this repository at this location: `src/examples`.
 
-### Setup the localizer using embedded Json resources files
+### Set up the localizer using embedded Json resources files
 
 If you are going to embed your Json files in your Assemblies, you just need the
 **SoloX.BlazorJsonLocalization** package to enable the localization support.
 
-#### Setup the dependency injection
+#### Set up the dependency injection
 
 A few lines of code are actually needed to setup the BlazorJsonLocalizer.
 You just need to use the name space `SoloX.BlazorJsonLocalization` to get access to
@@ -196,7 +196,7 @@ and the French file:
 > **Warning: the Json file should use UTF8 encoding in order to easily handle accents or specific character set.**
 
 The Json file need to be declared as *Embedded resources* in order to be shipped in
-the Assembly. You can do it this way in your csproj file:
+the Assembly. You can do it this way in your csproj file specifying every json file manually:
 
 ```xml
   <ItemGroup>
@@ -204,6 +204,15 @@ the Assembly. You can do it this way in your csproj file:
     <EmbeddedResource Include="Resources\Pages\Index.json" />
   </ItemGroup>
 ```
+
+Or using the wildcards version:
+
+```xml
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*.json" />
+  </ItemGroup>
+```
+
 
 ##### Use the localization in your code
 
@@ -236,7 +245,7 @@ Once the localizer is available you can just use it like this in the `Index.razo
 @L["Welcome"]
 ```
 
-### Setup the localizer using Json static assets on the HTTP host side
+### Set up the localizer using Json static assets on the HTTP host side
 
 Basically you need to do almost the same as above except for the following points.
 
