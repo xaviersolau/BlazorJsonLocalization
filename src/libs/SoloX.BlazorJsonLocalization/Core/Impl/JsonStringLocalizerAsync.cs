@@ -63,9 +63,9 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             {
                 this.stringLocalizer = loadingLocalizer;
 
-                lock (LoadingTasks)
+                lock (PendingAsyncLocalizers)
                 {
-                    LoadingTasks.Add(this.stringLocalizerGuid, this);
+                    PendingAsyncLocalizers.Add(this.stringLocalizerGuid, this);
                 }
             }
         }
@@ -101,11 +101,11 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 if (!this.loaded)
                 {
                     var completed = false;
-                    lock (LoadingTasks)
+                    lock (PendingAsyncLocalizers)
                     {
-                        if (this.loadingTask.Status == TaskStatus.RanToCompletion && LoadingTasks.ContainsKey(this.stringLocalizerGuid))
+                        if (this.loadingTask.Status == TaskStatus.RanToCompletion && PendingAsyncLocalizers.ContainsKey(this.stringLocalizerGuid))
                         {
-                            LoadingTasks.Remove(this.stringLocalizerGuid);
+                            PendingAsyncLocalizers.Remove(this.stringLocalizerGuid);
                             completed = true;
                         }
                     }
@@ -127,22 +127,42 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
         }
 
-        private static readonly IDictionary<string, JsonStringLocalizerAsync> LoadingTasks =
+        private static readonly IDictionary<string, JsonStringLocalizerAsync> PendingAsyncLocalizers =
             new Dictionary<string, JsonStringLocalizerAsync>();
 
-        internal static ValueTask LoadAsync(IStringLocalizer localizer, bool loadParentCulture)
+        private static readonly IDictionary<string, Task> LoadingTasks =
+            new Dictionary<string, Task>();
+
+        internal static async ValueTask LoadAsync(IStringLocalizer localizer, bool loadParentCulture)
         {
             JsonStringLocalizerAsync? stringLocalizer;
-            lock (LoadingTasks)
+
+            Task loadingTask;
+
+            lock (PendingAsyncLocalizers)
             {
                 var guid = localizer[nameof(stringLocalizerGuid)].Value;
-                if (!LoadingTasks.TryGetValue(guid, out stringLocalizer))
+                if (!PendingAsyncLocalizers.TryGetValue(guid, out stringLocalizer))
                 {
-                    return new ValueTask(Task.CompletedTask);
+                    if (!LoadingTasks.TryGetValue(guid, out loadingTask))
+                    {
+                        return;
+                    }
+
+                    if (loadingTask.Status == TaskStatus.RanToCompletion)
+                    {
+                        LoadingTasks.Remove(guid);
+                    }
                 }
-                LoadingTasks.Remove(guid);
+                else
+                {
+                    loadingTask = stringLocalizer.LoadDataAsync(loadParentCulture).AsTask();
+
+                    LoadingTasks.Add(guid, loadingTask);
+                    PendingAsyncLocalizers.Remove(guid);
+                }
             }
-            return stringLocalizer.LoadDataAsync(loadParentCulture);
+            await loadingTask.ConfigureAwait(false);
         }
 
         private async ValueTask LoadDataAsync(bool loadParentCulture)
