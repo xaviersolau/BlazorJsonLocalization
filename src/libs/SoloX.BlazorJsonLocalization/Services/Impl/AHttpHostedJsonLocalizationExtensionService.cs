@@ -71,9 +71,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
                 cultureName =>
                 {
+                    var versionSuffix = !string.IsNullOrWhiteSpace(options.Version) ? $"?v={options.Version}" : string.Empty;
                     var uri = string.IsNullOrEmpty(cultureName)
-                    ? new Uri($"{basePath}.json", UriKind.Relative)
-                    : new Uri($"{basePath}{options.CultureSeparator}{cultureName}.json", UriKind.Relative);
+                    ? new Uri($"{basePath}.json{versionSuffix}", UriKind.Relative)
+                    : new Uri($"{basePath}{options.CultureSeparator}{cultureName}.json{versionSuffix}", UriKind.Relative);
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 

@@ -27,6 +27,11 @@ namespace SoloX.BlazorJsonLocalization
         public string CultureSeparator { get; set; } = "-";
 
         /// <summary>
+        /// Adds a querystring version to the resource path. Use it for cache busting
+        /// </summary>
+        public string Version { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets/Sets the application assembly.
         /// </summary>
         public Assembly? ApplicationAssembly { get; set; }
