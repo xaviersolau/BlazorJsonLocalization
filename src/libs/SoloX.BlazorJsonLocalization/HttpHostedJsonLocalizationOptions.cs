@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
+using System;
 using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
@@ -22,9 +23,12 @@ namespace SoloX.BlazorJsonLocalization
         public string ResourcesPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets/Sets the separator for the culture. Defaults to '-'
+        /// Naming policy
         /// </summary>
-        public string CultureSeparator { get; set; } = "-";
+        public Func<string, string, Uri> NamingPolicy { get; set; } =
+            (basePath, cultureName) => string.IsNullOrEmpty(cultureName)
+             ? new Uri($"{basePath}.json", UriKind.Relative)
+             : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
 
         /// <summary>
         /// Adds a querystring version to the resource path. Use it for cache busting
