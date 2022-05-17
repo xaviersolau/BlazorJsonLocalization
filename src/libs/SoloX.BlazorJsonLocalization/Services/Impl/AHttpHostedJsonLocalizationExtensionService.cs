@@ -71,7 +71,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
                 cultureName =>
                 {
-                    var uri = options.NamingPolicy.Invoke(basePath, cultureName);
+                    var handler = options.NamingPolicy ?? ResourcePathHelper.DefaultHttpHostedJsonNamingPolicy;
+                    var uri = handler.Invoke(basePath, cultureName);
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 

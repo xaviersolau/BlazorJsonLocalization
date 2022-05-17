@@ -18,22 +18,24 @@ namespace SoloX.BlazorJsonLocalization
     public class HttpHostedJsonLocalizationOptions : AJsonExtensionOptions
     {
         /// <summary>
+        /// Naming policy handler used to compute the actual Http hosted Json file to fetch.
+        /// </summary>
+        /// <param name="basePath">The base resource path of the json file.</param>
+        /// <param name="cultureName">The culture name (if any).</param>
+        /// <returns>The actual Uri to load.</returns>
+        public delegate Uri NamingPolicyHandler(string basePath, string cultureName);
+
+        /// <summary>
         /// Gets/Sets Path where to get the resources.
         /// </summary>
         public string ResourcesPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// Set the delegate for custom file naming
+        /// Set the delegate for custom file naming.
+        /// For example:
+        /// (basePath, cultureName) => new Uri($"{basePath}{(string.IsNullOrEmpty(cultureName) ? string.Empty : $"-{cultureName}")}.json", UriKind.Relative);
         /// </summary>
-        public Func<string, string, Uri> NamingPolicy { get; set; } =
-            (basePath, cultureName) => string.IsNullOrEmpty(cultureName)
-             ? new Uri($"{basePath}.json", UriKind.Relative)
-             : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
-
-        /// <summary>
-        /// Adds a querystring version to the resource path. Use it for cache busting
-        /// </summary>
-        public string Version { get; set; } = string.Empty;
+        public NamingPolicyHandler? NamingPolicy { get; set; }
 
         /// <summary>
         /// Gets/Sets the application assembly.

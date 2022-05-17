@@ -46,5 +46,18 @@ namespace SoloX.BlazorJsonLocalization.Helpers
 
             return basePath;
         }
+
+        /// <summary>
+        /// Default naming policy for Http Hosted Json files.
+        /// </summary>
+        /// <param name="basePath">The base resource path of the json file.</param>
+        /// <param name="cultureName">The culture name (if any).</param>
+        /// <returns></returns>
+        public static Uri DefaultHttpHostedJsonNamingPolicy(string basePath, string cultureName)
+        {
+            return string.IsNullOrEmpty(cultureName)
+             ? new Uri($"{basePath}.json", UriKind.Relative)
+             : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+        }
     }
 }
