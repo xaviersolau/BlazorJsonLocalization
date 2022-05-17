@@ -23,7 +23,7 @@ namespace SoloX.BlazorJsonLocalization
         public string ResourcesPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// Naming policy
+        /// Set the delegate for custom file naming
         /// </summary>
         public Func<string, string, Uri> NamingPolicy { get; set; } =
             (basePath, cultureName) => string.IsNullOrEmpty(cultureName)
