@@ -39,6 +39,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                         .UseHttpHostedJson(options =>
                         {
                             options.ApplicationAssembly = typeof(Program).Assembly;
+                            options.NamingPolicy = (basePath, cultureName) => new Uri($"{basePath}{(string.IsNullOrEmpty(cultureName) ? string.Empty : $"-{cultureName}")}.json", UriKind.Relative);
                             options.ResourcesPath = "Resources";
                         });
                 });
