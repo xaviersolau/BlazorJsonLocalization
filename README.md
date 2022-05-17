@@ -272,9 +272,24 @@ builder.Services.AddWebAssemblyJsonLocalization(
         }));
 ```
 
-> Note that naming your static asset file, you can change the separator between the resource name
-> and the culture with `CultureSeparator`. So instead of naming your file `MyComponent-fr.json` you can name
-> it with a dot like this `MyComponent.fr.json` by setting the option CultureSeparator to `'.'`.
+> Note that naming your static asset file, you can change the expected file name by using
+> the `NamingPolicy` delegate. So instead of naming your file `MyComponent-fr.json` you can customize it
+> it by setting the `NamingPolicy` option to something like:
+> ```csharp
+> // Here we are going to change the culture separator to a dot `.` instead of a `-` and add a version querystring to help with cache busting
+> // having `MyComponent.fr.json?v=1.0.0.1` as a result
+> builder.Services.AddWebAssemblyJsonLocalization(
+>     builder => builder.UseHttpHostedJson(
+>         options =>
+>         {
+>             options.ApplicationAssembly = typeof(Program).Assembly;
+>             options.ResourcesPath = "Resources";
+>             options.NamingPolicy =  
+>                 (basePath, cultureName) => string.IsNullOrEmpty(cultureName)
+>                     ? new Uri($"{basePath}.json?v=1.0.0.1", UriKind.Relative)
+>                     : new Uri($"{basePath}.{cultureName}.json?v=1.0.0.1", UriKind.Relative);
+>         }));
+> ```
 
 #### Dependency injection in Blazor Server Side
 
