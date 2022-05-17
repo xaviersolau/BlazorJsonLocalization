@@ -274,10 +274,10 @@ builder.Services.AddWebAssemblyJsonLocalization(
 
 > Note that naming your static asset file, you can change the expected file name by using
 > the `NamingPolicy` delegate. So instead of naming your file `MyComponent-fr.json` you can customize it
-> it by setting the `NamingPolicy` option to something like:
+> like this `MyComponent.fr.json?v=1.0.0.1` it by setting the `NamingPolicy` delegate to something like:
 > ```csharp
-> // Here we are going to change the culture separator to a dot `.` instead of a `-` and add a version querystring to help with cache busting
-> // having `MyComponent.fr.json?v=1.0.0.1` as a result
+> // Here we are going to change the culture separator to a dot `.` instead of a `-` 
+> // and add a version querystring to help with cache busting
 > builder.Services.AddWebAssemblyJsonLocalization(
 >     builder => builder.UseHttpHostedJson(
 >         options =>
