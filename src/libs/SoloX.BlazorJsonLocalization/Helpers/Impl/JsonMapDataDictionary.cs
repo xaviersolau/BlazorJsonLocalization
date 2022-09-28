@@ -18,7 +18,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
         {
             foreach (var mapItem in ValueMap)
             {
-                var itemPrefix = string.IsNullOrEmpty(prefix) ? mapItem.Key : $"{prefix}:{mapItem.Key}";
+                var itemPrefix = string.IsNullOrEmpty(prefix) ? mapItem.Key : prefix + Key.Separator + mapItem.Key;
 
                 mapItem.Value.FillIn(itemPrefix, map);
             }

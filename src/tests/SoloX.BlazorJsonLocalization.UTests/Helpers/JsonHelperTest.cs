@@ -54,8 +54,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
             map.Should().NotBeNull();
             map.Should().HaveCount(3);
             map.Should().ContainKey("test1").WhoseValue.Should().Be("val1");
-            map.Should().ContainKey("test2:test21").WhoseValue.Should().Be("val21");
-            map.Should().ContainKey("test2:test22").WhoseValue.Should().Be("val22");
+            map.Should().ContainKey("test2" + Key.Separator + "test21").WhoseValue.Should().Be("val21");
+            map.Should().ContainKey("test2" + Key.Separator + "test22").WhoseValue.Should().Be("val22");
         }
 
         private static MemoryStream MakeJsonStream(string json)

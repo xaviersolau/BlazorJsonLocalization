@@ -1,4 +1,7 @@
 {
   "Test": "This is a test...",
-  "TestWithArg": "This is a test with an argument: {0}..."
+  "TestWithArg": "This is a test with an argument: {0}...",
+  "Structured": {
+    "SubTest": "This is a structured test..."
+  }
 }

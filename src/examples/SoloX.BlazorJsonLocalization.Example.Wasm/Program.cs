@@ -12,6 +12,8 @@ using SoloX.BlazorJsonLocalization.WebAssembly;
 using Blazored.LocalStorage;
 using System.Globalization;
 using SoloX.BlazorJsonLocalization.Http;
+using SoloX.BlazorJsonLocalisation.Example.Components.Embedded;
+using SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets;
 
 namespace SoloX.BlazorJsonLocalization.Example.Wasm
 {
@@ -32,17 +34,11 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                     builder
                         .EnableDisplayKeysWhileLoadingAsynchronously()
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
-                        .UseEmbeddedJson(options =>
-                        {
-                            options.ResourcesPath = "Resources";
-                        })
+                        .UseComponentsEmbedded()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
-                        .UseHttpHostedJson(options =>
-                        {
-                            options.ApplicationAssembly = typeof(Program).Assembly;
-                            options.NamingPolicy = (basePath, cultureName) => new Uri($"{basePath}{(string.IsNullOrEmpty(cultureName) ? string.Empty : $"-{cultureName}")}.json", UriKind.Relative);
-                            options.ResourcesPath = "Resources";
-                        });
+                        .UseComponentsStaticAssets();
+
+                    // We can use other setup here with UseHttpHostedJson or UseEmbeddedJson if we need to.
                 });
 
             builder.Services.AddBlazoredLocalStorage();
