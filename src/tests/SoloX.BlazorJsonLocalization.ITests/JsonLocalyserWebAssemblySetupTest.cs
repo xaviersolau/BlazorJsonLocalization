@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
+using SoloX.BlazorJsonLocalization.Http;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {

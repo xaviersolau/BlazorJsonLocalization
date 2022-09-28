@@ -8,10 +8,10 @@
 
 using System;
 
-namespace SoloX.BlazorJsonLocalization.ServerSide
+namespace SoloX.BlazorJsonLocalization.Http
 {
     /// <summary>
-    /// Extension methods to setup embedded Json file support.
+    /// Extension methods to setup Http hosted Json file support.
     /// </summary>
     public static class JsonLocalizationOptionsBuilderExtensions
     {

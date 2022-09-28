@@ -11,6 +11,7 @@ using SoloX.BlazorJsonLocalization;
 using SoloX.BlazorJsonLocalization.WebAssembly;
 using Blazored.LocalStorage;
 using System.Globalization;
+using SoloX.BlazorJsonLocalization.Http;
 
 namespace SoloX.BlazorJsonLocalization.Example.Wasm
 {

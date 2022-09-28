@@ -63,5 +63,35 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                 Assert.Null(map);
             }
         }
+
+        [Theory]
+        [InlineData("en-US", "Structured:Test", "English structured test.", true, "Resources")]
+        [InlineData("fr-FR", "Structured:Test", "French structured test.", true, "Resources")]
+        public async Task ItShouldLoadTheAppropriateMapFromAStructuredJsonFileAsync(
+            string cultureName,
+            string key,
+            string expectedText,
+            bool expectedSuccess,
+            string resourcePath)
+        {
+            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
+
+            var service = new EmbeddedJsonLocalizationExtensionService(Logger);
+
+            var options = new EmbeddedJsonLocalizationOptions();
+            options.ResourcesPath = resourcePath;
+
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+
+            if (expectedSuccess)
+            {
+                Assert.NotNull(map);
+                Assert.Equal(expectedText, map[key]);
+            }
+            else
+            {
+                Assert.Null(map);
+            }
+        }
     }
 }

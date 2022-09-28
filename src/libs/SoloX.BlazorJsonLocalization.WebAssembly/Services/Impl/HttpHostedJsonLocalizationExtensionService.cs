@@ -49,7 +49,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
                 using var stream = await this.httpClient.GetStreamAsync(uri).ConfigureAwait(false);
 
                 var map = await JsonHelper
-                    .DeserializeAsync<Dictionary<string, string>>(stream, jsonSerializerOptions)
+                    .DeserializeAsync(stream, jsonSerializerOptions)
                     .ConfigureAwait(false);
 
                 return map ?? throw new FileLoadException("Null resources");
