@@ -1,3 +1,6 @@
 ﻿{
-  "Test": "English test."
+  "Test": "English test.",
+  "Structured": {
+    "Test": "English structured test."
+  }
 }

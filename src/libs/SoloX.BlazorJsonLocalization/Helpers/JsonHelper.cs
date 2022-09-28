@@ -6,6 +6,8 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -28,16 +30,21 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         /// <summary>
         /// Deserialize Json data using provided options (or the one by default if null)
         /// </summary>
-        /// <typeparam name="TData">The data type to load.</typeparam>
         /// <param name="stream">The input stream.</param>
         /// <param name="jsonSerializerOptions">The options to use with the serializer (may be null).</param>
         /// <returns></returns>
-        public static ValueTask<TData> DeserializeAsync<TData>(Stream stream, JsonSerializerOptions? jsonSerializerOptions)
+        public static async ValueTask<Dictionary<string, string>> DeserializeAsync(Stream stream, JsonSerializerOptions? jsonSerializerOptions)
         {
             var options = jsonSerializerOptions ?? DefaultJsonOptions;
 
-            return JsonSerializer
-                .DeserializeAsync<TData>(stream, options);
+            var jsonMapData = await JsonSerializer
+                .DeserializeAsync<AJsonMapData>(stream, options)
+                .ConfigureAwait(false);
+
+            var map = new Dictionary<string, string>();
+            jsonMapData.FillIn(string.Empty, map);
+
+            return map;
         }
     }
 }

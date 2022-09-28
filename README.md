@@ -88,7 +88,7 @@ You can find an example in the project repository in `src/examples/SoloX.BlazorJ
 
 * For Blazor Server Side:
 
-First add the `using Microsoft.AspNetCore.Localization` directive and update your
+First add the `using Microsoft.AspNetCore.Localization` and `using SoloX.BlazorJsonLocalization` directives then update your
 `ConfigureServices` method in the `Startup.cs` file:
 
 ```csharp

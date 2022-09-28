@@ -1,3 +1,6 @@
 ﻿{
-  "Test": "French test."
+  "Test": "French test.",
+  "Structured": {
+    "Test": "French structured test."
+  }
 }

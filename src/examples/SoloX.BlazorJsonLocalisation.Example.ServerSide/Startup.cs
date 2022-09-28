@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
+using SoloX.BlazorJsonLocalization.Http;
 
 namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
 {

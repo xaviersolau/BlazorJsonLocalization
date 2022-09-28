@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using Xunit.Abstractions;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.BlazorJsonLocalization.Http;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
@@ -36,7 +37,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
-        public async Task ItShouldSetupWebAssemblyHttpHostedLocalizerAsync(string cultureName, string key, string arg, string expected)
+        public async Task ItShouldSetupServerSideHttpHostedLocalizerAsync(string cultureName, string key, string arg, string expected)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
             var cultureInfoServiceMock = new Mock<ICultureInfoService>();
