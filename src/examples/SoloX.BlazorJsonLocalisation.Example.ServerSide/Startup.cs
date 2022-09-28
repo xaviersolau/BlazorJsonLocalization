@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
 using SoloX.BlazorJsonLocalization.Http;
+using SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets;
+using SoloX.BlazorJsonLocalisation.Example.Components.Embedded;
 
 namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
 {
@@ -44,16 +46,11 @@ namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
                     builder
                         .EnableDisplayKeysWhileLoadingAsynchronously()
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
-                        .UseEmbeddedJson(options =>
-                        {
-                            options.ResourcesPath = "Resources";
-                        })
+                        .UseComponentsEmbedded()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
-                        .UseHttpHostedJson(options =>
-                        {
-                            options.ApplicationAssembly = typeof(Program).Assembly;
-                            options.ResourcesPath = "Resources";
-                        });
+                        .UseComponentsStaticAssets();
+
+                    // We can use other setup here with UseHttpHostedJson or UseEmbeddedJson if we need to.
                 });
 
             // AspNet core standard localization setup to get culture from the

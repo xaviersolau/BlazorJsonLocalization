@@ -245,6 +245,54 @@ Once the localizer is available you can just use it like this in the `Index.razo
 @L["Welcome"]
 ```
 
+##### Structured Json support
+
+As we have seen before, we can store key / value peer in the Json file but you also can use structured Json. For instance
+you can associate to a given key a sub-json structure like this:
+
+```json
+{
+  "Notification": {
+    "Message": "Some notification!",
+    "Description": "My notification description!"
+  }
+}
+```
+
+To access a complex object, you can directly use a key path (separated with ':'). In this case it is possible to use the
+IStringLocalizer with the key "Notification:Message" to get the corresponding value: "Some notification!".
+
+```csharp
+// Import extension methods (Get, GetSubLocalizer)
+using SoloX.BlazorJsonLocalization;
+
+[Inject]
+IStringLocalizer<Index> Localizer { get; set; }
+
+// Access with the key path:
+var txt = Localizer["Notification:Message"];
+
+// Or preferably using the Key.Path method.
+var txt = Localizer[Key.Path("Notification", "Message")];
+```
+
+That said, we can use an other way to access structured object: the GetSubLocalizer extension method:
+
+```csharp
+
+// Access using a sub-localizer
+var subLocalizer = Localizer.GetSubLocalizer("Notification");
+var txt = subLocalizer["Message"];
+```
+
+The sub-localizer can be be used as if it would contain only the structured object:
+```json
+{
+  "Message": "Some notification!",
+  "Description": "My notification description!"
+}
+```
+
 ### Set up the localizer using Json static assets on the HTTP host side
 
 Basically you need to do almost the same as above except for the following points.
