@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,10 +19,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     /// </summary>
     public class CacheService : ICacheService
     {
-        private readonly Dictionary<string, IStringLocalizer> cacheMap = new Dictionary<string, IStringLocalizer>();
+        private readonly Dictionary<string, IStringLocalizerInternal> cacheMap = new Dictionary<string, IStringLocalizerInternal>();
 
         ///<inheritdoc/>
-        public void Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizer localizer)
+        public void Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizerInternal localizer)
         {
             if (assembly == null)
             {
@@ -44,7 +44,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         }
 
         ///<inheritdoc/>
-        public IStringLocalizer? Match(Assembly assembly, string baseName, CultureInfo? cultureInfo)
+        public IStringLocalizerInternal? Match(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
             if (assembly == null)
             {

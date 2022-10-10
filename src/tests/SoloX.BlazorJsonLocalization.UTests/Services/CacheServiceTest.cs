@@ -6,8 +6,8 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.Extensions.Localization;
 using Moq;
+using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
 using System.Globalization;
@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldMatchARegisteredLocalizer()
         {
-            var localizer = Mock.Of<IStringLocalizer>();
+            var localizer = Mock.Of<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -43,7 +43,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldMatchARegisteredLocalizerNullCulture()
         {
-            var localizer = Mock.Of<IStringLocalizer>();
+            var localizer = Mock.Of<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -58,7 +58,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldResetARegisteredLocalizer()
         {
-            var localizer = Mock.Of<IStringLocalizer>();
+            var localizer = Mock.Of<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -79,7 +79,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldResetARegisteredLocalizerNullCulture()
         {
-            var localizer = Mock.Of<IStringLocalizer>();
+            var localizer = Mock.Of<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -140,7 +140,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         public void ItShouldValidateTheArgumentsOnCache(Type type, string baseName, bool withLocalizer)
         {
             var service = new CacheService();
-            var localizer = withLocalizer ? Mock.Of<IStringLocalizer>() : null;
+            var localizer = withLocalizer ? Mock.Of<IStringLocalizerInternal>() : null;
 
             Assert.Throws<ArgumentNullException>(() =>
             {

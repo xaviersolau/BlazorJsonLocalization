@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Moq;
+using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
 

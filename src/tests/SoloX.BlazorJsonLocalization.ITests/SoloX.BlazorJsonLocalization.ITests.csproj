@@ -9,11 +9,19 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Resources\IGlobal-fr.json" />
+    <None Remove="Resources\IGlobal.json" />
+    <None Remove="Resources\ISpecific-fr.json" />
+    <None Remove="Resources\ISpecific.json" />
     <None Remove="Resources\JsonLocalyserSetupTest-fr.json" />
     <None Remove="Resources\JsonLocalyserSetupTest.json" />
   </ItemGroup>
   
   <ItemGroup>
+    <EmbeddedResource Include="Resources\IGlobal-fr.json" />
+    <EmbeddedResource Include="Resources\ISpecific-fr.json" />
+    <EmbeddedResource Include="Resources\ISpecific.json" />
+    <EmbeddedResource Include="Resources\IGlobal.json" />
     <EmbeddedResource Include="Resources\JsonLocalyserSetupTest-fr.json" />
     <EmbeddedResource Include="Resources\JsonLocalyserSetupTest.json" />
   </ItemGroup>

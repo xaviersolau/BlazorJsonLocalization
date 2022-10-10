@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Moq;
+using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
 
@@ -40,7 +41,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
         private static JsonStringLocalizer CreateLocalizer(string resourceKey, string resourceText, string cultureName = "en-us")
         {
+            var localizerParentCultureLocalizerMock = new Mock<IStringLocalizerInternal>();
+
             var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            localizerFactoryMock.Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>())).Returns(localizerParentCultureLocalizerMock.Object);
 
             var map = new Dictionary<string, string>
             {

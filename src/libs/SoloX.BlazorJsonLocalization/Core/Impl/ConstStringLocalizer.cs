@@ -9,17 +9,14 @@
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
-
-#if !NET
 using System.Globalization;
-#endif
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     /// <summary>
     /// Constant string localizer.
     /// </summary>
-    public class ConstStringLocalizer : IStringLocalizer
+    public class ConstStringLocalizer : IStringLocalizer, IStringLocalizerInternal
     {
         private readonly string constValue;
         private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
@@ -43,16 +40,31 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         public LocalizedString this[string name, params object[] arguments] => new LocalizedString(name, this.constValue);
 
         ///<inheritdoc/>
+        public IStringLocalizer AsStringLocalizer => this;
+
+        ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             return Array.Empty<LocalizedString>();
+        }
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name)
+        {
+            return new LocalizedString(name, this.constValue);
+        }
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        {
+            return new LocalizedString(name, this.constValue);
         }
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture);
+            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
         }
 #endif
     }

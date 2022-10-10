@@ -10,6 +10,7 @@ using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Globalization;
 using Moq;
 using Xunit;
+using SoloX.BlazorJsonLocalization.Core;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
 {
