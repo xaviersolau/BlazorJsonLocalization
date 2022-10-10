@@ -17,8 +17,10 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// IStringLocalizer asynchronous implementation.
     /// </summary>
-    public class JsonStringLocalizerAsync : IStringLocalizer
+    public class JsonStringLocalizerAsync : IStringLocalizer, IStringLocalizerInternal
     {
+        internal const string AsynchronousStringLocalizerGuidKey = nameof(AsynchronousStringLocalizerGuidKey);
+
         private readonly string stringLocalizerGuid = Guid.NewGuid().ToString();
         private readonly object syncObject = new object();
 
@@ -27,7 +29,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         private bool loaded;
-        private IStringLocalizer stringLocalizer;
+        private IStringLocalizerInternal stringLocalizer;
 
         /// <summary>
         /// Setup the asynchronous StringLocalizer.
@@ -36,7 +38,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <param name="cultureInfo">The associated culture info.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
         /// <param name="loadingLocalizer">Localizer to use while loading asynchronously.</param>
-        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, IStringLocalizer loadingLocalizer)
+        public JsonStringLocalizerAsync(Task<IReadOnlyDictionary<string, string>?> loadingTask, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, IStringLocalizerInternal loadingLocalizer)
         {
             this.loadingTask = loadingTask;
             this.cultureInfo = cultureInfo;
@@ -72,29 +74,60 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         ///<inheritdoc/>
         public LocalizedString this[string name] =>
-            name == nameof(this.stringLocalizerGuid)
-            ? new LocalizedString(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
-            : LoadingForwarder((l) => l[name]);
+            IsStringLocalizerGuidAndLoading(name)
+            ? new LocalizedString(AsynchronousStringLocalizerGuidKey, this.stringLocalizerGuid, false)
+            : LoadingForwarder((l) => l.AsStringLocalizer[name]);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments] =>
-            name == nameof(this.stringLocalizerGuid)
-            ? new LocalizedString(nameof(this.stringLocalizerGuid), this.stringLocalizerGuid, false)
-            : LoadingForwarder((l) => l[name, arguments]);
+            LoadingForwarder((l) => l.AsStringLocalizer[name, arguments]);
+
+        private bool IsStringLocalizerGuidAndLoading(string name)
+        {
+            if (AsynchronousStringLocalizerGuidKey == name)
+            {
+                lock (PendingAsyncLocalizers)
+                {
+                    if (PendingAsyncLocalizers.ContainsKey(this.stringLocalizerGuid))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures) =>
-            LoadingForwarder((l) => l.GetAllStrings(includeParentCultures));
+            LoadingForwarder((l) => l.AsStringLocalizer.GetAllStrings(includeParentCultures));
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture);
+            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
         }
 #endif
 
-        private TData LoadingForwarder<TData>(Func<IStringLocalizer, TData> handler)
+        ///<inheritdoc/>
+        public IStringLocalizer AsStringLocalizer => this;
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name)
+        {
+            return IsStringLocalizerGuidAndLoading(name)
+                ? new LocalizedString(AsynchronousStringLocalizerGuidKey, this.stringLocalizerGuid, false)
+                : LoadingForwarder((l) => l.TryGet(name));
+        }
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        {
+            return LoadingForwarder((l) => l.TryGet(name, arguments, requestedCultureInfo));
+        }
+
+
+        private TData LoadingForwarder<TData>(Func<IStringLocalizerInternal, TData> handler)
         {
             lock (this.syncObject)
             {
@@ -135,34 +168,47 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         internal static async ValueTask LoadAsync(IStringLocalizer localizer, bool loadParentCulture)
         {
-            JsonStringLocalizerAsync? stringLocalizer;
-
-            Task loadingTask;
-
-            lock (PendingAsyncLocalizers)
+            var guidFund = true;
+            while (guidFund)
             {
-                var guid = localizer[nameof(stringLocalizerGuid)].Value;
-                if (!PendingAsyncLocalizers.TryGetValue(guid, out stringLocalizer))
-                {
-                    if (!LoadingTasks.TryGetValue(guid, out loadingTask))
-                    {
-                        return;
-                    }
+                string guid;
+                JsonStringLocalizerAsync? stringLocalizer;
+                Task loadingTask;
 
-                    if (loadingTask.Status == TaskStatus.RanToCompletion)
+                lock (PendingAsyncLocalizers)
+                {
+                    var localizedGuid = localizer[AsynchronousStringLocalizerGuidKey];
+                    guidFund = !localizedGuid.ResourceNotFound;
+
+                    guid = localizedGuid.Value;
+                    if (PendingAsyncLocalizers.TryGetValue(guid, out stringLocalizer))
                     {
-                        LoadingTasks.Remove(guid);
+                        loadingTask = stringLocalizer.LoadDataAsync(loadParentCulture).AsTask();
+
+                        LoadingTasks.Add(guid, loadingTask);
+                        PendingAsyncLocalizers.Remove(guid);
+                    }
+                    else
+                    {
+                        if (!LoadingTasks.TryGetValue(guid, out loadingTask))
+                        {
+                            continue;
+                        }
+
+                        if (loadingTask.Status == TaskStatus.RanToCompletion)
+                        {
+                            LoadingTasks.Remove(guid);
+                            continue;
+                        }
                     }
                 }
-                else
-                {
-                    loadingTask = stringLocalizer.LoadDataAsync(loadParentCulture).AsTask();
+                await loadingTask.ConfigureAwait(false);
 
-                    LoadingTasks.Add(guid, loadingTask);
-                    PendingAsyncLocalizers.Remove(guid);
+                lock (PendingAsyncLocalizers)
+                {
+                    LoadingTasks.Remove(guid);
                 }
             }
-            await loadingTask.ConfigureAwait(false);
         }
 
         private async ValueTask LoadDataAsync(bool loadParentCulture)
@@ -172,7 +218,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
                 if (parentLocalizer != null)
                 {
-                    await parentLocalizer.LoadAsync().ConfigureAwait(false);
+                    await parentLocalizer.AsStringLocalizer.LoadAsync().ConfigureAwait(false);
                 }
             }
 

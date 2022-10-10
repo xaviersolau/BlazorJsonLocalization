@@ -6,13 +6,10 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Moq;
-using SoloX.BlazorJsonLocalization.Services;
-using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.BlazorJsonLocalization.ITests.Utils;
 using System;
-using System.Globalization;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,9 +28,9 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
-        public void ItShouldSetupEmbeddedLocalizer(string cultureName, string key, string arg, string expected)
+        public Task ItShouldSetupEmbeddedLocalizer(string cultureName, string key, string arg, string expected)
         {
-            ProcessSetupLocalizerTest(cultureName, localizer =>
+            return ProcessSetupLocalizerTest(cultureName, localizer =>
             {
                 Assert.NotNull(localizer);
 
@@ -42,15 +39,17 @@ namespace SoloX.BlazorJsonLocalization.ITests
                     : localizer[key, arg];
 
                 Assert.Equal(expected, localized.Value);
+
+                return Task.CompletedTask;
             });
         }
 
         [Theory]
         [InlineData("fr-FR", "Structured", "SubTest", "C'est un test structuré...")]
         [InlineData("en-US", "Structured", "SubTest", "This is a structured test...")]
-        public void ItShouldSetupEmbeddedLocalizerUsingStructuredJsonResources(string cultureName, string structuredKey, string key, string expected)
+        public Task ItShouldSetupEmbeddedLocalizerUsingStructuredJsonResources(string cultureName, string structuredKey, string key, string expected)
         {
-            ProcessSetupLocalizerTest(cultureName, localizer =>
+            return ProcessSetupLocalizerTest(cultureName, localizer =>
             {
                 Assert.NotNull(localizer);
 
@@ -65,27 +64,14 @@ namespace SoloX.BlazorJsonLocalization.ITests
                 var subLocalized = subLocalizer[key];
 
                 Assert.Equal(expected, subLocalized.Value);
+
+                return Task.CompletedTask;
             });
         }
 
-        private void ProcessSetupLocalizerTest(string cultureName, Action<IStringLocalizer<JsonLocalyserSetupTest>> testHandler)
+        private Task ProcessSetupLocalizerTest(string cultureName, Func<IStringLocalizer<JsonLocalyserSetupTest>, Task> testHandler)
         {
-            var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
-
-            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
-
-            var services = new ServiceCollection();
-            services.AddTestLogging(this.testOutputHelper);
-
-            services.AddJsonLocalization(
-                builder => builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources"));
-
-            services.AddSingleton(cultureInfoServiceMock.Object);
-            using var provider = services.BuildServiceProvider();
-            var localizer = provider.GetRequiredService<IStringLocalizer<JsonLocalyserSetupTest>>();
-
-            testHandler(localizer);
+            return SetupHelper.ProcessLocalizerTestAsync(cultureName, testHandler, this.testOutputHelper);
         }
     }
 }

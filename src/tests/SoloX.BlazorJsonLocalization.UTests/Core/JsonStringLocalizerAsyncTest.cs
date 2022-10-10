@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Core;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
 {
@@ -31,7 +32,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             async Task<IReadOnlyDictionary<string, string>> loadAsync()
             {
                 // Make sure the task is running asynchronously.
-                await Task.Delay(1).ConfigureAwait(false);
+                await Task.Yield();
 
                 // Wait until signal.
                 waitHandler.WaitOne();
@@ -43,17 +44,23 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 };
             };
 
-            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryInternalMock = new Mock<IJsonStringLocalizerFactoryInternal>();
 
             var loadingLocalizerMock = new Mock<IStringLocalizer>();
             loadingLocalizerMock.SetupGet(x => x[key]).Returns(new LocalizedString(key, "..."));
+
+            var loadingLocalizerInternalMock = new Mock<IStringLocalizerInternal>();
+            loadingLocalizerInternalMock.SetupGet(x => x.AsStringLocalizer).Returns(loadingLocalizerMock.Object);
+
+            localizerFactoryInternalMock.Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>())).Returns(loadingLocalizerInternalMock.Object);
+
 
             // Setup the async localizer with the loadAsync task.
             var localizer = new JsonStringLocalizerAsync(
                 loadAsync(),
                 cultureInfo,
-                localizerFactoryMock.Object,
-                loadingLocalizerMock.Object);
+                localizerFactoryInternalMock.Object,
+                loadingLocalizerInternalMock.Object);
 
             // Make sure the localized text is loading...
             var loading = localizer[key];
@@ -62,7 +69,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             // Signal the async task.
             waitHandler.Set();
 
-            // Make the localized text is loaded.
+            // Make sure the localized text is loaded.
             await JsonStringLocalizerAsync.LoadAsync(localizer, false).ConfigureAwait(false);
 
             // Make sure the localized text is the one expected.

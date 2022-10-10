@@ -6,8 +6,8 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.Extensions.Localization;
 using Moq;
+using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 using System.Collections.Generic;
@@ -24,10 +24,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoFr = CultureInfo.GetCultureInfo("fr-FR");
             var cultureInfoEn = CultureInfo.GetCultureInfo("en-US");
 
-            var stringLocalizerFr = Mock.Of<IStringLocalizer>();
-            var stringLocalizerEn = Mock.Of<IStringLocalizer>();
+            var stringLocalizerFr = Mock.Of<IStringLocalizerInternal>();
+            var stringLocalizerEn = Mock.Of<IStringLocalizerInternal>();
 
-            var map = new Dictionary<string, IStringLocalizer>()
+            var map = new Dictionary<string, IStringLocalizerInternal>()
             {
                 [cultureInfoFr.Name] = stringLocalizerFr,
                 [cultureInfoEn.Name] = stringLocalizerEn,

@@ -17,7 +17,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// IStringLocalizer implementation.
     /// </summary>
-    public class JsonStringLocalizer : IStringLocalizer
+    public class JsonStringLocalizer : IStringLocalizer, IStringLocalizerInternal
     {
         private readonly IReadOnlyDictionary<string, string> stringMap;
         private readonly CultureInfo cultureInfo;
@@ -47,7 +47,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
                 if (parentLocalizer != null)
                 {
-                    result = result.Concat(parentLocalizer.GetAllStrings(true));
+                    result = result.Concat(parentLocalizer.AsStringLocalizer.GetAllStrings(true));
                 }
             }
 
@@ -56,36 +56,69 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         ///<inheritdoc/>
         public LocalizedString this[string name]
-            => BuildLocalizedString(name, s => s, l => l[name]);
+            => BuildLocalizedString(l => l.TryGet(name)) ?? new LocalizedString(name, name, true);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => BuildLocalizedString(name, s => string.Format(this.cultureInfo, s, arguments), l => l[name, arguments]);
+            => BuildLocalizedString(l => l.TryGet(name, arguments, this.cultureInfo)) ?? new LocalizedString(name, string.Format(this.cultureInfo, name, arguments), true);
 
-        private LocalizedString BuildLocalizedString(string name, Func<string, string> format, Func<IStringLocalizer, LocalizedString> forward)
+        private LocalizedString? BuildLocalizedString(Func<IStringLocalizerInternal, LocalizedString?> forward)
         {
-            if (this.stringMap.TryGetValue(name, out var value))
+            var localizedString = forward(this);
+
+            if (localizedString != null)
             {
-                return new LocalizedString(name, format(value));
-            }
-            else if (this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
-            {
-                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
-                if (parentLocalizer != null)
-                {
-                    return forward(parentLocalizer);
-                }
+                return localizedString;
             }
 
-            return new LocalizedString(name, format(name), true);
+            return this.localizerFactory.ProcessThroughStringLocalizerHierarchy(this.cultureInfo, forward);
         }
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture);
+            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
         }
 #endif
+
+        ///<inheritdoc/>
+        public IStringLocalizer AsStringLocalizer => this;
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name)
+        {
+            if (this.stringMap.TryGetValue(name, out var value))
+            {
+                return new LocalizedString(name, value);
+            }
+            else if (this.cultureInfo.Parent != null
+                && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent)
+                && JsonStringLocalizerAsync.AsynchronousStringLocalizerGuidKey != name)
+            {
+                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                return parentLocalizer.TryGet(name);
+            }
+
+            return null;
+        }
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        {
+            if (this.stringMap.TryGetValue(name, out var value))
+            {
+                return new LocalizedString(name, string.Format(requestedCultureInfo, value, arguments));
+            }
+            else if (this.cultureInfo.Parent != null
+                && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent)
+                && JsonStringLocalizerAsync.AsynchronousStringLocalizerGuidKey != name)
+            {
+                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                return parentLocalizer.TryGet(name, arguments, requestedCultureInfo);
+            }
+
+            return null;
+        }
     }
 }

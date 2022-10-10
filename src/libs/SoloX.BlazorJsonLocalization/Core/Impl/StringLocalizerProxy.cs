@@ -17,13 +17,13 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// String localizer proxy user to detect current culture info change.
     /// </summary>
-    public class StringLocalizerProxy : IStringLocalizer
+    public class StringLocalizerProxy : IStringLocalizer, IStringLocalizerInternal
     {
         private readonly ICultureInfoService cultureInfoService;
         private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         private CultureInfo cultureInfo;
-        private IStringLocalizer stringLocalizer;
+        private IStringLocalizerInternal stringLocalizer;
 
         /// <summary>
         /// Setup the proxy with the factory create handler and the cultureInfoService.
@@ -42,21 +42,21 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         }
 
         ///<inheritdoc/>
-        public LocalizedString this[string name] => CurrentStringLocalizer[name];
+        public LocalizedString this[string name] => CurrentStringLocalizer.AsStringLocalizer[name];
 
         ///<inheritdoc/>
-        public LocalizedString this[string name, params object[] arguments] => CurrentStringLocalizer[name, arguments];
+        public LocalizedString this[string name, params object[] arguments] => CurrentStringLocalizer.AsStringLocalizer[name, arguments];
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return CurrentStringLocalizer.GetAllStrings(includeParentCultures);
+            return CurrentStringLocalizer.AsStringLocalizer.GetAllStrings(includeParentCultures);
         }
 
         /// <summary>
         /// Get the current associated string localizer.
         /// </summary>
-        public IStringLocalizer CurrentStringLocalizer
+        public IStringLocalizerInternal CurrentStringLocalizer
         {
             get
             {
@@ -75,8 +75,23 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture);
+            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
         }
 #endif
+
+        ///<inheritdoc/>
+        public IStringLocalizer AsStringLocalizer => this;
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name)
+        {
+            return CurrentStringLocalizer.TryGet(name);
+        }
+
+        ///<inheritdoc/>
+        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        {
+            return CurrentStringLocalizer.TryGet(name, arguments, requestedCultureInfo);
+        }
     }
 }

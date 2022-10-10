@@ -219,9 +219,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.NotNull(localizer);
 
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, localizer), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, (IStringLocalizerInternal)localizer), Times.Once);
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Once);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Once);
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var cacheServiceMock = new Mock<ICacheService>();
 
-            var cachedLocalizer = Mock.Of<IStringLocalizer>();
+            var cachedLocalizer = Mock.Of<IStringLocalizerInternal>();
 
             cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, CultureInfo)).Returns(cachedLocalizer);
 
@@ -256,7 +256,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.NotNull(localizer);
 
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Never);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Never);
 
             var proxy = Assert.IsType<StringLocalizerProxy>(localizer);
 
@@ -281,7 +281,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var cachedLocalizer = Mock.Of<IStringLocalizer>();
 
-            cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, null)).Returns(cachedLocalizer);
+            var cachedInternalLocalizer = new Mock<IStringLocalizerInternal>();
+            cachedInternalLocalizer.SetupGet(x => x.AsStringLocalizer).Returns(cachedLocalizer);
+
+            cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, null)).Returns(cachedInternalLocalizer.Object);
 
             var factory = new JsonStringLocalizerFactory(
                 optionsMock.Object,
@@ -295,9 +298,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Assert.NotNull(localizer);
 
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, It.IsAny<IStringLocalizer>()), Times.Never);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, It.IsAny<IStringLocalizerInternal>()), Times.Never);
             cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Never);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizer>()), Times.Never);
+            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Never);
 
             Assert.Same(cachedLocalizer, localizer);
         }
