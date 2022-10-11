@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SoloX.BlazorJsonLocalisation.Example.ServerSide.Controllers
+namespace SoloX.BlazorJsonLocalization.Example.ServerSide.Controllers
 {
     /// <summary>
     /// This controller is dedicated to setup the current culture in a Browser cookie.

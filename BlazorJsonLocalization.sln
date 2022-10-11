@@ -24,9 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		src\SharedProperties.props = src\SharedProperties.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.ServerSide", "src\examples\SoloX.BlazorJsonLocalisation.Example.ServerSide\SoloX.BlazorJsonLocalisation.Example.ServerSide.csproj", "{9FF7C1B9-AE6E-43A5-AA67-97B05A40798C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.ServerSide", "src\examples\SoloX.BlazorJsonLocalization.Example.ServerSide\SoloX.BlazorJsonLocalization.Example.ServerSide.csproj", "{9FF7C1B9-AE6E-43A5-AA67-97B05A40798C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.Components.Embedded", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.Embedded\SoloX.BlazorJsonLocalisation.Example.Components.Embedded.csproj", "{46A3DB36-D6F0-467F-8E9D-F584FA529421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded\SoloX.BlazorJsonLocalization.Example.Components.Embedded.csproj", "{46A3DB36-D6F0-467F-8E9D-F584FA529421}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.ServerSide", "src\libs\SoloX.BlazorJsonLocalization.ServerSide\SoloX.BlazorJsonLocalization.ServerSide.csproj", "{5A178366-F360-42CC-99C3-78F521BA5D2E}"
 EndProject
@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.ServerSide.UTests", "src\tests\SoloX.BlazorJsonLocalization.ServerSide.UTests\SoloX.BlazorJsonLocalization.ServerSide.UTests.csproj", "{DD6B7C16-BC9A-4AE4-ADB2-0E50B88A60A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets", "src\examples\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj", "{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.StaticAssets", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.StaticAssets\SoloX.BlazorJsonLocalization.Example.Components.StaticAssets.csproj", "{157E96C3-6B5A-4355-9051-C4B9D4EF9B94}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{F5B186EB-3D14-4CF7-A9B2-2BBA712D0124}"
 	ProjectSection(SolutionItems) = preProject

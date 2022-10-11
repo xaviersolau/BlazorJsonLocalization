@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.ServerSide.Pages
+namespace SoloX.BlazorJsonLocalization.Example.ServerSide.Pages
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [IgnoreAntiforgeryToken]

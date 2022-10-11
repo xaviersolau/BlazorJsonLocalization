@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
+namespace SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
 {
     public static class ComponentsStaticAssetsExtensions
     {

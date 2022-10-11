@@ -14,8 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization.WebAssembly\SoloX.BlazorJsonLocalization.WebAssembly.csproj" />
-    <ProjectReference Include="..\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets\SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets.csproj" />
-    <ProjectReference Include="..\SoloX.BlazorJsonLocalisation.Example.Components.Embedded\SoloX.BlazorJsonLocalisation.Example.Components.Embedded.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.StaticAssets\SoloX.BlazorJsonLocalization.Example.Components.StaticAssets.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.Embedded\SoloX.BlazorJsonLocalization.Example.Components.Embedded.csproj" />
   </ItemGroup>
 
 </Project>

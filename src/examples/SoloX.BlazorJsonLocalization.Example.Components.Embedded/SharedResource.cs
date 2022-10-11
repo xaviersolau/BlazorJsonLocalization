@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.Components.Embedded
+namespace SoloX.BlazorJsonLocalization.Example.Components.Embedded
 {
     /// <summary>
     /// This class is just here to provide an entry point for the shared localization resources.
