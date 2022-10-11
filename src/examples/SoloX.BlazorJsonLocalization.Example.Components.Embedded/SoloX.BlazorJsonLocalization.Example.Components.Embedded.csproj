@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization.csproj" />
   </ItemGroup>
 
 </Project>
