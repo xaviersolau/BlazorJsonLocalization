@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
+namespace SoloX.BlazorJsonLocalization.Example.ServerSide
 {
     public class Program
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalisation.Example.Components.Embedded
+namespace SoloX.BlazorJsonLocalization.Example.Components.Embedded
 {
     public static class ComponentsEmbeddedExtensions
     {

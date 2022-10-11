@@ -16,10 +16,10 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
 using SoloX.BlazorJsonLocalization.Http;
-using SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets;
-using SoloX.BlazorJsonLocalisation.Example.Components.Embedded;
+using SoloX.BlazorJsonLocalization.Example.Components.StaticAssets;
+using SoloX.BlazorJsonLocalization.Example.Components.Embedded;
 
-namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
+namespace SoloX.BlazorJsonLocalization.Example.ServerSide
 {
     public class Startup
     {
@@ -45,9 +45,9 @@ namespace SoloX.BlazorJsonLocalisation.Example.ServerSide
                 {
                     builder
                         .EnableDisplayKeysWhileLoadingAsynchronously()
-                        // Since we want to use the embedded resources from SoloX.BlazorJsonLocalisation.Example.Components.Embedded
+                        // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded
                         .UseComponentsEmbedded()
-                        // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalisation.Example.Components.StaticAssets
+                        // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
                         .UseComponentsStaticAssets();
 
                     // We can use other setup here with UseHttpHostedJson or UseEmbeddedJson if we need to.

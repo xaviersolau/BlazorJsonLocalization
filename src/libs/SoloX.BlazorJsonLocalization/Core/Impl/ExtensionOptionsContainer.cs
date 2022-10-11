@@ -12,7 +12,7 @@ using System;
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     /// <summary>
-    /// Typed JsonLocalisation extension options.
+    /// Typed JsonLocalization extension options.
     /// </summary>
     /// <typeparam name="TOptions">The extension options type.</typeparam>
     public sealed class ExtensionOptionsContainer<TOptions> : IExtensionOptionsContainer

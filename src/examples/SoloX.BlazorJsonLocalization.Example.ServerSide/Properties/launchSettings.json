@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SoloX.BlazorJsonLocalisation.Example.ServerSide": {
+    "SoloX.BlazorJsonLocalization.Example.ServerSide": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
