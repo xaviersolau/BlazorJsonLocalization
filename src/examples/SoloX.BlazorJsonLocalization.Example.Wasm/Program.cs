@@ -14,6 +14,7 @@ using System.Globalization;
 using SoloX.BlazorJsonLocalization.Http;
 using SoloX.BlazorJsonLocalization.Example.Components.Embedded;
 using SoloX.BlazorJsonLocalization.Example.Components.StaticAssets;
+using SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization;
 
 namespace SoloX.BlazorJsonLocalization.Example.Wasm
 {
@@ -36,7 +37,9 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded
                         .UseComponentsEmbedded()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
-                        .UseComponentsStaticAssets();
+                        .UseComponentsStaticAssets()
+                        // Use the SharedLocalization
+                        .UseSharedLocalization();
 
                     // We can use other setup here with UseHttpHostedJson or UseEmbeddedJson if we need to.
                 });
