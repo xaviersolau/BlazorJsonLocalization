@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.Services;
 
 namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 {
@@ -31,8 +32,12 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
         /// </summary>
         /// <param name="webHostEnvironment">The IWebHostEnvironment.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
-        public HttpHostedJsonLocalizationExtensionService(IWebHostEnvironment webHostEnvironment, ILogger<HttpHostedJsonLocalizationExtensionService> logger)
-            : base(logger)
+        /// <param name="httpCacheService">Http loading task cache service.</param>
+        public HttpHostedJsonLocalizationExtensionService(
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<HttpHostedJsonLocalizationExtensionService> logger,
+            IHttpCacheService httpCacheService)
+            : base(logger, httpCacheService)
         {
             this.webHostEnvironment = webHostEnvironment;
             this.logger = logger;

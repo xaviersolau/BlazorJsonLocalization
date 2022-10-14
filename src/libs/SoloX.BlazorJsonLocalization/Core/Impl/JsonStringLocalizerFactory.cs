@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SoloX.BlazorJsonLocalization.Helpers;
 using SoloX.BlazorJsonLocalization.Services;
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
@@ -65,18 +66,6 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
                 return null;
             }
-
-            public IEnumerable<IStringLocalizerInternal> GetLocalizerHierarchy(CultureInfo cultureInfo)
-            {
-                var localizerList = new List<IStringLocalizerInternal>();
-                foreach (var item in this.parents)
-                {
-                    var itemStringLocalizer = this.createHandler(item.baseName, item.assembly, cultureInfo, this);
-                    localizerList.Add(itemStringLocalizer);
-                }
-
-                return localizerList;
-            }
         }
 
         private readonly JsonLocalizationOptions options;
@@ -116,17 +105,17 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer Create(Type resourceSource)
         {
-            this.logger.LogDebug($"Create String localizer for {resourceSource?.FullName}");
-
             if (resourceSource == null)
             {
                 throw new ArgumentNullException(nameof(resourceSource));
             }
 
-            var assembly = resourceSource.Assembly;
-            var baseName = resourceSource.FullName ?? resourceSource.Name;
+            this.logger.LogDebug($"Create String localizer for {resourceSource.GetBaseName()}");
 
-            var parents = resourceSource.GetInterfaces().Select(x => (x.FullName ?? x.Name, x.Assembly));
+            var assembly = resourceSource.Assembly;
+            var baseName = resourceSource.GetBaseName();
+
+            var parents = resourceSource.GetInterfaces().Select(x => (x.GetBaseName(), x.Assembly)).Concat(this.options.Fallbacks).ToArray();
 
             return CreateStringLocalizerProxy(baseName, assembly, parents);
         }
@@ -138,7 +127,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             var assembly = Assembly.Load(location);
 
-            return CreateStringLocalizerProxy(baseName, assembly, Enumerable.Empty<(string baseName, Assembly assembly)>());
+            return CreateStringLocalizerProxy(baseName, assembly, this.options.Fallbacks);
         }
 
         private IStringLocalizer CreateStringLocalizerProxy(string baseName, Assembly assembly, IEnumerable<(string baseName, Assembly assembly)> parents)

@@ -236,7 +236,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             // Setup extension resolver service.
             var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
 
-            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+            var optionsMock = JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock();
 
             var cacheServiceMock = new Mock<ICacheService>();
 
@@ -275,7 +275,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             // Setup extension resolver service.
             var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
 
-            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+            var optionsMock = JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock();
 
             var cacheServiceMock = new Mock<ICacheService>();
 
@@ -475,7 +475,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             return extensionResolverServiceMock;
         }
 
-        private static Mock<IOptions<JsonLocalizationOptions>> SetupJsonLocalizationOptionsMock(params IExtensionOptionsContainer[] extensionOptionsContainers)
+        internal static Mock<IOptions<JsonLocalizationOptions>> SetupJsonLocalizationOptionsMock(params IExtensionOptionsContainer[] extensionOptionsContainers)
         {
             var opt = new JsonLocalizationOptions();
             opt.ExtensionOptions = extensionOptionsContainers;

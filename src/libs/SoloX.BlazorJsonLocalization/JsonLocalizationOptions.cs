@@ -9,6 +9,7 @@
 using SoloX.BlazorJsonLocalization.Core;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -22,6 +23,12 @@ namespace SoloX.BlazorJsonLocalization
         /// </summary>
         public IEnumerable<IExtensionOptionsContainer> ExtensionOptions { get; internal set; }
             = Array.Empty<IExtensionOptionsContainer>();
+
+        /// <summary>
+        /// Get localization fallback list.
+        /// </summary>
+        public IEnumerable<(string baseName, Assembly assembly)> Fallbacks { get; internal set; }
+            = Array.Empty<(string baseName, Assembly assembly)>();
 
         /// <summary>
         /// Tells if the keys must be displayed while resources are loading asynchronously.

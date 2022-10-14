@@ -20,7 +20,6 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
 
@@ -28,7 +27,11 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
 {
     public static class SetupHelper
     {
-        internal static Task ProcessLocalizerTestAsync<T>(string cultureName, Func<IStringLocalizer<T>, Task> testHandler, ITestOutputHelper testOutputHelper)
+        internal static Task ProcessLocalizerTestAsync<T>(
+            string cultureName,
+            Func<IStringLocalizer<T>, Task> testHandler,
+            ITestOutputHelper testOutputHelper,
+            Action<JsonLocalizationOptionsBuilder>? builderHandler = null)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
             var cultureInfoServiceMock = new Mock<ICultureInfoService>();
@@ -39,7 +42,15 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             services.AddTestLogging(testOutputHelper);
 
             services.AddJsonLocalization(
-                builder => builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources"));
+                builder =>
+                {
+                    builder.UseEmbeddedJson(options => options.ResourcesPath = "Resources");
+
+                    if (builderHandler != null)
+                    {
+                        builderHandler(builder);
+                    }
+                });
 
             services.AddSingleton(cultureInfoServiceMock.Object);
             using var provider = services.BuildServiceProvider();
@@ -48,12 +59,35 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             return testHandler(localizer);
         }
 
-        internal static async Task ProcessHttpLocalizerTestAsync<T>(
+        internal static Task ProcessHttpLocalizerTestAsync<T>(
             string cultureName,
             IDictionary<string, string> httpResources,
             Func<IStringLocalizer<T>, Task> testHandler,
             ITestOutputHelper testOutputHelper,
-            WaitHandle? waitHandle = null)
+            Action<JsonLocalizationOptionsBuilder>? builderHandler = null)
+        {
+            return ProcessHttpLocalizerTestAsync<T>(
+                cultureName,
+                httpResources,
+                (l, unlocker) =>
+                {
+                    foreach (var kvp in httpResources)
+                    {
+                        unlocker(kvp.Key);
+                    }
+
+                    return testHandler(l);
+                },
+                testOutputHelper,
+                builderHandler);
+        }
+
+        internal static async Task ProcessHttpLocalizerTestAsync<T>(
+            string cultureName,
+            IDictionary<string, string> httpResources,
+            Func<IStringLocalizer<T>, Action<string>, Task> testHandler,
+            ITestOutputHelper testOutputHelper,
+            Action<JsonLocalizationOptionsBuilder>? builderHandler = null)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
             var cultureInfoServiceMock = new Mock<ICultureInfoService>();
@@ -66,19 +100,17 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             var httpClientBuilder = new HttpClientMockBuilder()
                 .WithBaseAddress(new Uri("http://test.com"));
 
+            var taskCompletionSourceMap = new Dictionary<string, TaskCompletionSource>();
+
             foreach (var httpResource in httpResources)
             {
+                var taskCompletionSource = new TaskCompletionSource();
+                taskCompletionSourceMap.Add(httpResource.Key, taskCompletionSource);
+
                 httpClientBuilder = httpClientBuilder.WithRequest($"/_content/SoloX.BlazorJsonLocalization.ITests/Resources/{httpResource.Key}")
                     .Responding(async request =>
                     {
-                        if (waitHandle != null)
-                        {
-                            // Make sure the task is running asynchronously.
-                            await Task.Yield();
-
-                            // Wait until signal.
-                            waitHandle.WaitOne();
-                        }
+                        await taskCompletionSource.Task.ConfigureAwait(false);
 
                         var response = new HttpResponseMessage();
                         response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(httpResource.Value)));
@@ -91,14 +123,22 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             services.AddSingleton(httpClient);
 
             services.AddWebAssemblyJsonLocalization(
-                builder => builder.UseHttpHostedJson(options => options.ResourcesPath = "Resources"));
+                builder =>
+                {
+                    builder.UseHttpHostedJson(options => options.ResourcesPath = "Resources");
+
+                    if (builderHandler != null)
+                    {
+                        builderHandler(builder);
+                    }
+                });
 
             services.AddSingleton(cultureInfoServiceMock.Object);
 
             await using var provider = services.BuildServiceProvider();
             var localizer = provider.GetRequiredService<IStringLocalizer<T>>();
 
-            await testHandler(localizer).ConfigureAwait(false);
+            await testHandler(localizer, s => taskCompletionSourceMap[s].SetResult()).ConfigureAwait(false);
         }
     }
 }
