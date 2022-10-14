@@ -9,6 +9,8 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="Resources\Fallback-fr.json" />
+    <None Remove="Resources\Fallback.json" />
     <None Remove="Resources\IGlobal-fr.json" />
     <None Remove="Resources\IGlobal.json" />
     <None Remove="Resources\ISpecific-fr.json" />
@@ -18,6 +20,8 @@
   </ItemGroup>
   
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Fallback.json" />
+    <EmbeddedResource Include="Resources\Fallback-fr.json" />
     <EmbeddedResource Include="Resources\IGlobal-fr.json" />
     <EmbeddedResource Include="Resources\ISpecific-fr.json" />
     <EmbeddedResource Include="Resources\ISpecific.json" />

@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="JsonLocalyserInheritTest.cs" company="Xavier Solau">
+// <copyright file="JsonLocalyserFallbackTest.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -14,20 +14,20 @@ using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
-    public class JsonLocalyserInheritTest
+    public class JsonLocalyserFallbackTest
     {
         private readonly ITestOutputHelper testOutputHelper;
-        public JsonLocalyserInheritTest(ITestOutputHelper testOutputHelper)
+        public JsonLocalyserFallbackTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
         }
 
         [Theory]
         [InlineData("en-US", "Global", "This is global message...")]
-        [InlineData("en-US", "Specific", "This is specific message...")]
-        public Task ItShouldSetupEmbeddedLocalizerUsingInheritedJsonResources(string cultureName, string key, string expected)
+        [InlineData("en-US", "Fallback", "This is a Fallback message...")]
+        public Task ItShouldSetupEmbeddedLocalizerUsingFallbackJsonResources(string cultureName, string key, string expected)
         {
-            return SetupHelper.ProcessLocalizerTestAsync<ISpecific>(
+            return SetupHelper.ProcessLocalizerTestAsync<IGlobal>(
                 cultureName,
                 localizer =>
                 {
@@ -38,72 +38,49 @@ namespace SoloX.BlazorJsonLocalization.ITests
 
                     return Task.CompletedTask;
                 },
-                this.testOutputHelper);
+                this.testOutputHelper,
+                builder => builder.AddFallback("Fallback", typeof(JsonLocalyserFallbackTest).Assembly));
         }
 
         [Fact]
-        public async Task ItShouldLoadAsyncThroughHierarchy()
+        public async Task ItShouldLoadAsyncUsingFallback()
         {
-            await SetupHelper.ProcessHttpLocalizerTestAsync<ISpecific>(
+            await SetupHelper.ProcessHttpLocalizerTestAsync<IGlobal>(
                 "en-US",
                 new Dictionary<string, string>
                 {
-                    ["ISpecific.json"] = "{\"Specific\": \"This is specific message...\"}",
+                    ["Fallback.json"] = "{\"Fallback\": \"This is a fallback message...\"}",
                     ["IGlobal.json"] = "{\"Global\": \"This is global message...\"}",
                 },
                 async (localizer, unlocker) =>
                 {
                     Assert.NotNull(localizer);
 
-                    var specificLocalized = localizer["Specific"];
-                    Assert.Equal("...", specificLocalized);
-
                     var globalLocalized = localizer["Global"];
                     Assert.Equal("...", globalLocalized);
+
+                    var fallbackLocalized = localizer["Fallback"];
+                    Assert.Equal("...", fallbackLocalized);
 
                     // Start loading async
                     var loadingTask = localizer.LoadAsync();
 
                     // We are sure that it is not loaded at this point (since we didn't signal any one).
 
-                    unlocker("ISpecific.json"); // Signal Specific
-
-                    // Make sure Specific string is available.
-                    var nbRetry = 5;
-                    for (var i = 0; i <= nbRetry; i++)
-                    {
-                        await Task.Delay(100).ConfigureAwait(false);
-
-                        specificLocalized = localizer["Specific"];
-                        if ("This is specific message..." == specificLocalized)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Assert.True(i < nbRetry);
-                        }
-                    }
-
-                    // Global must not be loaded.
-                    globalLocalized = localizer["Global"];
-                    Assert.Equal("...", globalLocalized);
-
-                    // Loading task must not be completed.
-                    Assert.False(loadingTask.IsCompleted);
-
                     unlocker("IGlobal.json"); // Signal Global
+                    unlocker("Fallback.json"); // Signal Fallback
 
                     // make sure all is loaded.
                     await loadingTask.ConfigureAwait(false);
 
-                    specificLocalized = localizer["Specific"];
-                    Assert.Equal("This is specific message...", specificLocalized);
-
                     globalLocalized = localizer["Global"];
                     Assert.Equal("This is global message...", globalLocalized);
+
+                    fallbackLocalized = localizer["Fallback"];
+                    Assert.Equal("This is a fallback message...", fallbackLocalized);
                 },
-                this.testOutputHelper).ConfigureAwait(false);
+                this.testOutputHelper,
+                builder => builder.AddFallback("Fallback", typeof(JsonLocalyserFallbackTest).Assembly)).ConfigureAwait(false);
         }
     }
 }

@@ -8,7 +8,9 @@
 
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
+using SoloX.BlazorJsonLocalization.Helpers;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -17,9 +19,11 @@ namespace SoloX.BlazorJsonLocalization
     /// </summary>
     public sealed class JsonLocalizationOptionsBuilder
     {
-        private readonly IList<IExtensionOptionsContainer> extensionOptions
-            = new List<IExtensionOptionsContainer>();
+        private readonly IList<IExtensionOptionsContainer> extensionOptions = new List<IExtensionOptionsContainer>();
+        private readonly IList<(string baseName, Assembly assembly)> fallbackList = new List<(string baseName, Assembly assembly)>();
+
         private bool enableDisplayKeysWhileLoadingAsynchronously;
+
 
         /// <summary>
         /// Enable (or not) the option to return keys on localization result while resources are loading asynchronously.
@@ -29,6 +33,30 @@ namespace SoloX.BlazorJsonLocalization
         public JsonLocalizationOptionsBuilder EnableDisplayKeysWhileLoadingAsynchronously(bool enable = true)
         {
             this.enableDisplayKeysWhileLoadingAsynchronously = enable;
+            return this;
+        }
+
+        /// <summary>
+        /// Add a fallback localizer.
+        /// </summary>
+        /// <typeparam name="TLocalizer">The type defining the localization.</typeparam>
+        /// <returns>Self.</returns>
+        public JsonLocalizationOptionsBuilder AddFallback<TLocalizer>()
+        {
+            var localizerType = typeof(TLocalizer);
+            AddFallback(localizerType.GetBaseName(), localizerType.Assembly);
+            return this;
+        }
+
+        /// <summary>
+        /// Add a fallback localizer.
+        /// </summary>
+        /// <param name="baseName">Localization file base name.</param>
+        /// <param name="assembly">Assembly where to find the localization resources.</param>
+        /// <returns>Self.</returns>
+        public JsonLocalizationOptionsBuilder AddFallback(string baseName, Assembly assembly)
+        {
+            this.fallbackList.Add((baseName, assembly));
             return this;
         }
 
@@ -51,6 +79,7 @@ namespace SoloX.BlazorJsonLocalization
             {
                 opt.IsDisplayKeysWhileLoadingAsynchronouslyEnabled = this.enableDisplayKeysWhileLoadingAsynchronously;
                 opt.ExtensionOptions = this.extensionOptions;
+                opt.Fallbacks = this.fallbackList;
             }
         }
     }

@@ -11,7 +11,10 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.BlazorJsonLocalization.ServerSide.Services.Impl;
+using SoloX.BlazorJsonLocalization.Services;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -76,10 +79,14 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
                 .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest-fr.json"))
                 .Returns(fileInfoFrMock.Object);
 
+            var httpCacheServiceMock = new Mock<IHttpCacheService>();
+            httpCacheServiceMock.Setup(x => x.ProcessLoadingTask(It.IsAny<Uri>(), It.IsAny<Func<Task<IReadOnlyDictionary<string, string>?>>>()))
+                .Returns<Uri, Func<Task<IReadOnlyDictionary<string, string>?>>>((uri, loader) => loader());
+
             var hostEnvMock = new Mock<IWebHostEnvironment>();
             hostEnvMock.SetupGet(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
 
-            var service = new HttpHostedJsonLocalizationExtensionService(hostEnvMock.Object, Logger);
+            var service = new HttpHostedJsonLocalizationExtensionService(hostEnvMock.Object, Logger, httpCacheServiceMock.Object);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {

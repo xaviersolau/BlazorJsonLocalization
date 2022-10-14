@@ -34,6 +34,8 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                 {
                     builder
                         .EnableDisplayKeysWhileLoadingAsynchronously()
+                        // Add a localization fallback.
+                        .AddFallback("Fallback", typeof(SharedLocalizationExtensions).Assembly)
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded
                         .UseComponentsEmbedded()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets

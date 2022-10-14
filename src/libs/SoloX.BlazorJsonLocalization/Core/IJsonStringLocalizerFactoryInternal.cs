@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 
@@ -32,13 +31,6 @@ namespace SoloX.BlazorJsonLocalization.Core
         /// <param name="forward"></param>
         /// <returns></returns>
         LocalizedString? ProcessThroughStringLocalizerHierarchy(CultureInfo cultureInfo, Func<IStringLocalizerInternal, LocalizedString?> forward);
-
-        /// <summary>
-        /// Get the localizer hierarchy.
-        /// </summary>
-        /// <param name="cultureInfo"></param>
-        /// <returns></returns>
-        IEnumerable<IStringLocalizerInternal> GetLocalizerHierarchy(CultureInfo cultureInfo);
     }
 
     /// <summary>

@@ -24,19 +24,17 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         : IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>
     {
         private readonly ILogger<AHttpHostedJsonLocalizationExtensionService> logger;
-
-        /// <summary>
-        /// Cache to avoid Json file reload.
-        /// </summary>
-        private static readonly IDictionary<Uri, Task<IReadOnlyDictionary<string, string>?>> Cache = new Dictionary<Uri, Task<IReadOnlyDictionary<string, string>?>>();
+        private readonly IHttpCacheService httpCacheService;
 
         /// <summary>
         /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
         /// </summary>
         /// <param name="logger">Logger where to log processing messages.</param>
-        protected AHttpHostedJsonLocalizationExtensionService(ILogger<AHttpHostedJsonLocalizationExtensionService> logger)
+        /// <param name="httpCacheService">Http loading task cache service.</param>
+        protected AHttpHostedJsonLocalizationExtensionService(ILogger<AHttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
         {
             this.logger = logger;
+            this.httpCacheService = httpCacheService;
         }
 
         ///<inheritdoc/>
@@ -76,20 +74,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LogDebug($"Loading static assets data from {uri}");
 
-                    lock (Cache)
-                    {
-                        if (!Cache.TryGetValue(uri, out var loadingTask))
-                        {
-                            loadingTask = TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
-                            Cache.Add(uri, loadingTask);
-                        }
-                        else if (loadingTask.IsFaulted)
-                        {
-                            loadingTask = TryLoadFromUriAsync(uri, options.JsonSerializerOptions);
-                            Cache[uri] = loadingTask;
-                        }
-                        return loadingTask;
-                    }
+                    return this.httpCacheService.ProcessLoadingTask(uri, () => TryLoadFromUriAsync(uri, options.JsonSerializerOptions));
                 })
                 .ConfigureAwait(false);
         }
