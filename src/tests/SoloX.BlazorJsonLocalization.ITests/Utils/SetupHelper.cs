@@ -9,7 +9,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Moq;
-using SoloX.BlazorJsonLocalization.Http;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.WebAssembly;
 using SoloX.CodeQuality.Test.Helpers.Http;

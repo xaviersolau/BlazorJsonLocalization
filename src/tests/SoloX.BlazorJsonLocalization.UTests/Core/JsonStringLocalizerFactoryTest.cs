@@ -112,9 +112,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoServiceMock = SetupCultureInfoServiceMock();
 
             var extensionOptionsContainer1 = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
-            extensionOptionsContainer1.Options.AssemblyNames = new[] { "OtherAssemblyName" };
+            extensionOptionsContainer1.Options.Assemblies = new[] { typeof(Type).Assembly }; // Use another assembly
             var extensionOptionsContainer2 = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
-            extensionOptionsContainer2.Options.AssemblyNames = new[] { Assembly.GetName().Name };
+            extensionOptionsContainer2.Options.Assemblies = new[] { Assembly };
 
             // Setup extension service
             var extensionServiceMock1 = SetupExtensionServiceMock(map1, extensionOptionsContainer1);
@@ -140,6 +140,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.NotNull(localizer);
 
+            // Make sure the selected localizer is the one resulting from extensionOptionsContainer2.
             Assert.Equal(value2, localizer[key]);
         }
 
