@@ -25,9 +25,28 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [Theory]
         [InlineData("en-US", "Global", "This is global message...")]
         [InlineData("en-US", "Specific", "This is specific message...")]
-        public Task ItShouldSetupEmbeddedLocalizerUsingInheritedJsonResources(string cultureName, string key, string expected)
+        public Task ItShouldSetupEmbeddedLocalizerUsingInheritedJsonResourcesOnInterfaces(string cultureName, string key, string expected)
         {
             return SetupHelper.ProcessLocalizerTestAsync<ISpecific>(
+                cultureName,
+                localizer =>
+                {
+                    Assert.NotNull(localizer);
+
+                    var localized = localizer[key];
+                    Assert.Equal(expected, localized);
+
+                    return Task.CompletedTask;
+                },
+                this.testOutputHelper);
+        }
+
+        [Theory]
+        [InlineData("en-US", "Global", "This is global message...")]
+        [InlineData("en-US", "Specific", "This is specific message...")]
+        public Task ItShouldSetupEmbeddedLocalizerUsingInheritedJsonResourcesOnClasses(string cultureName, string key, string expected)
+        {
+            return SetupHelper.ProcessLocalizerTestAsync<Specific>(
                 cultureName,
                 localizer =>
                 {

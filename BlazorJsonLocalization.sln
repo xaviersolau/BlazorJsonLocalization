@@ -19,6 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{F8C0C88A-0F31-493C-AC26-921133378F75}"
 	ProjectSection(SolutionItems) = preProject
+		documents\BreakingChanges.md = documents\BreakingChanges.md
 		LICENSE = LICENSE
 		README.md = README.md
 		src\SharedProperties.props = src\SharedProperties.props
@@ -44,7 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{F5B186EB
 		.github\workflows\build-pr.yml = .github\workflows\build-pr.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization.csproj", "{CD894707-863C-4B92-924C-F6D8241E78D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization.csproj", "{CD894707-863C-4B92-924C-F6D8241E78D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -25,30 +25,42 @@ BlazorJsonLocalization project is written by Xavier Solau. It's licensed under t
 
  * * *
 
+## Features
+
+* Enable Json based localization with embedded Json files.
+* Enable Json based localization with hosted Json files.
+* Assembly scoped localizer support.
+* Structured Json support with complex objects.
+* Localizer inheritance.
+* Localizer fall back.
+* Both WebAssembly and Server Side support.
+
 ## Installation
 
 You can checkout this Github repository or you can use the NuGet packages:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.BlazorJsonLocalization -version 2.0.0-alpha.2
-Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 2.0.0-alpha.2
-Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 2.0.0-alpha.2
+Install-Package SoloX.BlazorJsonLocalization -version 2.0.0-alpha.3
+Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 2.0.0-alpha.3
+Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 2.0.0-alpha.3
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.BlazorJsonLocalization --version 2.0.0-alpha.2
-dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 2.0.0-alpha.2
-dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 2.0.0-alpha.2
+dotnet add package SoloX.BlazorJsonLocalization --version 2.0.0-alpha.3
+dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 2.0.0-alpha.3
+dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 2.0.0-alpha.3
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.BlazorJsonLocalization" Version="2.0.0-alpha.2" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="2.0.0-alpha.2" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="2.0.0-alpha.2" />
+<PackageReference Include="SoloX.BlazorJsonLocalization" Version="2.0.0-alpha.3" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="2.0.0-alpha.3" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="2.0.0-alpha.3" />
 ```
+
+> Find out the [Breaking changes](documents/BreakingChanges.md) from one version to another.
 
 ## How to use it
 
@@ -378,3 +390,96 @@ protected override async Task OnInitializedAsync()
 
 > Note that as long as the translation resources are not loaded the IStringLocalizer will always return ``...``
 > unless you use the ``EnableDisplayKeysWhileLoadingAsync`` method in the ``JsonLocalizationOptionsBuilder``.
+
+
+### Inheritance and fall back
+
+Let's say that we have a localizer `Global` with some basic and reusable string, we have
+several options to use it.
+
+The Global class:
+```csharp
+public class Global
+{
+}
+```
+
+With its Json resource file:
+```json
+{
+  "GlobalKey": "This is global message..."
+}
+```
+
+#### Injecting the Global localizer
+
+The first option is to inject the localizer in your component
+and to use it directly alongside of the component specific localizer.
+
+```csharp
+[Inject]
+private IStringLocalizer<Global> Localizer { get; set; }
+```
+
+#### Using inheritance
+
+A second option is to use inheritance. Your component specific localizer can inherit `Global` in
+order to access the Global localization strings directly using you component localizer.
+
+Here is an example with a `Specific` localizer:
+
+```csharp
+public class Specific : Global
+{
+}
+
+[Inject]
+private IStringLocalizer<Specific> Localizer { get; set; }
+
+// Use of the GlobalKey will return the message from the Global localizer.
+var txt = Localizer["GlobalKey"]
+```
+
+#### Using a fall back
+
+Finally you can setup a fall back localizer in the localization options to use the fall back
+localizer any time where a message key is not found in a specific Localizer.
+
+Here is an example that set up a fall back to the Fallback Json files defined in a given assembly.
+
+```csharp
+builder.Services.AddWebAssemblyJsonLocalization(
+    optionBuilder =>
+    {
+        optionBuilder
+            // Add a localization fallback.
+            .AddFallback("Fallback", assemblyWhereFallbackJsonFilesAreDefined);
+    });
+```
+
+### Scope Localizer to a specific Assembly
+
+You may need to set up a localizer differently depending on the assembly. For example you may
+be using embedded Json resources in an assembly that contains some components and Http hosted
+Json resources in an other assembly.
+
+In this case, you can set up the localization options for each assembly using the `AssemblyNames`
+property in the localizer options object.
+
+```csharp
+builder.Services.AddWebAssemblyJsonLocalization(
+    builder =>
+    {
+        builder
+            .UseEmbeddedJson(options =>
+            {
+                options.AssemblyNames = new[] { AssemblyWithEmbeddedJson.GetName().Name };
+                //...
+            })
+            .UseHttpHostedJson(options =>
+            {
+                options.AssemblyNames = new[] { AssemblyWithHttpHostedJson.GetName().Name };
+                //...
+            });
+    });
+```

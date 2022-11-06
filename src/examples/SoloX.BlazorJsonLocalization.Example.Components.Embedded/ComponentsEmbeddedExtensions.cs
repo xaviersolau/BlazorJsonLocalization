@@ -13,7 +13,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Components.Embedded
         {
             return builder.UseEmbeddedJson(options =>
             {
-                options.AssemblyNames = new[] { typeof(ComponentsEmbeddedExtensions).Assembly.GetName().Name };
+                options.Assemblies = new[] { typeof(ComponentsEmbeddedExtensions).Assembly };
                 options.ResourcesPath = "Resources";
             });
         }

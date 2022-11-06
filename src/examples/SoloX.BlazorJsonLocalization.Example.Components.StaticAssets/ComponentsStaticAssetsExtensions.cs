@@ -15,7 +15,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
         {
             return builder.UseHttpHostedJson(options =>
             {
-                options.AssemblyNames = new[] { typeof(ComponentsStaticAssetsExtensions).Assembly.GetName().Name };
+                options.Assemblies = new[] { typeof(ComponentsStaticAssetsExtensions).Assembly };
 
                 // we don't need to setup the applicationAssembly because this options focuses only on this component that will be a component of the application.
                 //options.ApplicationAssembly = null;

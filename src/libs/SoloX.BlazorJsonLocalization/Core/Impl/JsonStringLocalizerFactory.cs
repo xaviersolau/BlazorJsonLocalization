@@ -115,7 +115,17 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var assembly = resourceSource.Assembly;
             var baseName = resourceSource.GetBaseName();
 
-            var parents = resourceSource.GetInterfaces().Select(x => (x.GetBaseName(), x.Assembly)).Concat(this.options.Fallbacks).ToArray();
+            var parents = new List<(string baseName, Assembly assembly)>();
+
+            var baseType = resourceSource.BaseType;
+            if (baseType != null && baseType != typeof(object))
+            {
+                parents.Add((baseType.GetBaseName(), baseType.Assembly));
+            }
+
+            parents.AddRange(resourceSource.GetInterfaces().Select(x => (x.GetBaseName(), x.Assembly)));
+
+            parents.AddRange(this.options.Fallbacks);
 
             return CreateStringLocalizerProxy(baseName, assembly, parents);
         }
@@ -204,9 +214,9 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 {
                     var options = extensionOptionsContainer.Options;
 
-                    var noAssambliesToMatch = !options.AssemblyNames.Any();
+                    var noAssambliesToMatch = !options.Assemblies.Any();
 
-                    if (noAssambliesToMatch || options.AssemblyNames.Contains(assembly.GetName().Name))
+                    if (noAssambliesToMatch || options.Assemblies.Contains(assembly))
                     {
                         var extensionService = this.extensionResolverService.GetExtensionService(extensionOptionsContainer);
 

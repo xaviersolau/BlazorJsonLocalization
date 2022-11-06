@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization.Core
 {
@@ -17,9 +18,9 @@ namespace SoloX.BlazorJsonLocalization.Core
     public abstract class AExtensionOptions
     {
         /// <summary>
-        /// Assembly names to match when the extension is loading resources. The extension won't apply
+        /// Assemblies to match when the extension is loading resources. The extension won't apply
         /// on other assemblies except if the list is empty.
         /// </summary>
-        public IEnumerable<string> AssemblyNames { get; set; } = Array.Empty<string>();
+        public IEnumerable<Assembly> Assemblies { get; set; } = Array.Empty<Assembly>();
     }
 }

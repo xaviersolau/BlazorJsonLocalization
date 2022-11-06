@@ -20,7 +20,6 @@ using System.IO;
 using System.Text;
 using Xunit.Abstractions;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
-using SoloX.BlazorJsonLocalization.Http;
 
 namespace SoloX.BlazorJsonLocalization.ITests
 {
