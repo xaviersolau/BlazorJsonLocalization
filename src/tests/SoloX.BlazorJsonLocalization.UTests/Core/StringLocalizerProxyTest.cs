@@ -6,18 +6,27 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Microsoft.Extensions.Logging;
 using Moq;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
+using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System.Collections.Generic;
 using System.Globalization;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
 {
     public class StringLocalizerProxyTest
     {
+        private ILogger<StringLocalizerProxy> Logger { get; }
+        public StringLocalizerProxyTest(ITestOutputHelper testOutputHelper)
+        {
+            Logger = new TestLogger<StringLocalizerProxy>(testOutputHelper);
+        }
+
         [Fact]
         public void ItShouldProvideTheRightStringLocalizerDependingOnTheCurrentCulture()
         {
@@ -43,8 +52,11 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 .Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>()))
                 .Returns<CultureInfo>(ci => map[ci.Name]);
 
-            var proxy = new StringLocalizerProxy(cultureInfoServiceMock.Object,
-                localizerFactoryMock.Object);
+            var proxy = new StringLocalizerProxy(
+                Logger,
+                cultureInfoServiceMock.Object,
+                localizerFactoryMock.Object
+                );
 
             Assert.Same(stringLocalizerEn, proxy.CurrentStringLocalizer);
 
