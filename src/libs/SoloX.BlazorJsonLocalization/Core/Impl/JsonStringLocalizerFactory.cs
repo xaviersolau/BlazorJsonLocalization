@@ -46,6 +46,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         private readonly ICultureInfoService cultureInfoService;
         private readonly ICacheService cacheService;
         private readonly ILogger<JsonStringLocalizerFactory> logger;
+        private readonly ILogger<StringLocalizerProxy> loggerForStringLocalizerProxy;
 
         /// <summary>
         /// Setup the factory.
@@ -56,12 +57,14 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// extension service.</param>
         /// <param name="cacheService">The service to cache the loaded data.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
+        /// <param name="loggerForStringLocalizerProxy">Logger to pass when creating a <see cref="StringLocalizerProxy"/>.</param>
         public JsonStringLocalizerFactory(
             IOptions<JsonLocalizationOptions> options,
             ICultureInfoService cultureInfoService,
             IExtensionResolverService extensionResolverService,
             ICacheService cacheService,
-            ILogger<JsonStringLocalizerFactory> logger)
+            ILogger<JsonStringLocalizerFactory> logger,
+            ILogger<StringLocalizerProxy> loggerForStringLocalizerProxy)
         {
             if (options == null)
             {
@@ -69,6 +72,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
 
             this.logger = logger;
+            this.loggerForStringLocalizerProxy = loggerForStringLocalizerProxy;
             this.options = options.Value;
             this.extensionResolverService = extensionResolverService;
             this.cultureInfoService = cultureInfoService;
@@ -114,7 +118,11 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             this.logger.LogDebug($"Create String localizer proxy for {baseName} in {assembly} and register in cache");
 
-            localizer = new StringLocalizerProxy(this.cultureInfoService, new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
+            localizer = new StringLocalizerProxy(
+                this.loggerForStringLocalizerProxy,
+                this.cultureInfoService,
+                new FactoryInternal(ci => this.CreateStringLocalizer(baseName, assembly, ci)));
+
             this.cacheService.Cache(assembly, baseName, null, localizer);
 
             return localizer;

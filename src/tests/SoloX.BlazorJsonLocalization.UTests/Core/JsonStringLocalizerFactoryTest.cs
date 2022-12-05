@@ -36,10 +36,12 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         private static readonly CultureInfo CultureInfo = CultureInfo.GetCultureInfo(CultureName);
 
         private ILogger<JsonStringLocalizerFactory> Logger { get; }
+        private ILogger<StringLocalizerProxy> LoggerForStringLocalizerProxy { get; }
 
         public JsonStringLocalizerFactoryTest(ITestOutputHelper testOutputHelper)
         {
             Logger = new TestLogger<JsonStringLocalizerFactory>(testOutputHelper);
+            LoggerForStringLocalizerProxy = new TestLogger<StringLocalizerProxy>(testOutputHelper);
         }
 
         [Fact]
@@ -84,7 +86,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = getLocalizer(factory);
 
@@ -134,7 +137,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
 
@@ -177,7 +181,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
 
@@ -212,7 +217,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(BaseName, Assembly.FullName);
 
@@ -249,7 +255,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(BaseName, Assembly.FullName);
 
@@ -288,7 +295,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheServiceMock.Object,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(BaseName, Assembly.FullName);
 
@@ -364,7 +372,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheService,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
 
@@ -424,7 +433,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 cultureInfoServiceMock.Object,
                 extensionResolverServiceMock.Object,
                 cacheService,
-                Logger);
+                Logger,
+                LoggerForStringLocalizerProxy);
 
             var localizer = factory.Create(typeof(JsonStringLocalizerFactoryTest));
 
