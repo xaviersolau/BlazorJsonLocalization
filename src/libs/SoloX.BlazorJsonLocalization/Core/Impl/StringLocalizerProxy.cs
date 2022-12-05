@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Services;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// </summary>
     public class StringLocalizerProxy : IStringLocalizer, IStringLocalizerInternal
     {
+        private readonly ILogger<StringLocalizerProxy> logger;
         private readonly ICultureInfoService cultureInfoService;
         private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
@@ -28,10 +30,13 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <summary>
         /// Setup the proxy with the factory create handler and the cultureInfoService.
         /// </summary>
+        /// <param name="logger">The logger to use in this class.</param>
         /// <param name="cultureInfoService">Culture info service to get current culture.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
-        public StringLocalizerProxy(ICultureInfoService cultureInfoService, IJsonStringLocalizerFactoryInternal localizerFactory)
+        public StringLocalizerProxy(ILogger<StringLocalizerProxy> logger, ICultureInfoService cultureInfoService, IJsonStringLocalizerFactoryInternal localizerFactory)
         {
+            this.logger = logger;
+
             this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
 
             this.cultureInfoService = cultureInfoService;
@@ -62,6 +67,10 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             {
                 if (this.cultureInfo != this.cultureInfoService.CurrentUICulture)
                 {
+                    this.logger.LogDebug("Current UI culture changed: from {0} to {1}.",
+                        this.cultureInfo,
+                        this.cultureInfoService.CurrentUICulture
+                        );
                     // Looks like the current culture has changed so we need to switch the stringLocalizer.
                     this.cultureInfo = this.cultureInfoService.CurrentUICulture;
                     this.stringLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo);
