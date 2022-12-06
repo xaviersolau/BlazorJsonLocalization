@@ -32,12 +32,14 @@ namespace SoloX.BlazorJsonLocalization.ITests
             this.testOutputHelper = testOutputHelper;
         }
 
+#pragma warning disable CA1506
         [Theory]
         [InlineData("fr-FR", "Test", null, "C'est un test...")]
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
         public async Task ItShouldSetupWebAssemblyHttpHostedLocalizerAsync(string cultureName, string key, string arg, string expected)
+#pragma warning restore CA1506
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
             var cultureInfoServiceMock = new Mock<ICultureInfoService>();

@@ -15,6 +15,7 @@
     <CodeQualityHeaderLicenseFile>LICENSE</CodeQualityHeaderLicenseFile>
 
     <CodeQualityUpdateGitIgnore>true</CodeQualityUpdateGitIgnore>
+    <CodeQualityLoggerUseDisabled>true</CodeQualityLoggerUseDisabled>
 
     <Nullable>enable</Nullable>
 
