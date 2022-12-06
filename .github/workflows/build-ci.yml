@@ -2,7 +2,7 @@ name: Build - CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ v1_0_4 ]
 
 jobs:
   build-ci:
