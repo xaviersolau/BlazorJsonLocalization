@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                         ? $"{basePath}.json"
                         : $"{basePath}-{cultureName}.json";
 
-                    this.logger.LogDebug($"Loading embedded data {path}");
+                    this.logger.LoadingEmbeddedData(path);
 
                     return TryLoadMapAsync(fileProvider, path, jsonSerializerOptions).AsTask();
                 })
@@ -93,11 +93,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             if (!fileInfo.Exists)
             {
-                this.logger.LogWarning($"Embedded File {path} does not exist");
+                this.logger.EmbeddedFileNotFound(path);
                 return null;
             }
 
-            this.logger.LogDebug($"Loading file {path} does not exist");
+            this.logger.LoadingFile(path);
 
             using var stream = fileInfo.CreateReadStream();
 

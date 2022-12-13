@@ -67,10 +67,10 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             {
                 if (this.cultureInfo != this.cultureInfoService.CurrentUICulture)
                 {
-                    this.logger.LogDebug("Current UI culture changed: from {0} to {1}.",
+                    this.logger.SwitchCurrentCulture(
                         this.cultureInfo,
-                        this.cultureInfoService.CurrentUICulture
-                        );
+                        this.cultureInfoService.CurrentUICulture);
+
                     // Looks like the current culture has changed so we need to switch the stringLocalizer.
                     this.cultureInfo = this.cultureInfoService.CurrentUICulture;
                     this.stringLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo);

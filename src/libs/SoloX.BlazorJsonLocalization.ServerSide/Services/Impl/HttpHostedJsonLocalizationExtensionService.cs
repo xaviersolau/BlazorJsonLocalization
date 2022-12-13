@@ -51,17 +51,17 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
                 throw new ArgumentNullException(nameof(uri));
             }
 
-            this.logger.LogDebug($"Loading localization data from {uri} using Web Host WebRootFileProvider");
+            this.logger.LoadingLocalizationDataFromHost(uri);
 
             var fileInfo = this.webHostEnvironment.WebRootFileProvider.GetFileInfo(uri.OriginalString);
 
             if (!fileInfo.Exists)
             {
-                this.logger.LogWarning($"Web Host File {uri} does not exist");
+                this.logger.FileDoesNotExist(uri);
                 return null;
             }
 
-            this.logger.LogDebug($"Loading file {uri} does not exist");
+            this.logger.LoadingFile(uri);
 
             using var stream = fileInfo.CreateReadStream();
 

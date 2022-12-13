@@ -81,6 +81,7 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
                 builderHandler);
         }
 
+#pragma warning disable CA1506
         internal static async Task ProcessHttpLocalizerTestAsync<T>(
             string cultureName,
             IDictionary<string, string> httpResources,
@@ -134,10 +135,14 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
 
             services.AddSingleton(cultureInfoServiceMock.Object);
 
-            await using var provider = services.BuildServiceProvider();
-            var localizer = provider.GetRequiredService<IStringLocalizer<T>>();
+            var provider = services.BuildServiceProvider();
+            await using (provider.ConfigureAwait(false))
+            {
+                var localizer = provider.GetRequiredService<IStringLocalizer<T>>();
 
-            await testHandler(localizer, s => taskCompletionSourceMap[s].SetResult()).ConfigureAwait(false);
+                await testHandler(localizer, s => taskCompletionSourceMap[s].SetResult()).ConfigureAwait(false);
+            }
         }
+#pragma warning restore CA1506
     }
 }

@@ -9,7 +9,7 @@
 namespace SoloX.BlazorJsonLocalization.ITests
 {
 #pragma warning disable CA1812 // Internal class that is apparently never instantiated.
-    internal class Specific : Global
+    internal sealed class Specific : Global
     {
     }
 #pragma warning restore CA1812 // Internal class that is apparently never instantiated.

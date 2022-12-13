@@ -8,6 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.ServerSide;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
@@ -46,7 +47,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
         {
             try
             {
-                this.logger.LogDebug($"Loading localization data from {uri} using HTTP client");
+                this.logger.LoadingLocalizationDataFromHttpClient(uri);
 
                 using var stream = await this.httpClient.GetStreamAsync(uri).ConfigureAwait(false);
 
@@ -58,7 +59,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
             }
             catch (HttpRequestException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
-                this.logger.LogWarning(e, $"Http not found data from {uri}");
+                this.logger.HttpFileNotFound(uri, e);
 
                 return null;
             }
