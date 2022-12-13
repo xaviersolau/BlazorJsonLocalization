@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp.Extensions" Version="1.0.0-alpha.21" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
+  </ItemGroup>
+
+</Project>

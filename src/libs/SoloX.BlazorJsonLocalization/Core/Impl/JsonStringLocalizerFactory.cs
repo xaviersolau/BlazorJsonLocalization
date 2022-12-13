@@ -114,7 +114,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 throw new ArgumentNullException(nameof(resourceSource));
             }
 
-            this.logger.LogDebug($"Create String localizer for {resourceSource.GetBaseName()}");
+            this.logger.CreateStringLocalizer(resourceSource.GetBaseName());
 
             var assembly = resourceSource.Assembly;
             var baseName = resourceSource.GetBaseName();
@@ -137,7 +137,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer Create(string baseName, string location)
         {
-            this.logger.LogDebug($"Create String localizer for {baseName} in {location}");
+            this.logger.CreateStringLocalizerInLocation(baseName, location);
 
             var assembly = Assembly.Load(location);
 
@@ -150,12 +150,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var localizer = this.cacheService.Match(assembly, baseName, null);
             if (localizer != null)
             {
-                this.logger.LogDebug($"Got String localizer proxy for {baseName} in {assembly} from cache");
+                this.logger.GotStringLocalizerProxyFromCache(baseName, assembly);
 
                 return localizer.AsStringLocalizer;
             }
 
-            this.logger.LogDebug($"Create String localizer proxy for {baseName} in {assembly} and register in cache");
+            this.logger.CreateStringLocalizerProxy(baseName, assembly);
 
             localizer = new StringLocalizerProxy(
                 this.loggerForStringLocalizerProxy,
@@ -173,7 +173,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var localizer = this.cacheService.Match(assembly, baseName, cultureInfo);
             if (localizer != null)
             {
-                this.logger.LogDebug($"Got String localizer for {baseName} in {assembly} with culture {cultureInfo} from cache");
+                this.logger.GotStringLocalizerFromCache(baseName, assembly, cultureInfo);
 
                 return localizer;
             }
@@ -182,7 +182,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             if (task.Status == TaskStatus.RanToCompletion)
             {
-                this.logger.LogInformation($"Loading task completed synchronously for {baseName} in {assembly} with culture {cultureInfo}");
+                this.logger.LoadingTaskCompletedSynchronously(baseName, assembly, cultureInfo);
 
                 var map = task.Result;
                 if (map != null)
@@ -197,7 +197,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
             else
             {
-                this.logger.LogInformation($"Loading data asynchronously for {baseName} in {assembly} with culture {cultureInfo}");
+                this.logger.LoadingDataAsynchronously(baseName, assembly, cultureInfo);
 
                 IStringLocalizerInternal loadingLocalizer = this.options.IsDisplayKeysWhileLoadingAsynchronouslyEnabled
                     ? new NullStringLocalizer(cultureInfo, factoryInternal, false)
@@ -228,25 +228,25 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                         var map = await extensionService.TryLoadAsync(options, assembly, baseName, cultureInfo).ConfigureAwait(false);
                         if (map != null)
                         {
-                            this.logger.LogInformation($"Loaded localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
+                            this.logger.LoadedLocalizationData(baseName, assembly, cultureInfo);
                             return map;
                         }
                     }
                 }
                 catch (FileLoadException e)
                 {
-                    this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
+                    this.logger.ErrorWhileLoadingLocalizationData(extensionOptionsContainer.ExtensionOptionsType.Name, e);
                 }
 #pragma warning disable CA1031 // Ne pas intercepter les types d'exception générale
                 catch (Exception e)
 #pragma warning restore CA1031 // Ne pas intercepter les types d'exception générale
                 {
-                    this.logger.LogError(e, $"Error while loading localization data from extension {extensionOptionsContainer.ExtensionOptionsType.Name}");
+                    this.logger.ErrorWhileLoadingLocalizationData(extensionOptionsContainer.ExtensionOptionsType.Name, e);
                     hadErrors = true;
                 }
             }
 
-            this.logger.LogError($"Unable to load localization data for {baseName} in assembly {assembly.GetName().Name} with culture {cultureInfo}");
+            this.logger.UnableToLoadLocalizationData(baseName, assembly, cultureInfo);
 
             if (hadErrors)
             {

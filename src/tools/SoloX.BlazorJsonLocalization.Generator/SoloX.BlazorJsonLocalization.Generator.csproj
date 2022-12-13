@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" Visible="false" />
+    <PackageReference Include="SoloX.GeneratorTools.Core" Version="1.0.0-alpha.21" GeneratePathProperty="true" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.21" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\**\SoloX.BlazorJsonLocalization.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(PkgSoloX_GeneratorTools_Core)\lib\netstandard2.0\*.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(PkgSoloX_GeneratorTools_Core_CSharp)\lib\netstandard2.0\*.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
+    <None Include="$(PkgMicrosoft_Extensions_Localization_Abstractions)\lib\netstandard2.0\*.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
+  </ItemGroup>
+	
+</Project>

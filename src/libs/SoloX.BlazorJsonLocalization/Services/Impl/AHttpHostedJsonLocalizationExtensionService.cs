@@ -72,7 +72,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                     var handler = options.NamingPolicy ?? ResourcePathHelper.DefaultHttpHostedJsonNamingPolicy;
                     var uri = handler.Invoke(basePath, cultureName);
 
-                    this.logger.LogDebug($"Loading static assets data from {uri}");
+                    this.logger.LoadingStaticAssets(uri);
 
                     return this.httpCacheService.ProcessLoadingTask(uri, () => TryLoadFromUriAsync(uri, options.JsonSerializerOptions));
                 })

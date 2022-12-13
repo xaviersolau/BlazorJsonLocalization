@@ -1,0 +1,81 @@
+---------------------
+SimpleLocalizer
+---------------------
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Resources.Sample1;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Resources.Sample1
+{
+    public class SimpleLocalizer : ISimpleLocalizer
+    {
+        private IStringLocalizer<Sample> stringLocalizer;
+
+        public SimpleLocalizer(IStringLocalizer<Sample> stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
+
+        public LocalizedString this[string name]
+            => this.stringLocalizer[name];
+
+        public LocalizedString this[string name, params object[] arguments]
+            => this.stringLocalizer[name, arguments];
+
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+
+        public string BasicProperty
+        {
+            get => this.stringLocalizer.BasicProperty();
+        }
+    }
+}
+
+---------------------
+SimpleLocalizerExtensions
+---------------------
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Resources.Sample1;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Resources.Sample1
+{
+    public static class SimpleLocalizerExtensions
+    {
+        public static ISimpleLocalizer ToSampleStringLocalizer(this IStringLocalizer<Sample> stringLocalizer)
+            => new SimpleLocalizer(stringLocalizer);
+
+        public static string BasicProperty(this IStringLocalizer<Sample> stringLocalizer)
+        {
+            return stringLocalizer[nameof(BasicProperty)];
+        }
+    }
+}
+
+---------------------
+Sample
+---------------------
+{
+  "BasicProperty": "BasicProperty"
+}
+---------------------
+Sample-fr
+---------------------
+{
+  "BasicProperty": "BasicProperty"
+}
+---------------------
+Sample-en
+---------------------
+{
+  "BasicProperty": "BasicProperty"
+}
