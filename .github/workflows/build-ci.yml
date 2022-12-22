@@ -88,5 +88,5 @@ jobs:
       with:
         name: 'NugetPackages'
         path: |
-          'src/libs/**/*.nupkg'
-          'src/tools/**/*.nupkg'
+          src/libs/**/*.nupkg
+          src/tools/**/*.nupkg

@@ -61,7 +61,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Generator", "src\tools\SoloX.BlazorJsonLocalization.Generator\SoloX.BlazorJsonLocalization.Generator.csproj", "{EA4554F7-6A32-4FDC-AD13-F1C585DF150B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Tools.Core.ITests", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Core.ITests\SoloX.BlazorJsonLocalization.Tools.Core.ITests.csproj", "{692129FB-C59D-4903-98D4-53E6F09B8F38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Tools.Core.ITests", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Core.ITests\SoloX.BlazorJsonLocalization.Tools.Core.ITests.csproj", "{692129FB-C59D-4903-98D4-53E6F09B8F38}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Generator.Sample", "src\tools.examples\SoloX.BlazorJsonLocalization.Generator.Sample\SoloX.BlazorJsonLocalization.Generator.Sample.csproj", "{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools.Examples", "Tools.Examples", "{DB31B12E-0E5B-406D-BA0E-5833707752DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Generator.ITests", "src\tools.tests\SoloX.BlazorJsonLocalization.Generator.ITests\SoloX.BlazorJsonLocalization.Generator.ITests.csproj", "{C970D28F-5FB3-4273-9A38-A1243364DA4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -141,6 +147,14 @@ Global
 		{692129FB-C59D-4903-98D4-53E6F09B8F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{692129FB-C59D-4903-98D4-53E6F09B8F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{692129FB-C59D-4903-98D4-53E6F09B8F38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C970D28F-5FB3-4273-9A38-A1243364DA4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C970D28F-5FB3-4273-9A38-A1243364DA4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C970D28F-5FB3-4273-9A38-A1243364DA4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C970D28F-5FB3-4273-9A38-A1243364DA4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +178,8 @@ Global
 		{795FF9B9-2CB5-409E-B372-1D8F9082A289} = {3AB1D2DC-2E54-443E-A79F-41ABDAA4204F}
 		{EA4554F7-6A32-4FDC-AD13-F1C585DF150B} = {3AB1D2DC-2E54-443E-A79F-41ABDAA4204F}
 		{692129FB-C59D-4903-98D4-53E6F09B8F38} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
+		{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB} = {DB31B12E-0E5B-406D-BA0E-5833707752DC}
+		{C970D28F-5FB3-4273-9A38-A1243364DA4C} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}
