@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         }
 
         [Theory]
-        [InlineData(@"Resources/Sample1/ISimpleLocalizer.cs", @"Resources/Sample1/Sample.cs")]
+        [InlineData(@"Samples/Sample1/ISimpleLocalizer.cs", @"Samples/Sample1/Component.cs")]
         public void GenerateBasicLocalizer(string interfaceFile, string componentFile)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizer)

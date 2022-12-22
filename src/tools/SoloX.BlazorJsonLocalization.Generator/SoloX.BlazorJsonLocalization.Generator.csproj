@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.1" Visible="false" />
-    <PackageReference Include="SoloX.GeneratorTools.Core" Version="1.0.0-alpha.21" GeneratePathProperty="true" />
-    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.21" GeneratePathProperty="true" />
+    <PackageReference Include="SoloX.GeneratorTools.Core" Version="1.0.0-alpha.22" GeneratePathProperty="true" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.22" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" GeneratePathProperty="true" />
   </ItemGroup>
 

@@ -7,8 +7,10 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
 using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -22,13 +24,17 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         private ILocator locator;
         private IDeclarationResolver resolver;
         private ISelector selector;
+        private readonly IGeneratorLogger logger;
+        private readonly string resourcesFolderName;
 
-        public JsonFileGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector)
+        public JsonFileGenerator(IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName)
         {
             this.writer = writer;
             this.locator = locator;
             this.resolver = resolver;
             this.selector = selector;
+            this.logger = logger;
+            this.resourcesFolderName = resourcesFolderName;
         }
 
         public IEnumerable<IGeneratedItem> Generate(IEnumerable<ICSharpFile> files)
@@ -37,8 +43,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var declarations = this.selector.GetDeclarations(files);
 
+            this.logger.LogDebug($"Selected declarations: {string.Join(", ", declarations.Select(d => d.Name))}");
+
             foreach (var declaration in declarations)
             {
+                this.logger.LogDebug($"Processing json for {declaration.Name}");
+
                 var (location, nameSpace) = this.locator.ComputeTargetLocation(declaration.DeclarationNameSpace);
 
                 var genericDeclaration = declaration as IGenericDeclaration<SyntaxNode>;
@@ -49,6 +59,15 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                 var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
                 var folder = constEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.First().Expression);
+
+                if (string.IsNullOrEmpty(folder))
+                {
+                    location = location.Replace(this.resourcesFolderName + Path.PathSeparator, string.Empty);
+                }
+                else
+                {
+                    location = location.Replace(this.resourcesFolderName, folder);
+                }
 
                 var constArrayEvaluator = new ConstantExpressionSyntaxEvaluator<string[]>();
                 var languages = constArrayEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.Skip(1).First().Expression);

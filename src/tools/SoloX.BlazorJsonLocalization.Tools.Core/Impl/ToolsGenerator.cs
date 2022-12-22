@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 {
@@ -22,6 +23,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
     {
         private readonly IGeneratorLogger<ToolsGenerator> logger;
         private readonly ICSharpWorkspaceFactory workspaceFactory;
+
+        private const string ResourcesFolderName = "JsonResourcesFolder";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolsGenerator"/> class.
@@ -47,7 +50,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var locator = new RelativeLocator(Path.Combine(projectFolder), project.RootNameSpace);
             var fileWriter = new FileWriter(".g.cs");
 
-            var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, "Resources"), project.RootNameSpace);
+            var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), project.RootNameSpace);
             var jsonWriter = new FileWriter(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -62,24 +65,21 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         public void Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
         {
-            var projectFolder = FindProjectFolder(compilation.SyntaxTrees.Select(x => x.FilePath));
+            var (ns, projectFolder) = ProbRootNamespaceAndProjectFolder(compilation);
 
             var workspace = this.workspaceFactory.CreateWorkspace(compilation);
-
-            // var ns = compilation.Assembly.NamespaceNames.First(); TODO
-            var ns = "SoloX.BlazorJsonLocalization.Generator.Sample";
 
             var locator = new RelativeLocator(Path.Combine(projectFolder), ns);
             var fileWriter = new MemoryWriter(".g.cs", (l, s) =>
             {
                 var name = l.StartsWith(projectFolder) ? l.Substring(projectFolder.Length) : l;
 
-                name = name.Replace('/', '.').Replace('\\', '.');
+                name = name.Replace('/', '.').Replace('\\', '.').TrimStart('.');
 
                 context.AddSource(name, s.ReadToEnd());
             });
 
-            var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, "Resources"), ns);
+            var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), ns);
             var jsonWriter = new FileWriter(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -92,29 +92,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)));
         }
 
-        private string FindProjectFolder(IEnumerable<string> paths)
+        private static TAttribute FindAttribute<TAttribute>(Type type)
+            where TAttribute : Attribute
         {
-            var root = paths.First();
-
-            var len = root.Length;
-
-            foreach (var path in paths.Skip(1))
-            {
-                len = Math.Min(len, path.Length);
-                while (!root.Substring(0, len).Equals(path.Substring(0, len)))
-                {
-                    len--;
-
-                    if (len == 0)
-                    {
-                        throw new InvalidOperationException("Unable to find common part");
-                    }
-                }
-
-                root = root.Substring(0, len);
-            }
-
-            return root;
+            var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
+            return (TAttribute)attributes.FirstOrDefault();
         }
 
         internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
@@ -125,11 +107,25 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var resolver = workspace.DeepLoad();
 
+            /// debug
+            var patternAttribute = FindAttribute<PatternAttribute>(typeof(MyObjectStringLocalizerPattern));
+
+            var selector = patternAttribute.Selector;
+
+            var declarations = selector.GetDeclarations(files);
+
+            var repeatAttribute = FindAttribute<RepeatAttribute>(typeof(MyObjectStringLocalizerPattern));
+
+            var pattern = resolver.Find(typeof(MyObjectStringLocalizerPattern).FullName);
+
+            var patternPattern = resolver.Resolve(repeatAttribute.RepeatPattern, pattern.Single());
+
             var generator1 = new AutomatedGenerator(
                 fileWriter,
                 locator,
                 resolver,
-                typeof(MyObjectStringLocalizerPattern));
+                typeof(MyObjectStringLocalizerPattern),
+                this.logger);
 
             generator1.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers");
 
@@ -139,7 +135,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 fileWriter,
                 locator,
                 resolver,
-                typeof(MyObjectStringLocalizerPatternExtensions));
+                typeof(MyObjectStringLocalizerPatternExtensions),
+                this.logger);
 
             generator2.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers");
 
@@ -149,7 +146,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonWriter,
                 jsonLocator,
                 resolver,
-                new AttributeSelector<LocalizerAttribute>());
+                new AttributeSelector<LocalizerAttribute>(),
+                this.logger,
+                ResourcesFolderName);
 
             var jsonItems = jsonGenerator.Generate(files);
         }
@@ -178,6 +177,102 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             stream.CopyTo(tempStream);
 
             return tempFile;
+        }
+
+        private (string Namespace, string ProjectFolder) ProbRootNamespaceAndProjectFolder(Compilation compilation)
+        {
+            var commonFolder = FindCommonRootFolder(compilation.SyntaxTrees.Select(x => x.FilePath));
+
+            var pathWords = commonFolder.TrimEnd('\\', '/').Split('\\', '/');
+
+            var nsList = new HashSet<string>();
+            var nsBuilder = new StringBuilder();
+
+            foreach (var item in compilation.Assembly.NamespaceNames.Concat(new string[] { string.Empty }))
+            {
+                if (string.IsNullOrEmpty(item))
+                {
+                    if (nsBuilder.Length > 0)
+                    {
+                        nsList.Add(nsBuilder.ToString());
+                        nsBuilder.Clear();
+                    }
+                }
+                else
+                {
+                    if (nsBuilder.Length > 0)
+                    {
+                        nsBuilder.Append('.');
+                    }
+                    nsBuilder.Append(item);
+                }
+            }
+
+            var firstNs = nsList.First();
+
+            var i = 0;
+            var intersect = pathWords.Reverse().First();
+
+            var rootNs = compilation.Assembly.Name;
+
+            var idx = firstNs.IndexOf(intersect);
+            if (idx > 0)
+            {
+                i++;
+                rootNs = firstNs.Substring(0, idx - 1);
+
+                foreach (var word in pathWords.Reverse().Skip(1))
+                {
+                    intersect = word + '.' + intersect;
+
+                    idx = firstNs.IndexOf(intersect);
+
+                    if (idx > 0)
+                    {
+                        rootNs = firstNs.Substring(0, idx - 1);
+
+                        i++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            var projectFolder = string.Join("/", pathWords.Reverse().Skip(i).Reverse());
+
+            if (string.IsNullOrEmpty(projectFolder))
+            {
+                projectFolder = ".";
+            }
+
+            return (rootNs, projectFolder);
+        }
+
+        private string FindCommonRootFolder(IEnumerable<string> paths)
+        {
+            var root = paths.First();
+
+            var len = root.Length;
+
+            foreach (var path in paths.Skip(1))
+            {
+                len = Math.Min(len, path.Length);
+                while (!root.Substring(0, len).Equals(path.Substring(0, len)))
+                {
+                    len--;
+
+                    if (len == 0)
+                    {
+                        throw new InvalidOperationException("Unable to find common part");
+                    }
+                }
+
+                root = root.Substring(0, len);
+            }
+
+            return root;
         }
     }
 }

@@ -9,10 +9,10 @@
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Resources.Sample1
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 {
     [Localizer("Resources", new[] { "fr", "en" })]
-    public interface ISimpleLocalizer : IStringLocalizer<Sample>
+    public interface ISimpleLocalizer : IStringLocalizer<Component>
     {
         string BasicProperty { get; }
     }

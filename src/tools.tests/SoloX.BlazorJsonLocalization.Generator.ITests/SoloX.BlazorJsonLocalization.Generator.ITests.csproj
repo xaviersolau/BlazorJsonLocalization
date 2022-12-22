@@ -11,7 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="FluentAssertions" Version="6.8.0" />
     <PackageReference Include="Moq" Version="4.18.2" />
@@ -34,17 +36,9 @@
  </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Generator\SoloX.BlazorJsonLocalization.Generator.csproj" />
     <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
-    <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Extensions\SoloX.BlazorJsonLocalization.Tools.Extensions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Samples\Sample1\ISimpleLocalizer.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Samples\Sample1\Component.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core.ITests\SoloX.BlazorJsonLocalization.Tools.Core.ITests.csproj" />
   </ItemGroup>
 
 </Project>

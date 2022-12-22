@@ -1,5 +1,5 @@
 ---------------------
-SimpleLocalizer
+SoloX.BlazorJsonLocalization.Generator\SoloX.GeneratorTools.Test.GeneratorHandler\Samples.Sample1.SimpleLocalizer.g.cs
 ---------------------
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1;
@@ -37,7 +37,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 }
 
 ---------------------
-SimpleLocalizerExtensions
+SoloX.BlazorJsonLocalization.Generator\SoloX.GeneratorTools.Test.GeneratorHandler\Samples.Sample1.SimpleLocalizerExtensions.g.cs
 ---------------------
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1;
@@ -62,19 +62,19 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 }
 
 ---------------------
-Component
+Resources/Samples/Sample1/Component.json
 ---------------------
 {
   "BasicProperty": "BasicProperty"
 }
 ---------------------
-Component-fr
+Resources/Samples/Sample1/Component-en.json
 ---------------------
 {
   "BasicProperty": "BasicProperty"
 }
 ---------------------
-Component-en
+Resources/Samples/Sample1/Component-fr.json
 ---------------------
 {
   "BasicProperty": "BasicProperty"
