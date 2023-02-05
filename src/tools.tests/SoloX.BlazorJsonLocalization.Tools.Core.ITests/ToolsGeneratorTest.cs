@@ -37,9 +37,19 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             this.GenerateSnapshot(snapshotName, interfaceFile, componentFile);
         }
 
+        [Theory]
+        [InlineData(@"Samples/Sample2/ISimpleLocalizer.cs", @"Samples/Sample2/ISimpleSubLocalizer.cs", @"Samples/Sample2/Component.cs")]
+        public void GenerateSubLocalizer(string interfaceFile, string subInterfaceFile, string componentFile)
+        {
+            var snapshotName = nameof(this.GenerateSubLocalizer)
+                + Path.GetFileNameWithoutExtension(interfaceFile);
+
+            this.GenerateSnapshot(snapshotName, interfaceFile, subInterfaceFile, componentFile);
+        }
+
         private void GenerateSnapshot(string snapshotName, params string[] files)
         {
-            //SnapshotHelper.IsOverwriteEnable = true;
+            SnapshotHelper.IsOverwriteEnable = true;
 
             var sc = new ServiceCollection();
             sc.AddTestLogging(this.testOutputHelper);

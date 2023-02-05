@@ -31,9 +31,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 
         public string BasicProperty
         {
-            get => this.stringLocalizer.BasicProperty();
+            get => this.stringLocalizer[nameof(BasicProperty)];
         }
     }
+
+
 }
 
 ---------------------
@@ -51,7 +53,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 {
     public static class SimpleLocalizerExtensions
     {
-        public static ISimpleLocalizer ToComponentStringLocalizer(this IStringLocalizer<Component> stringLocalizer)
+        public static ISimpleLocalizer ToSimpleLocalizer(this IStringLocalizer<Component> stringLocalizer)
             => new SimpleLocalizer(stringLocalizer);
 
         public static string BasicProperty(this IStringLocalizer<Component> stringLocalizer)

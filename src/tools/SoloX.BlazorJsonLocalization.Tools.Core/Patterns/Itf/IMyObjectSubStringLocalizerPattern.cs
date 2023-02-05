@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf
 {
-    public interface IMyObjectStringLocalizerPattern : IStringLocalizer<MyObject>
+    public interface IMyObjectSubStringLocalizerPattern : IStringLocalizer
     {
         [Pattern(typeof(SubLocalizerPropertySelector))]
-        IMyObjectSubStringLocalizerPattern MyObjectSubStringLocalizerProperty { get; }
+        IMyObjectSub2StringLocalizerPattern MyObjectSub2StringLocalizerProperty { get; }
 
         [Pattern(typeof(StringPropertySelector))]
-        string SomeProperty { get; }
+        string SomeSubProperty { get; }
 
-        string SomeStringArgs(object someParameter);
+        string SomeSubStringArgs(object someParameter);
     }
 }

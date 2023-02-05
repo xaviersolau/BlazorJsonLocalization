@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.22" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.27" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.1" />
   </ItemGroup>
@@ -20,7 +20,7 @@
     <EmbeddedResource Include="Patterns\Impl\*.cs" />
     <EmbeddedResource Include="Patterns\Itf\*.cs" />
   </ItemGroup>
-	
+
   <ItemGroup>
     <Compile Update="Patterns\Impl\MyObjectStringLocalizerPatternExtensions.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -28,7 +28,19 @@
     <Compile Update="Patterns\Impl\MyObjectStringLocalizerPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Patterns\Impl\MyObjectSubStringLocalizerPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Impl\MyObjectSub2StringLocalizerPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Patterns\Itf\IMyObjectStringLocalizerPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Itf\IMyObjectSubStringLocalizerPattern.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Patterns\Itf\IMyObjectSub2StringLocalizerPattern.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

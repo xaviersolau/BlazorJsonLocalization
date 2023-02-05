@@ -41,7 +41,7 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
 
         private static void GenerateSnapshot(string snapshotName, string expectedResourcePath, string[] expectedJsonFiles, params string[] files)
         {
-            //SnapshotHelper.IsOverwriteEnable = true;
+            SnapshotHelper.IsOverwriteEnable = true;
 
             var generator = new GeneratorHandler();
 
@@ -68,14 +68,16 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
 
             foreach (var generatedTree in generatorResults.GeneratedTrees)
             {
-                snapshotGenerator.Generate(generatedTree.FilePath, generatedTree.FilePath, w => w.Write(generatedTree.GetText().ToString()));
+                var file = Path.GetFileName(generatedTree.FilePath);
+
+                snapshotGenerator.Generate(file, file, w => w.Write(generatedTree.GetText().ToString()));
             }
 
             foreach (var expectedJsonFile in expectedJsonFiles)
             {
                 var jsonFile = expectedResourcePath + '/' + expectedJsonFile;
                 File.Exists(jsonFile).Should().BeTrue();
-                snapshotGenerator.Generate(jsonFile, jsonFile, w => w.Write(File.ReadAllText(jsonFile)));
+                snapshotGenerator.Generate(expectedJsonFile, expectedJsonFile, w => w.Write(File.ReadAllText(jsonFile)));
             }
 
             var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);

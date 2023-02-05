@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Handlers;
+using SoloX.BlazorJsonLocalization.Tools.Core.Selectors;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
 {
     [Pattern(typeof(AttributeSelector<LocalizerAttribute>))]
-    [Repeat(RepeatPattern = nameof(IMyObjectStringLocalizerPattern), RepeatPatternPrefix = "I")]
+    [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern), Prefix = "I")]
     [ReplacePattern(typeof(TypeReplaceHandler))]
     public class MyObjectStringLocalizerPattern : IMyObjectStringLocalizerPattern
     {
@@ -33,14 +34,22 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
             => this.stringLocalizer.GetAllStrings(includeParentCultures);
 
-        [Repeat(RepeatPattern = nameof(IMyObjectStringLocalizerPattern.SomeProperty))]
-        public string SomeProperty
+        [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty), Prefix = "I")]
+        public IMyObjectSubStringLocalizerPattern MyObjectSubStringLocalizerProperty
         {
-            get => this.stringLocalizer.SomeProperty();
+            get => new MyObjectSubStringLocalizerPattern(this.stringLocalizer.GetSubLocalizer(nameof(MyObjectSubStringLocalizerProperty)));
         }
 
-        [Repeat(RepeatPattern = nameof(IMyObjectStringLocalizerPattern.SomeStringArgs))]
-        public string SomeStringArgs([Repeat(RepeatPattern = "someParameter")] object someParameter)
-            => this.stringLocalizer.SomeStringArgs(someParameter);
+        [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern.SomeProperty))]
+        public string SomeProperty
+        {
+            get => this.stringLocalizer[nameof(SomeProperty)];
+        }
+
+        [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern.SomeStringArgs))]
+        public string SomeStringArgs([Repeat(Pattern = "someParameter")] object someParameter)
+            => this.stringLocalizer[nameof(SomeStringArgs), someParameter];
     }
+
+
 }

@@ -65,10 +65,6 @@ namespace SoloX.BlazorJsonLocalization.Tools
                 return -1;
             }
 
-            var ws = new AdhocWorkspace();
-
-            ws.AddProject(projectFile, LanguageNames.CSharp);
-
             var generator = this.Service.GetService<IToolsGenerator>();
             generator.Generate(projectFile);
 

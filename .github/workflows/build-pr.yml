@@ -33,6 +33,7 @@ jobs:
           - src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests
           - src/tests/SoloX.BlazorJsonLocalization.ITests
           - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.ITests
+          - src/tools.tests/SoloX.BlazorJsonLocalization.Generator.ITests
 
     steps:
     - uses: actions/checkout@v2

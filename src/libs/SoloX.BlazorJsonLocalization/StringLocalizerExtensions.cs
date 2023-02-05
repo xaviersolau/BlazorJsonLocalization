@@ -71,28 +71,7 @@ namespace SoloX.BlazorJsonLocalization
                 return localizer;
             }
 
-            return new SubStringLocalizer<object>(localizer, string.Join(Key.Separator, structuredKey) + Key.Separator);
-        }
-
-        /// <summary>
-        /// Create a SubLocalizer instance.
-        /// </summary>
-        /// <param name="localizer">Localizer to get the sub localizer from.</param>
-        /// <returns>The sub-localizer.</returns>
-        /// <remarks>The sub localizer can be used to access structured Json object.</remarks>
-        public static IStringLocalizer<T> GetSubLocalizer<T>(this IStringLocalizer<T> localizer, params string[] structuredKey)
-        {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
-
-            if (structuredKey == null || structuredKey.Length == 0)
-            {
-                return localizer;
-            }
-
-            return new SubStringLocalizer<T>(localizer, string.Join(Key.Separator, structuredKey) + Key.Separator);
+            return new SubStringLocalizer(localizer, string.Join(Key.Separator, structuredKey) + Key.Separator);
         }
     }
 }

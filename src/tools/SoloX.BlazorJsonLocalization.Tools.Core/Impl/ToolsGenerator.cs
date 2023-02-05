@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
+using SoloX.BlazorJsonLocalization.Tools.Core.Selectors;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 {
@@ -105,29 +106,20 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectStringLocalizerPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectStringLocalizerPatternExtensions.cs"));
 
+            workspace.RegisterFile(GetContentFile("./Patterns/Itf/IMyObjectSubStringLocalizerPattern.cs"));
+            workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectSubStringLocalizerPattern.cs"));
+
             var resolver = workspace.DeepLoad();
-
-            /// debug
-            var patternAttribute = FindAttribute<PatternAttribute>(typeof(MyObjectStringLocalizerPattern));
-
-            var selector = patternAttribute.Selector;
-
-            var declarations = selector.GetDeclarations(files);
-
-            var repeatAttribute = FindAttribute<RepeatAttribute>(typeof(MyObjectStringLocalizerPattern));
-
-            var pattern = resolver.Find(typeof(MyObjectStringLocalizerPattern).FullName);
-
-            var patternPattern = resolver.Resolve(repeatAttribute.RepeatPattern, pattern.Single());
 
             var generator1 = new AutomatedGenerator(
                 fileWriter,
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPattern),
-                this.logger);
+                this.logger,
+                new SelectorResolver());
 
-            generator1.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers");
+            generator1.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
             var gen1Items = generator1.Generate(files);
 
@@ -136,11 +128,24 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPatternExtensions),
-                this.logger);
+                this.logger,
+                new SelectorResolver());
 
-            generator2.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers");
+            generator2.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
             var gen2Items = generator2.Generate(files);
+
+            var generator3 = new AutomatedGenerator(
+                fileWriter,
+                locator,
+                resolver,
+                typeof(MyObjectSubStringLocalizerPattern),
+                this.logger,
+                new SelectorResolver());
+
+            generator3.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
+
+            var gen3Items = generator3.Generate(files);
 
             var jsonGenerator = new JsonFileGenerator(
                 jsonWriter,
