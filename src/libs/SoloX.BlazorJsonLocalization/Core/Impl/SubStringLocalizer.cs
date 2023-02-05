@@ -19,7 +19,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// Sub string localizer implement a localizer proxy that add a key prefix when accessing a localized resource.
     /// </summary>
-    public class SubStringLocalizer<T> : IStringLocalizer<T>
+    public class SubStringLocalizer : IStringLocalizer
     {
         private readonly IStringLocalizer localizer;
         private readonly string structuredKeyPrefix;
@@ -51,7 +51,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return new SubStringLocalizer<T>(this.localizer.WithCulture(culture), this.structuredKeyPrefix);
+            return new SubStringLocalizer(this.localizer.WithCulture(culture), this.structuredKeyPrefix);
         }
 #endif
     }

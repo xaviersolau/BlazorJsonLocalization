@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Attributes
 {
-    public sealed class LocalizerAttribute : Attribute
+    public sealed class SubLocalizerAttribute : Attribute
     {
-        public LocalizerAttribute(string path, string[] lang)
+        public SubLocalizerAttribute()
         {
         }
     }

@@ -57,47 +57,60 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                 var attributeSyntax = localizerAttribute.SyntaxNodeProvider.SyntaxNode;
 
-                var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
-                var folder = constEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.First().Expression);
-
-                if (string.IsNullOrEmpty(folder))
+                if (attributeSyntax.ArgumentList != null)
                 {
-                    location = location.Replace(this.resourcesFolderName + Path.PathSeparator, string.Empty);
-                }
-                else
-                {
-                    location = location.Replace(this.resourcesFolderName, folder);
-                }
+                    var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
+                    var folder = constEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.First().Expression);
 
-                var constArrayEvaluator = new ConstantExpressionSyntaxEvaluator<string[]>();
-                var languages = constArrayEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.Skip(1).First().Expression);
+                    if (string.IsNullOrEmpty(folder))
+                    {
+                        location = location.Replace(this.resourcesFolderName + Path.PathSeparator, string.Empty);
+                    }
+                    else
+                    {
+                        location = location.Replace(this.resourcesFolderName, folder);
+                    }
 
-                var jsonName = ((IGenericDeclarationUse)genericDeclaration.Extends.First()).GenericParameters.First().Declaration.Name;
+                    var constArrayEvaluator = new ConstantExpressionSyntaxEvaluator<string[]>();
+                    var languages = constArrayEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.Skip(1).First().Expression);
 
-                var map = BuildLocalizationMap(genericDeclaration);
+                    var jsonName = ((IGenericDeclarationUse)genericDeclaration.Extends.First()).GenericParameters.First().Declaration.Name;
 
-                WriteLanguageJsonFile(location, map, jsonName);
+                    var map = BuildLocalizationMap(genericDeclaration);
 
-                foreach (var language in languages)
-                {
-                    var name = $"{jsonName}-{language}";
+                    WriteLanguageJsonFile(location, map, jsonName);
 
-                    WriteLanguageJsonFile(location, map, name);
+                    foreach (var language in languages)
+                    {
+                        var name = $"{jsonName}-{language}";
+
+                        WriteLanguageJsonFile(location, map, name);
+                    }
                 }
             }
 
             return generatedItems;
         }
 
-        private static IDictionary<string, string> BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration)
+        private static IDictionary<string, object> BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
-            var map = new Dictionary<string, string>();
+            var map = new Dictionary<string, object>();
 
             foreach (var member in genericDeclaration.Members)
             {
                 if (member is IPropertyDeclaration propertyDeclaration)
                 {
-                    map.Add(propertyDeclaration.Name, propertyDeclaration.Name);
+                    var propertyType = propertyDeclaration.PropertyType.Declaration;
+                    if (propertyType is IGenericDeclaration<SyntaxNode> genericSubDeclaration)
+                    {
+                        var subMap = BuildLocalizationMap(genericSubDeclaration);
+
+                        map.Add(propertyDeclaration.Name, subMap);
+                    }
+                    else
+                    {
+                        map.Add(propertyDeclaration.Name, propertyDeclaration.Name);
+                    }
                 }
                 else if (member is IMethodDeclaration methodDeclaration)
                 {
@@ -108,7 +121,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return map;
         }
 
-        private void WriteLanguageJsonFile(string location, IDictionary<string, string> map, string jsonName)
+        private void WriteLanguageJsonFile(string location, IDictionary<string, object> map, string jsonName)
         {
             this.writer.Generate(location, jsonName, textWriter =>
             {

@@ -10,6 +10,7 @@
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <SkipAutoProps>true</SkipAutoProps>
           <DeterministicReport>false</DeterministicReport>
+          <Exclude>[SoloX.BlazorJsonLocalization.Tools.Core.ITests.*]*,[Microsoft.NET.Test.Sdk.*]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>

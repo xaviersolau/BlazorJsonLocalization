@@ -1,0 +1,158 @@
+---------------------
+SimpleLocalizer
+---------------------
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+{
+    public class SimpleLocalizer : ISimpleLocalizer
+    {
+        private IStringLocalizer<Component> stringLocalizer;
+
+        public SimpleLocalizer(IStringLocalizer<Component> stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
+
+        public LocalizedString this[string name]
+            => this.stringLocalizer[name];
+
+        public LocalizedString this[string name, params object[] arguments]
+            => this.stringLocalizer[name, arguments];
+
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+
+        public ISimpleSubLocalizer SubLocalizer1
+        {
+            get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer1)));
+        }
+
+        public ISimpleSubLocalizer SubLocalizer2
+        {
+            get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer2)));
+        }
+
+        public string BasicProperty
+        {
+            get => this.stringLocalizer[nameof(BasicProperty)];
+        }
+    }
+
+
+}
+
+---------------------
+SimpleLocalizerExtensions
+---------------------
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+{
+    public static class SimpleLocalizerExtensions
+    {
+        public static ISimpleLocalizer ToSimpleLocalizer(this IStringLocalizer<Component> stringLocalizer)
+            => new SimpleLocalizer(stringLocalizer);
+
+        public static string BasicProperty(this IStringLocalizer<Component> stringLocalizer)
+        {
+            return stringLocalizer[nameof(BasicProperty)];
+        }
+    }
+}
+
+---------------------
+SimpleSubLocalizer
+---------------------
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+{
+    public class SimpleSubLocalizer : ISimpleSubLocalizer
+    {
+        private IStringLocalizer stringLocalizer;
+
+        public SimpleSubLocalizer(IStringLocalizer stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
+
+        public LocalizedString this[string name]
+            => this.stringLocalizer[name];
+
+        public LocalizedString this[string name, params object[] arguments]
+            => this.stringLocalizer[name, arguments];
+
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+
+        public string BasicSubProperty1
+        {
+            get => this.stringLocalizer[nameof(BasicSubProperty1)];
+        }
+
+        public string BasicSubProperty2
+        {
+            get => this.stringLocalizer[nameof(BasicSubProperty2)];
+        }
+    }
+}
+
+---------------------
+Component
+---------------------
+{
+  "SubLocalizer1": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "SubLocalizer2": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "BasicProperty": "BasicProperty"
+}
+---------------------
+Component-fr
+---------------------
+{
+  "SubLocalizer1": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "SubLocalizer2": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "BasicProperty": "BasicProperty"
+}
+---------------------
+Component-en
+---------------------
+{
+  "SubLocalizer1": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "SubLocalizer2": {
+    "BasicSubProperty1": "BasicSubProperty1",
+    "BasicSubProperty2": "BasicSubProperty2"
+  },
+  "BasicProperty": "BasicProperty"
+}
