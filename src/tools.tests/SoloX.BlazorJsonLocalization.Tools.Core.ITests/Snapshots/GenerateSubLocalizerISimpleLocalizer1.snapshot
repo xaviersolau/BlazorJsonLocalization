@@ -2,14 +2,14 @@
 SimpleLocalizer
 ---------------------
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
     public class SimpleLocalizer : ISimpleLocalizer
     {
@@ -52,14 +52,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
 SimpleLocalizerExtensions
 ---------------------
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
     public static class SimpleLocalizerExtensions
     {
@@ -77,12 +77,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
 SimpleSubLocalizer
 ---------------------
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
     public class SimpleSubLocalizer : ISimpleSubLocalizer
     {
@@ -114,45 +114,3 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
     }
 }
 
----------------------
-Component
----------------------
-{
-  "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "SubLocalizer2": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "BasicProperty": "BasicProperty"
-}
----------------------
-Component-fr
----------------------
-{
-  "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "SubLocalizer2": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "BasicProperty": "BasicProperty"
-}
----------------------
-Component-en
----------------------
-{
-  "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "SubLocalizer2": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
-  },
-  "BasicProperty": "BasicProperty"
-}

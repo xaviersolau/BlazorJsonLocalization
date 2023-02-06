@@ -53,6 +53,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), project.RootNameSpace);
             var jsonWriter = new FileWriter(".json");
+            var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
             this.Generate(
@@ -60,6 +61,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 fileWriter,
                 jsonLocator,
+                jsonReader,
                 jsonWriter,
                 project.Files);
         }
@@ -82,6 +84,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), ns);
             var jsonWriter = new FileWriter(".json");
+            var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
             this.Generate(
@@ -89,6 +92,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 fileWriter,
                 jsonLocator,
+                jsonReader,
                 jsonWriter,
                 workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)));
         }
@@ -100,7 +104,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return (TAttribute)attributes.FirstOrDefault();
         }
 
-        internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
+        internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IReader jsonReader, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
         {
             workspace.RegisterFile(GetContentFile("./Patterns/Itf/IMyObjectStringLocalizerPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectStringLocalizerPattern.cs"));
@@ -148,6 +152,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var gen3Items = generator3.Generate(files);
 
             var jsonGenerator = new JsonFileGenerator(
+                jsonReader,
                 jsonWriter,
                 jsonLocator,
                 resolver,

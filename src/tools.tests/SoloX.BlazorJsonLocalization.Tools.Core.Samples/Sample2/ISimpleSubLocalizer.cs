@@ -9,7 +9,7 @@
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
     [SubLocalizer]
     public interface ISimpleSubLocalizer : IStringLocalizer
