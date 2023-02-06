@@ -14,6 +14,7 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator.Impl;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Core.Utils;
+using System.Text;
 using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
@@ -28,26 +29,56 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         }
 
         [Theory]
-        [InlineData(@"Samples/Sample1/ISimpleLocalizer.cs", @"Samples/Sample1/Component.cs")]
-        public void GenerateBasicLocalizer(string interfaceFile, string componentFile)
+        [InlineData(@"Sample1/ISimpleLocalizer.cs", 0, @"Sample1/Component.cs", null)]
+        public void GenerateBasicLocalizer(string interfaceFile, int idx, string componentFile, string jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizer)
-                + Path.GetFileNameWithoutExtension(interfaceFile);
+                + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, interfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, interfaceFile, componentFile);
         }
+
+
+        private const string SimpleSubJson1 = @"
+        {
+          ""SubLocalizer1"": {
+            ""BasicSubProperty1"": ""SubLocalizer1BasicSubProperty1ValueFor{name}"",
+            ""BasicSubProperty2"": ""SubLocalizer1BasicSubProperty2ValueFor{name}""
+          },
+          ""SubLocalizer2"": {
+            ""BasicSubProperty1"": ""SubLocalizer2BasicSubProperty1ValueFor{name}"",
+            ""BasicSubProperty2"": ""SubLocalizer2BasicSubProperty2ValueFor{name}""
+          },
+          ""BasicProperty"": ""BasicPropertyValueFor{name}""
+        }";
+
+        private const string SimpleSubJson2 = @"
+        {
+          ""SubLocalizer1"":  ""SubLocalizer1BasicSubProperty1ValueFor{name}"",
+          ""SubLocalizer2"": {
+            ""BasicSubProperty1"": ""SubLocalizer2BasicSubProperty1ValueFor{name}"",
+            ""BasicSubProperty2"": ""SubLocalizer2BasicSubProperty2ValueFor{name}""
+          },
+          ""BasicProperty"": ""BasicPropertyValueFor{name}"",
+          ""BasicPropertyUnused"": ""BasicPropertyValueFor{name}""
+        }";
+
+        private const string SimpleSubJson3 = @"Bad Json";
 
         [Theory]
-        [InlineData(@"Samples/Sample2/ISimpleLocalizer.cs", @"Samples/Sample2/ISimpleSubLocalizer.cs", @"Samples/Sample2/Component.cs")]
-        public void GenerateSubLocalizer(string interfaceFile, string subInterfaceFile, string componentFile)
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 0, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", null)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 1, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson1)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 2, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson2)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 3, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson3)]
+        public void GenerateSubLocalizer(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizer)
-                + Path.GetFileNameWithoutExtension(interfaceFile);
+                + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, interfaceFile, subInterfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, interfaceFile, subInterfaceFile, componentFile);
         }
 
-        private void GenerateSnapshot(string snapshotName, params string[] files)
+        private void GenerateSnapshot(string snapshotName, string jsonLocalization, params string[] files)
         {
             SnapshotHelper.IsOverwriteEnable = true;
 
@@ -73,12 +104,39 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                 var inputs = new HashSet<string>();
                 var locator = new RelativeLocator(string.Empty, "target.name.space");
 
-                var snapshotGenerator = new SnapshotWriter();
+                var snapshotWriter = new SnapshotWriter();
+                var jsonReader = new TestReader(jsonLocalization);
 
-                generator.Generate(workspace, locator, snapshotGenerator, locator, snapshotGenerator, workspace.Files);
+                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files);
 
                 var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
-                SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+                SnapshotHelper.AssertSnapshot(snapshotWriter.GetAllGenerated(), snapshotName, location);
+            }
+        }
+    }
+
+    public class TestReader : IReader
+    {
+        private readonly string text;
+
+        public TestReader(string text)
+        {
+            this.text = text;
+        }
+
+        public void Read(string location, string name, Action<Stream> reader)
+        {
+            if (!string.IsNullOrEmpty(this.text))
+            {
+                var stream = new MemoryStream();
+
+                var bytes = Encoding.UTF8.GetBytes(this.text.Replace("{name}", name, StringComparison.InvariantCulture));
+
+                stream.Write(bytes);
+
+                stream.Position = 0;
+
+                reader(stream);
             }
         }
     }

@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 {
     public class Component
     {

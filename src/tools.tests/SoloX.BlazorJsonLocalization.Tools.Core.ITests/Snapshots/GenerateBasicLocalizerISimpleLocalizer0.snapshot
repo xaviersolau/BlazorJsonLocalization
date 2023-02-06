@@ -2,14 +2,14 @@
 SimpleLocalizer
 ---------------------
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 {
     public class SimpleLocalizer : ISimpleLocalizer
     {
@@ -42,14 +42,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
 SimpleLocalizerExtensions
 ---------------------
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests.Samples.Sample1
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 {
     public static class SimpleLocalizerExtensions
     {

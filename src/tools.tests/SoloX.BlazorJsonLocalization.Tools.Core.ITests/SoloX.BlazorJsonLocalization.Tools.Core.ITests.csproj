@@ -36,24 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
     <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Extensions\SoloX.BlazorJsonLocalization.Tools.Extensions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Samples\Sample1\ISimpleLocalizer.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Samples\Sample1\Component.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Samples\Sample2\Component.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Samples\Sample2\ISimpleSubLocalizer.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Samples\Sample2\ISimpleLocalizer.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core.Samples\SoloX.BlazorJsonLocalization.Tools.Core.Samples.csproj" />
   </ItemGroup>
 
 </Project>

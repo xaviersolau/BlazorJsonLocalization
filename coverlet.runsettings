@@ -2,7 +2,7 @@
 <RunSettings>
   <DataCollectionRunSettings>
     <DataCollectors>
-      <DataCollector friendlyName="XPlat code coverage">
+      <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
           <Format>lcov</Format>
           <SingleHit>false</SingleHit>
@@ -10,7 +10,6 @@
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <SkipAutoProps>true</SkipAutoProps>
           <DeterministicReport>false</DeterministicReport>
-          <Exclude>[SoloX.BlazorJsonLocalization.Tools.Core.ITests.*]*,[Microsoft.NET.Test.Sdk.*]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>

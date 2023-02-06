@@ -38,7 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Generator\SoloX.BlazorJsonLocalization.Generator.csproj" />
     <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
-    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core.ITests\SoloX.BlazorJsonLocalization.Tools.Core.ITests.csproj" />
+    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core.Samples\SoloX.BlazorJsonLocalization.Tools.Core.Samples.csproj" />
   </ItemGroup>
 
 </Project>
