@@ -35,29 +35,33 @@ BlazorJsonLocalization project is written by Xavier Solau. It's licensed under t
 * Localizer fall back.
 * Both WebAssembly and Server Side support.
 
+## Coming soon
+
+* Code first localization support
+
 ## Installation
 
 You can checkout this Github repository or you can use the NuGet packages:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.BlazorJsonLocalization -version 2.0.0-alpha.3
-Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 2.0.0-alpha.3
-Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 2.0.0-alpha.3
+Install-Package SoloX.BlazorJsonLocalization -version 2.0.0-alpha.4
+Install-Package SoloX.BlazorJsonLocalization.WebAssembly -version 2.0.0-alpha.4
+Install-Package SoloX.BlazorJsonLocalization.ServerSide -version 2.0.0-alpha.4
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.BlazorJsonLocalization --version 2.0.0-alpha.3
-dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 2.0.0-alpha.3
-dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 2.0.0-alpha.3
+dotnet add package SoloX.BlazorJsonLocalization --version 2.0.0-alpha.4
+dotnet add package SoloX.BlazorJsonLocalization.WebAssembly --version 2.0.0-alpha.4
+dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 2.0.0-alpha.4
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.BlazorJsonLocalization" Version="2.0.0-alpha.3" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="2.0.0-alpha.3" />
-<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="2.0.0-alpha.3" />
+<PackageReference Include="SoloX.BlazorJsonLocalization" Version="2.0.0-alpha.4" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.WebAssembly" Version="2.0.0-alpha.4" />
+<PackageReference Include="SoloX.BlazorJsonLocalization.ServerSide" Version="2.0.0-alpha.4" />
 ```
 
 > Find out the [Breaking changes](documents/BreakingChanges.md) from one version to another.
