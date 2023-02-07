@@ -64,7 +64,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 rootPath = $"{rootPath}{options.ResourcesPath}/";
             }
 
-            var basePath = $"{rootPath}{ResourcePathHelper.ComputeBasePath(assembly, baseName)}";
+            var basePath = $"{rootPath}{ResourcePathHelper.ComputeBasePath(assembly, baseName, assembly.GetName().Name)}";
 
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
                 cultureName =>

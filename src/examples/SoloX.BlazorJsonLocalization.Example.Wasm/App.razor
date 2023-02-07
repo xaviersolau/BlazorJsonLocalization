@@ -1,5 +1,9 @@
 <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true"
-        AdditionalAssemblies="@(new [] { typeof(SoloX.BlazorJsonLocalization.Example.Components.StaticAssets.Pages.Counter).Assembly, typeof(SoloX.BlazorJsonLocalization.Example.Components.Embedded.Pages.Index).Assembly })">
+        AdditionalAssemblies="@(new [] {
+            typeof(SoloX.BlazorJsonLocalization.Example.Components.StaticAssets.Pages.Counter).Assembly,
+            typeof(SoloX.BlazorJsonLocalization.Example.Components.Embedded.Pages.Index).Assembly,
+            typeof(An.Other.Name.Embedded.Pages.Component1).Assembly
+        })">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>

@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
+using System;
+using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -19,5 +21,13 @@ namespace SoloX.BlazorJsonLocalization
         /// Gets/Sets Path where to get the resources.
         /// </summary>
         public string ResourcesPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets/Sets Assembly Root NameSpace resolver.
+        /// </summary>
+        /// <remarks>
+        /// By default the root name space will be resolved as the assembly name.
+        /// </remarks>
+        public Func<Assembly, string?>? RootNameSpaceResolver { get; set; }
     }
 }

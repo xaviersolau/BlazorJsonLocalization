@@ -21,8 +21,9 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         /// </summary>
         /// <param name="assembly">The assembly declaring resource</param>
         /// <param name="baseName">The baseName of the resource to load.</param>
+        /// <param name="rootNameSpace">The root namespace if not the assembly name.</param>
         /// <returns>The converted resource base path to load.</returns>
-        public static string ComputeBasePath(Assembly assembly, string baseName)
+        public static string ComputeBasePath(Assembly assembly, string baseName, string rootNameSpace)
         {
             if (assembly == null)
             {
@@ -33,13 +34,12 @@ namespace SoloX.BlazorJsonLocalization.Helpers
                 throw new ArgumentNullException(nameof(baseName));
             }
 
-            var assemblyName = assembly.GetName().Name;
             var basePath = baseName;
 
-            if (!string.IsNullOrEmpty(assemblyName)
-                && baseName.StartsWith($"{assemblyName}.", StringComparison.Ordinal))
+            if (!string.IsNullOrEmpty(rootNameSpace)
+                && baseName.StartsWith($"{rootNameSpace}.", StringComparison.Ordinal))
             {
-                basePath = baseName.Remove(0, assemblyName.Length + 1);
+                basePath = baseName.Substring(rootNameSpace.Length + 1);
             }
 
             basePath = basePath.Replace('.', '/');
