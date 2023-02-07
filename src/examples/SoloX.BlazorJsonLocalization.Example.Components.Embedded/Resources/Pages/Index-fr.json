@@ -1,5 +1,11 @@
 ﻿{
   "Hello": "Bonjour tout le monde!",
   "Welcome": "Bienvenue dans votre nouvelle application.",
-  "Here is an example with accents": "Voici quelques accents : é è à ô ä...."
+  "Here is an example with accents": "Voici quelques accents : é è à ô ä....",
+  "Dashboard": {
+    "TITLE": "Tableau des messages",
+    "List": {
+      "MESSAGES": "Des messages"
+    }
+  }
 }
