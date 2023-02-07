@@ -20,3 +20,26 @@
     @L["Here is an example with accents"]
 </p>
 
+<p>
+    @L.GetSubLocalizer("Dashboard")["TITLE"]
+</p>
+
+<p>
+    @L.GetSubLocalizer("Dashboard").GetSubLocalizer("List")["MESSAGES"]
+</p>
+
+<p>
+    @L[Key.Path("Dashboard", "TITLE")]
+</p>
+
+<p>
+    @L[Key.Path("Dashboard", "List", "MESSAGES")]
+</p>
+
+<p>
+    @L["Dashboard:TITLE"]
+</p>
+
+<p>
+    @L["Dashboard:List:MESSAGES"]
+</p>
