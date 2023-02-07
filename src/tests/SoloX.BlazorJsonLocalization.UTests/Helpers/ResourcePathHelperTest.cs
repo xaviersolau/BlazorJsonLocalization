@@ -22,7 +22,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
         [Fact]
         public void ItShouldComputeTheResourcePath()
         {
-            var path = ResourcePathHelper.ComputeBasePath(Assembly, BaseName);
+            var path = ResourcePathHelper.ComputeBasePath(Assembly, BaseName, Assembly.GetName().Name);
 
             var expectedPath = BaseName
                 .Replace(Assembly.GetName().Name + ".", string.Empty, StringComparison.Ordinal)
