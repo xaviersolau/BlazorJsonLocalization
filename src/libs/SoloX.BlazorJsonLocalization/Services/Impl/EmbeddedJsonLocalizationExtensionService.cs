@@ -61,7 +61,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             var basePath = ResourcePathHelper.ComputeBasePath(assembly, baseName, rootNameSpace);
 
-            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo, options.JsonSerializerOptions)
+            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo, options)
                 .ConfigureAwait(false);
         }
 
@@ -70,8 +70,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             string resourcesPath,
             string basePath,
             CultureInfo cultureInfo,
-            JsonSerializerOptions? jsonSerializerOptions)
+            EmbeddedJsonLocalizationOptions options)
         {
+            var jsonSerializerOptions = options.JsonSerializerOptions;
+
             basePath = string.IsNullOrEmpty(resourcesPath)
                 ? basePath
                 : Path.Combine(resourcesPath, basePath);
@@ -79,9 +81,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
                 cultureName =>
                 {
-                    var path = string.IsNullOrEmpty(cultureName)
-                        ? $"{basePath}.json"
-                        : $"{basePath}-{cultureName}.json";
+                    var handler = options.NamingPolicy ?? ResourcePathHelper.DefaultEmbeddedJsonNamingPolicy;
+                    var path = handler.Invoke(basePath, cultureName);
 
                     this.logger.LoadingEmbeddedData(path);
 

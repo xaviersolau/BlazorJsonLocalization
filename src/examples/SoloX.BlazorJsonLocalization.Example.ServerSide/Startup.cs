@@ -20,6 +20,7 @@ using SoloX.BlazorJsonLocalization.Example.Components.StaticAssets;
 using SoloX.BlazorJsonLocalization.Example.Components.Embedded;
 using SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization;
 using An.Other.Name.Embedded;
+using SoloX.BlazorJsonLocalization.Example.Components.Embedded3;
 
 namespace SoloX.BlazorJsonLocalization.Example.ServerSide
 {
@@ -53,6 +54,8 @@ namespace SoloX.BlazorJsonLocalization.Example.ServerSide
                         .UseComponentsEmbedded()
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded2 (with an assembly name different than the root namespace)
                         .UseComponentsEmbedded2()
+                        // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded2 (with json files named with .razor extension)
+                        .UseComponentsEmbedded3()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
                         .UseComponentsStaticAssets()
                         // Use the SharedLocalization

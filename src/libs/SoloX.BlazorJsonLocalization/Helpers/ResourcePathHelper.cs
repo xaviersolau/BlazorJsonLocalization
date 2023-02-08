@@ -56,8 +56,21 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         public static Uri DefaultHttpHostedJsonNamingPolicy(string basePath, string cultureName)
         {
             return string.IsNullOrEmpty(cultureName)
-             ? new Uri($"{basePath}.json", UriKind.Relative)
-             : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+                ? new Uri($"{basePath}.json", UriKind.Relative)
+                : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+        }
+
+        /// <summary>
+        /// Default naming policy for Embedded Json files.
+        /// </summary>
+        /// <param name="basePath">The base resource path of the json file.</param>
+        /// <param name="cultureName">The culture name (if any).</param>
+        /// <returns></returns>
+        public static string DefaultEmbeddedJsonNamingPolicy(string basePath, string cultureName)
+        {
+            return string.IsNullOrEmpty(cultureName)
+                ? $"{basePath}.json"
+                : $"{basePath}-{cultureName}.json";
         }
     }
 }

@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
-using System;
 using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
@@ -17,6 +16,21 @@ namespace SoloX.BlazorJsonLocalization
     /// </summary>
     public class EmbeddedJsonLocalizationOptions : AJsonExtensionOptions
     {
+        /// <summary>
+        /// Naming policy handler used to compute the actual embedded Json file to fetch.
+        /// </summary>
+        /// <param name="basePath">The base resource path of the json file.</param>
+        /// <param name="cultureName">The culture name (if any).</param>
+        /// <returns>The actual embedded resource name to load.</returns>
+        public delegate string? NamingPolicyHandler(string basePath, string cultureName);
+
+        /// <summary>
+        /// Assembly Root NameSpace resolver handler.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        public delegate string RootNameSpaceResolverHandler(Assembly assembly);
+
         /// <summary>
         /// Gets/Sets Path where to get the resources.
         /// </summary>
@@ -28,6 +42,13 @@ namespace SoloX.BlazorJsonLocalization
         /// <remarks>
         /// By default the root name space will be resolved as the assembly name.
         /// </remarks>
-        public Func<Assembly, string?>? RootNameSpaceResolver { get; set; }
+        public RootNameSpaceResolverHandler? RootNameSpaceResolver { get; set; }
+
+        /// <summary>
+        /// Set the delegate for custom file naming.
+        /// For example:
+        /// (basePath, cultureName) => $"{basePath}{(string.IsNullOrEmpty(cultureName) ? string.Empty : $"-{cultureName}")}.json";
+        /// </summary>
+        public NamingPolicyHandler? NamingPolicy { get; set; }
     }
 }
