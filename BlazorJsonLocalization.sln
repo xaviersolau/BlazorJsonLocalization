@@ -73,7 +73,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Tools.Core.Samples", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Core.Samples\SoloX.BlazorJsonLocalization.Tools.Core.Samples.csproj", "{E633FA15-35AD-493E-A3AA-3AFD06729F3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded2", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded2\SoloX.BlazorJsonLocalization.Example.Components.Embedded2.csproj", "{CCDA128E-8111-4F30-B664-07511B8351A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded2", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded2\SoloX.BlazorJsonLocalization.Example.Components.Embedded2.csproj", "{CCDA128E-8111-4F30-B664-07511B8351A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded3", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded3\SoloX.BlazorJsonLocalization.Example.Components.Embedded3.csproj", "{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -173,6 +175,10 @@ Global
 		{CCDA128E-8111-4F30-B664-07511B8351A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCDA128E-8111-4F30-B664-07511B8351A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCDA128E-8111-4F30-B664-07511B8351A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -201,6 +207,7 @@ Global
 		{CA45167E-B5AD-4DF8-B29D-AA8DF82C922B} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
 		{E633FA15-35AD-493E-A3AA-3AFD06729F3D} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
 		{CCDA128E-8111-4F30-B664-07511B8351A8} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
+		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}
