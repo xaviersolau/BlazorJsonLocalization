@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Helpers;
 using Microsoft.Extensions.Logging;
+using SoloX.BlazorJsonLocalization.Core.Impl;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -57,16 +58,16 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             var rootNameSpace = options.RootNameSpaceResolver?.Invoke(assembly) ?? assembly.GetName().Name;
 
-            var embeddedFileProvider = GetFileProvider(assembly, rootNameSpace);
+            var embeddedFileProviderFactory = GetSatelliteFileProviderFactory(assembly, rootNameSpace);
 
             var basePath = ResourcePathHelper.ComputeBasePath(assembly, baseName, rootNameSpace);
 
-            return await LoadStringMapAsync(embeddedFileProvider, options.ResourcesPath, basePath, cultureInfo, options)
+            return await LoadStringMapAsync(embeddedFileProviderFactory, options.ResourcesPath, basePath, cultureInfo, options)
                 .ConfigureAwait(false);
         }
 
         private async ValueTask<IReadOnlyDictionary<string, string>?> LoadStringMapAsync(
-            IFileProvider fileProvider,
+            SatelliteFileProviderFactory fileProviderFactory,
             string resourcesPath,
             string basePath,
             CultureInfo cultureInfo,
@@ -79,12 +80,14 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
                 : Path.Combine(resourcesPath, basePath);
 
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
-                cultureName =>
+                culture =>
                 {
                     var handler = options.NamingPolicy ?? ResourcePathHelper.DefaultEmbeddedJsonNamingPolicy;
-                    var path = handler.Invoke(basePath, cultureName);
+                    var path = handler.Invoke(basePath, culture.Name);
 
                     this.logger.LoadingEmbeddedData(path);
+
+                    var fileProvider = fileProviderFactory.GetFileProvider(culture);
 
                     return TryLoadMapAsync(fileProvider, path, jsonSerializerOptions).AsTask();
                 })
@@ -115,9 +118,9 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             return map ?? throw new FileLoadException("Null resources");
         }
 
-        private static IFileProvider GetFileProvider(Assembly assembly, string rootNameSpace)
+        private static SatelliteFileProviderFactory GetSatelliteFileProviderFactory(Assembly assembly, string rootNameSpace)
         {
-            return new EmbeddedFileProvider(assembly, rootNameSpace);
+            return new SatelliteFileProviderFactory(assembly, rootNameSpace);
         }
     }
 }
