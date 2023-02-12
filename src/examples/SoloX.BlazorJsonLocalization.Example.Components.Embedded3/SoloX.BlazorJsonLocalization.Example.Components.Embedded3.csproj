@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <Content Remove="Pages\Component2.razor.json" />
+    <Content Remove="Pages\test.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Pages\Component2.razor-fr.json" />
+    <EmbeddedResource Include="Pages\test.json" />
+    <EmbeddedResource Include="Pages\Component2.razor.fr.json" />
     <EmbeddedResource Include="Pages\Component2.razor.json" />
   </ItemGroup>
 

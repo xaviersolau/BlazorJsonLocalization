@@ -13,7 +13,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Components.Embedded3
             return builder.UseEmbeddedJson(options =>
             {
                 options.Assemblies = new[] { typeof(ComponentsEmbeddedExtensions).Assembly };
-                options.NamingPolicy = (basePath, cultureName) => $"{basePath}.razor{(string.IsNullOrEmpty(cultureName) ? string.Empty : $"-{cultureName}")}.json";
+                options.NamingPolicy = (basePath, cultureName) => $"{basePath}.razor{(string.IsNullOrEmpty(cultureName) ? string.Empty : $".{cultureName}")}.json";
             });
         }
     }

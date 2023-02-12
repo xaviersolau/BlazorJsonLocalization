@@ -9,15 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\EmbeddedJsonLocalizationExtensionServiceTest-fr.json" />
-    <None Remove="Resources\EmbeddedJsonLocalizationExtensionServiceTest.json" />
-    <None Remove="Resources\EmbeddedJsonLocalizationExtensionUsingAccentsTest.json" />
+    <None Remove="Resources\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionUsingAccentsTest.json" />
-    <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionServiceTest-fr.json" />
-    <EmbeddedResource Include="Resources\EmbeddedJsonLocalizationExtensionServiceTest.json" />
+    <EmbeddedResource Include="Resources\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>

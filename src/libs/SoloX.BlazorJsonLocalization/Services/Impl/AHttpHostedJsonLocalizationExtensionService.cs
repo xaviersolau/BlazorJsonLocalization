@@ -67,10 +67,10 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             var basePath = $"{rootPath}{ResourcePathHelper.ComputeBasePath(assembly, baseName, assembly.GetName().Name)}";
 
             return await CultureInfoHelper.WalkThoughCultureInfoParentsAsync(cultureInfo,
-                cultureName =>
+                culture =>
                 {
                     var handler = options.NamingPolicy ?? ResourcePathHelper.DefaultHttpHostedJsonNamingPolicy;
-                    var uri = handler.Invoke(basePath, cultureName);
+                    var uri = handler.Invoke(basePath, culture.Name);
 
                     this.logger.LoadingStaticAssets(uri);
 
