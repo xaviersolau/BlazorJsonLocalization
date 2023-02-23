@@ -1,14 +1,38 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// ----------------------------------------------------------------------
+// <copyright file="LocalizationMap.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
 {
+    /// <summary>
+    /// Localization data map (a node of the Json tree).
+    /// </summary>
     public class LocalizationMap : ALocalizationData
     {
-        public IDictionary<string, ALocalizationData> ValueMap { get; set; }
+        /// <summary>
+        /// The Mapped values.
+        /// </summary>
+        public IReadOnlyDictionary<string, ALocalizationData> ValueMap { get; }
 
+        /// <summary>
+        /// Setup LocalizationMap instance.
+        /// </summary>
+        /// <param name="valueMap">value to map.</param>
+        public LocalizationMap(IReadOnlyDictionary<string, ALocalizationData> valueMap)
+        {
+            ValueMap = valueMap;
+        }
+
+        /// <inheritdoc/>
         public override ALocalizationData Merge(ALocalizationData source, string path, out bool dirty)
         {
             dirty = false;
@@ -43,9 +67,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                             mergedMap.Add(item.Key, item.Value);
                         }
 
-                        return new LocalizationMap { ValueMap = mergedMap };
+                        return new LocalizationMap(mergedMap);
                     }
-                    break;
                 case LocalizationValue mapValue:
                     {
                         // Warning overwriting a simple by a complex structure on path

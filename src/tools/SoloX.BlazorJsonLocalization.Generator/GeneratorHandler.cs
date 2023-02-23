@@ -1,4 +1,11 @@
-﻿
+﻿// ----------------------------------------------------------------------
+// <copyright file="GeneratorHandler.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -7,16 +14,22 @@ using System.Linq;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
 using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
-using System.Diagnostics;
 
 namespace SoloX.GeneratorTools.Test
 {
+    /// <summary>
+    /// C# code analyzer generator implementation.
+    /// </summary>
     [Generator(LanguageNames.CSharp)]
     public class GeneratorHandler : IIncrementalGenerator
     {
+        /// <summary>
+        /// Setup the generator.
+        /// </summary>
+        /// <param name="context">Code analyzer context.</param>
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            IncrementalValuesProvider<InterfaceDeclarationSyntax> classDeclarations = context.SyntaxProvider
+            var classDeclarations = context.SyntaxProvider
                 .CreateSyntaxProvider(static (s, _) => IsSyntaxTargetForGeneration(s), static (ctx, _) => GetSemanticTargetForGeneration(ctx))
                 .Where(static m => m is not null);
 
@@ -26,6 +39,12 @@ namespace SoloX.GeneratorTools.Test
             context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.Item1, source.Item2, spc));
         }
 
+        /// <summary>
+        /// Execute the ToolsGenerator.
+        /// </summary>
+        /// <param name="compilation"></param>
+        /// <param name="classes"></param>
+        /// <param name="context"></param>
         public static void Execute(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
         {
             //if (!Debugger.IsAttached)
@@ -46,7 +65,7 @@ namespace SoloX.GeneratorTools.Test
             generator.Generate(compilation, classes, context);
         }
 
-        public class LogFactory : IGeneratorLoggerFactory
+        internal sealed class LogFactory : IGeneratorLoggerFactory
         {
             private readonly SourceProductionContext context;
             private readonly InterfaceDeclarationSyntax interfaceDeclarationSyntax;
@@ -62,7 +81,7 @@ namespace SoloX.GeneratorTools.Test
                 return new Logger<TType>(this.context, this.interfaceDeclarationSyntax);
             }
 
-            public class Logger<TType> : IGeneratorLogger<TType>
+            public sealed class Logger<TType> : IGeneratorLogger<TType>
             {
                 private readonly SourceProductionContext context;
                 private readonly InterfaceDeclarationSyntax interfaceDeclarationSyntax;

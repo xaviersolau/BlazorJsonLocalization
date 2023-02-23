@@ -1,19 +1,31 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------
+// <copyright file="LocalizationMapConverter.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
 {
+    /// <summary>
+    /// Localization Map Json converter.
+    /// </summary>
     public class LocalizationMapConverter : JsonConverter<ALocalizationData>
     {
+        /// <inheritdoc/>
         public override ALocalizationData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
                 var strValue = reader.GetString();
 
-                return new LocalizationValue { Value = strValue };
+                return new LocalizationValue(strValue);
             }
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
@@ -22,7 +34,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                     throw new JsonException();
                 }
 
-                return new LocalizationMap { ValueMap = ReadMap(ref reader, options) };
+                return new LocalizationMap(ReadMap(ref reader, options));
             }
             else
             {
@@ -30,6 +42,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             }
         }
 
+        /// <inheritdoc/>
         private static Dictionary<string, ALocalizationData> ReadMap(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             var map = new Dictionary<string, ALocalizationData>();
@@ -61,8 +74,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return map;
         }
 
+        /// <inheritdoc/>
         public override void Write(Utf8JsonWriter writer, ALocalizationData value, JsonSerializerOptions options)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
             switch (value)
             {
                 case LocalizationMap map:

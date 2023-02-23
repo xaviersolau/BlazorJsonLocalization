@@ -1,15 +1,20 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// ----------------------------------------------------------------------
+// <copyright file="IToolsGenerator.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core
 {
+    /// <summary>
+    /// Localization tools generator interface.
+    /// </summary>
     public interface IToolsGenerator
     {
         /// <summary>

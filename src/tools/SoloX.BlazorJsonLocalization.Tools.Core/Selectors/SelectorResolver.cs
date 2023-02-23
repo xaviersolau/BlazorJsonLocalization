@@ -1,14 +1,18 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿// ----------------------------------------------------------------------
+// <copyright file="SelectorResolver.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
 {
     internal class SelectorResolver : ISelectorResolver
     {
-        public ISelector GetSelector(string selectorName)
+        public ISelector? GetSelector(string selectorName)
         {
             if (selectorName == typeof(SubLocalizerPropertySelector).FullName)
             {
@@ -18,6 +22,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
             {
                 return new StringPropertySelector();
             }
+
             return null;
         }
     }

@@ -1,13 +1,16 @@
-﻿using FluentAssertions;
+﻿// ----------------------------------------------------------------------
+// <copyright file="PatternsTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 {
@@ -19,13 +22,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         public PatternsTest()
         {
             this.mock = new Mock<IStringLocalizer<MyObject>>();
-            this.pattern = mock.Object.ToMyObjectStringLocalizerPattern();
+            this.pattern = this.mock.Object.ToMyObjectStringLocalizerPattern();
         }
 
         [Fact]
         public void IsShouldGetInterfaceImplementation()
         {
-            pattern.Should().NotBeNull();
+            this.pattern.Should().NotBeNull();
         }
 
         [Fact]
@@ -36,9 +39,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var argument = "My Argument";
 
-            mock.Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument]).Returns(new LocalizedString(expectedName, expectedValue));
+            this.mock
+                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument])
+                .Returns(new LocalizedString(expectedName, expectedValue));
 
-            var value = pattern.SomeStringArgs(argument);
+            var value = this.pattern.SomeStringArgs(argument);
 
             value.Should().Be(expectedValue);
         }
@@ -49,9 +54,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value";
             var expectedName = "My Test Name";
 
-            mock.Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeProperty)]).Returns(new LocalizedString(expectedName, expectedValue));
+            this.mock
+                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeProperty)])
+                .Returns(new LocalizedString(expectedName, expectedValue));
 
-            var value = pattern.SomeProperty;
+            var value = this.pattern.SomeProperty;
 
             value.Should().Be(expectedValue);
         }
@@ -62,9 +69,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value";
             var expectedName = "My Test Name";
 
-            mock.Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty)]).Returns(new LocalizedString(expectedName, expectedValue));
+            this.mock
+                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty)])
+                .Returns(new LocalizedString(expectedName, expectedValue));
 
-            var value = pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
+            var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
 
             value.Should().Be(expectedValue);
         }
