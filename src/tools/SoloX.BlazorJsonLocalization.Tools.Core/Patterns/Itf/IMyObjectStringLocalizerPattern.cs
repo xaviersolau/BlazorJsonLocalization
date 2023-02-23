@@ -1,25 +1,37 @@
-﻿using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Attributes;
-using SoloX.BlazorJsonLocalization.Tools.Core.Handlers;
+﻿// ----------------------------------------------------------------------
+// <copyright file="IMyObjectStringLocalizerPattern.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf
 {
+    /// <summary>
+    /// Code first string localizer definition pattern.
+    /// </summary>
     public interface IMyObjectStringLocalizerPattern : IStringLocalizer<MyObject>
     {
+        /// <summary>
+        /// Get MyObjectSubStringLocalizerProperty Sub string localizer.
+        /// </summary>
         [Pattern(typeof(SubLocalizerPropertySelector))]
         IMyObjectSubStringLocalizerPattern MyObjectSubStringLocalizerProperty { get; }
 
+        /// <summary>
+        /// Get SomeProperty localized string.
+        /// </summary>
         [Pattern(typeof(StringPropertySelector))]
         string SomeProperty { get; }
 
+        /// <summary>
+        /// Get SomeStringArgs localized string.
+        /// </summary>
         string SomeStringArgs(object someParameter);
     }
 }

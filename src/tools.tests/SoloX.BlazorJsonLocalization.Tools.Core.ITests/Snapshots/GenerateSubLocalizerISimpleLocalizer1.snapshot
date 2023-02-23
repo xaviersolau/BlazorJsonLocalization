@@ -1,44 +1,67 @@
 ---------------------
 SimpleLocalizer
 ---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleLocalizer.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
+    /// <summary>
+    /// ISimpleLocalizer generated implementation.
+    /// </summary>
     public class SimpleLocalizer : ISimpleLocalizer
     {
-        private IStringLocalizer<Component> stringLocalizer;
+        private readonly IStringLocalizer<Component> stringLocalizer;
 
+        /// <summary>
+        /// Setup instance.
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
         public SimpleLocalizer(IStringLocalizer<Component> stringLocalizer)
         {
             this.stringLocalizer = stringLocalizer;
         }
 
+        /// <inheritdoc/>
         public LocalizedString this[string name]
             => this.stringLocalizer[name];
 
+        /// <inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
             => this.stringLocalizer[name, arguments];
 
+        /// <inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
             => this.stringLocalizer.GetAllStrings(includeParentCultures);
 
+        /// <summary>
+        /// Get SubLocalizer1 Sub string localizer.
+        /// </summary>
         public ISimpleSubLocalizer SubLocalizer1
         {
             get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer1)));
         }
 
+        /// <summary>
+        /// Get SubLocalizer2 Sub string localizer.
+        /// </summary>
         public ISimpleSubLocalizer SubLocalizer2
         {
             get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer2)));
         }
 
+        /// <summary>
+        /// Get BasicProperty localized string.
+        /// </summary>
         public string BasicProperty
         {
             get => this.stringLocalizer[nameof(BasicProperty)];
@@ -51,23 +74,45 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 ---------------------
 SimpleLocalizerExtensions
 ---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleLocalizerExtensions.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
+    /// <summary>
+    /// SimpleLocalizerExtensions generated extension methods.
+    /// </summary>
     public static class SimpleLocalizerExtensions
     {
+        /// <summary>
+        /// Convert StringLocalizer to ISimpleLocalizer
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
+        /// <returns>The localizer instance.</returns>
         public static ISimpleLocalizer ToSimpleLocalizer(this IStringLocalizer<Component> stringLocalizer)
             => new SimpleLocalizer(stringLocalizer);
 
+        /// <summary>
+        /// Get BasicProperty localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
         public static string BasicProperty(this IStringLocalizer<Component> stringLocalizer)
         {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
             return stringLocalizer[nameof(BasicProperty)];
         }
     }
@@ -76,37 +121,59 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 ---------------------
 SimpleSubLocalizer
 ---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleSubLocalizer.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 {
+    /// <summary>
+    /// ISimpleSubLocalizer generated implementation.
+    /// </summary>
     public class SimpleSubLocalizer : ISimpleSubLocalizer
     {
-        private IStringLocalizer stringLocalizer;
+        private readonly IStringLocalizer stringLocalizer;
 
+        /// <summary>
+        /// Setup instance.
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
         public SimpleSubLocalizer(IStringLocalizer stringLocalizer)
         {
             this.stringLocalizer = stringLocalizer;
         }
 
+        /// <inheritdoc/>
         public LocalizedString this[string name]
             => this.stringLocalizer[name];
 
+        /// <inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
             => this.stringLocalizer[name, arguments];
 
+        /// <inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
             => this.stringLocalizer.GetAllStrings(includeParentCultures);
 
+        /// <summary>
+        /// Get BasicSubProperty1 localized string.
+        /// </summary>
         public string BasicSubProperty1
         {
             get => this.stringLocalizer[nameof(BasicSubProperty1)];
         }
 
+        /// <summary>
+        /// Get BasicSubProperty2 localized string.
+        /// </summary>
         public string BasicSubProperty2
         {
             get => this.stringLocalizer[nameof(BasicSubProperty2)];

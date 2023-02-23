@@ -1,13 +1,14 @@
-﻿using FluentAssertions;
-using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿// ----------------------------------------------------------------------
+// <copyright file="LocalizationMapTest.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using FluentAssertions;
+using SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 {
@@ -121,7 +122,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         [InlineData(Source6, Target, Expected6, false)]
         public void ItShouldMergeSourceWithTarget(string source, string target, string expected, bool expectedDirty)
         {
-            expected = expected.Replace("        ", string.Empty).Trim();
+            expected = expected.Replace("        ", string.Empty, StringComparison.Ordinal).Trim();
 
             var sourceMap = JsonSerializer.Deserialize<ALocalizationData>(source);
             var targetMap = JsonSerializer.Deserialize<ALocalizationData>(target);

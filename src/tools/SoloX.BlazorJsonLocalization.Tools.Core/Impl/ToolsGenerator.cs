@@ -1,4 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// ----------------------------------------------------------------------
+// <copyright file="ToolsGenerator.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
@@ -12,14 +20,15 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Attributes;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Selectors;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 {
+    /// <summary>
+    /// Json localizer generator that will generate the String localizer classes and the Json resources.
+    /// </summary>
     public class ToolsGenerator : IToolsGenerator
     {
         private readonly IGeneratorLogger<ToolsGenerator> logger;
@@ -38,6 +47,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             this.workspaceFactory = workspaceFactory;
         }
 
+        /// <summary>
+        /// Process generation for the given project file. It can be used from a CLI tool.
+        /// </summary>
+        /// <param name="projectFile">The project file to process.</param>
         public void Generate(string projectFile)
         {
             var projectFolder = Path.GetDirectoryName(projectFile);
@@ -66,8 +79,19 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 project.Files);
         }
 
+        /// <summary>
+        /// Process generation for the given compilation unit. It can be used by a code analyzer tool.
+        /// </summary>
+        /// <param name="compilation">Compilation unit to process.</param>
+        /// <param name="classes">Targeted interfaces.</param>
+        /// <param name="context">Source production context to generate the C# code.</param>
         public void Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
         {
+            if (compilation == null)
+            {
+                throw new ArgumentNullException(nameof(compilation));
+            }
+
             var (ns, projectFolder) = ProbRootNamespaceAndProjectFolder(compilation);
 
             var workspace = this.workspaceFactory.CreateWorkspace(compilation);
@@ -75,7 +99,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var locator = new RelativeLocator(Path.Combine(projectFolder), ns);
             var fileWriter = new MemoryWriter(".g.cs", (l, s) =>
             {
-                var name = l.StartsWith(projectFolder) ? l.Substring(projectFolder.Length) : l;
+                var name = l.StartsWith(projectFolder, StringComparison.Ordinal) ? l.Substring(projectFolder.Length) : l;
 
                 name = name.Replace('/', '.').Replace('\\', '.').TrimStart('.');
 
@@ -95,13 +119,6 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonReader,
                 jsonWriter,
                 workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)));
-        }
-
-        private static TAttribute FindAttribute<TAttribute>(Type type)
-            where TAttribute : Attribute
-        {
-            var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
-            return (TAttribute)attributes.FirstOrDefault();
         }
 
         internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IReader jsonReader, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
@@ -189,9 +206,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return tempFile;
         }
 
-        private (string Namespace, string ProjectFolder) ProbRootNamespaceAndProjectFolder(Compilation compilation)
+        private static (string Namespace, string ProjectFolder) ProbRootNamespaceAndProjectFolder(Compilation compilation)
         {
-            var commonFolder = FindCommonRootFolder(compilation.SyntaxTrees.Select(x => x.FilePath));
+            var commonFolder = FindCommonRootFolder(compilation.SyntaxTrees.Select(x => x.FilePath).ToArray());
 
             var pathWords = commonFolder.TrimEnd('\\', '/').Split('\\', '/');
 
@@ -225,7 +242,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var rootNs = compilation.Assembly.Name;
 
-            var idx = firstNs.IndexOf(intersect);
+            var idx = firstNs.IndexOf(intersect, StringComparison.Ordinal);
             if (idx > 0)
             {
                 i++;
@@ -235,7 +252,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 {
                     intersect = word + '.' + intersect;
 
-                    idx = firstNs.IndexOf(intersect);
+                    idx = firstNs.IndexOf(intersect, StringComparison.Ordinal);
 
                     if (idx > 0)
                     {
@@ -260,8 +277,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return (rootNs, projectFolder);
         }
 
-        private string FindCommonRootFolder(IEnumerable<string> paths)
+        private static string FindCommonRootFolder(IReadOnlyCollection<string> paths)
         {
+            if (paths == null)
+            {
+                throw new ArgumentNullException(nameof(paths));
+            }
+
             var root = paths.First();
 
             var len = root.Length;
@@ -269,7 +291,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             foreach (var path in paths.Skip(1))
             {
                 len = Math.Min(len, path.Length);
-                while (!root.Substring(0, len).Equals(path.Substring(0, len)))
+                while (!root.Substring(0, len).Equals(path.Substring(0, len), StringComparison.Ordinal))
                 {
                     len--;
 

@@ -1,15 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿// ----------------------------------------------------------------------
+// <copyright file="ToolsGeneratorExtensions.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.Extensions.DependencyInjection;
 using SoloX.BlazorJsonLocalization.Tools.Core;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Extensions
 {
+    /// <summary>
+    /// Extension methods to register the Tools generator.
+    /// </summary>
     public static class ToolsGeneratorExtensions
     {
         /// <summary>

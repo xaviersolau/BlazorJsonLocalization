@@ -1,4 +1,13 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// ----------------------------------------------------------------------
+// <copyright file="JsonFileGenerator.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis;
+using SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization;
 using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
@@ -11,12 +20,13 @@ using SoloX.GeneratorTools.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 {
+    /// <summary>
+    /// Json localization resource file generator.
+    /// </summary>
     public class JsonFileGenerator
     {
         private readonly IReader reader;
@@ -27,6 +37,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         private readonly IGeneratorLogger logger;
         private readonly string resourcesFolderName;
 
+        /// <summary>
+        /// Setup instance.
+        /// </summary>
+        /// <param name="reader">Reader to get existing resources.</param>
+        /// <param name="writer">Writer to write the generated resources.</param>
+        /// <param name="locator">Locator that provide read resources location.</param>
+        /// <param name="resolver">Declaration resolver.</param>
+        /// <param name="selector">Declaration selector to get the Declarations to generate the resource from.</param>
+        /// <param name="logger">Logger to log messages.</param>
+        /// <param name="resourcesFolderName">Resource folder name used in the provided locator.</param>
         public JsonFileGenerator(IReader reader, IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName)
         {
             this.reader = reader;
@@ -38,6 +58,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             this.resourcesFolderName = resourcesFolderName;
         }
 
+        /// <summary>
+        /// Generate the resources from the given files.
+        /// </summary>
+        /// <param name="files">Files to generate the resource from.</param>
+        /// <returns>The generated items.</returns>
         public IEnumerable<IGeneratedItem> Generate(IEnumerable<ICSharpFile> files)
         {
             var generatedItems = new List<IGeneratedItem>();
@@ -54,7 +79,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                 var genericDeclaration = declaration as IGenericDeclaration<SyntaxNode>;
 
-                var localizerAttribute = genericDeclaration.Attributes.First();
+                var localizerAttribute = genericDeclaration.Attributes[0];
 
                 var attributeSyntax = localizerAttribute.SyntaxNodeProvider.SyntaxNode;
 
@@ -110,21 +135,21 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                     }
                     else
                     {
-                        map.Add(propertyDeclaration.Name, new LocalizationValue { Value = propertyDeclaration.Name });
+                        map.Add(propertyDeclaration.Name, new LocalizationValue(propertyDeclaration.Name));
                     }
                 }
                 else if (member is IMethodDeclaration methodDeclaration)
                 {
-                    map.Add(methodDeclaration.Name, new LocalizationValue { Value = methodDeclaration.Name });
+                    map.Add(methodDeclaration.Name, new LocalizationValue(methodDeclaration.Name));
                 }
             }
 
-            return new LocalizationMap { ValueMap = map };
+            return new LocalizationMap(map);
         }
 
         private void WriteLanguageJsonFile(string location, ALocalizationData map, string jsonName)
         {
-            ALocalizationData sourceMap = null;
+            ALocalizationData? sourceMap = null;
             try
             {
                 this.reader.Read(location, jsonName, textReader =>
@@ -139,9 +164,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var dirty = true;
 
+#pragma warning disable CA1508 // Avoid dead conditional code
             var targetMap = sourceMap == null
                 ? map
                 : map.Merge(sourceMap, string.Empty, out dirty);
+#pragma warning restore CA1508 // Avoid dead conditional code
 
             if (dirty)
             {
