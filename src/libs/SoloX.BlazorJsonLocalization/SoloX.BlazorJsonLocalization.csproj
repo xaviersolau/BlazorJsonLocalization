@@ -44,7 +44,7 @@
 	  <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
 	  <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.0.16">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
