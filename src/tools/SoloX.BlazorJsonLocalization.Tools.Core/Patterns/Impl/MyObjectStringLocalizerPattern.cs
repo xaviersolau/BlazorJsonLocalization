@@ -19,7 +19,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
     /// <summary>
     /// IMyObjectStringLocalizerPattern generated implementation.
     /// </summary>
-    [Pattern(typeof(AttributeSelector<LocalizerAttribute>))]
+    [Pattern<AttributeSelector<LocalizerAttribute>>]
     [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern), Prefix = "I")]
     [ReplacePattern(typeof(TypeReplaceHandler))]
     public class MyObjectStringLocalizerPattern : IMyObjectStringLocalizerPattern
@@ -53,7 +53,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty), Prefix = "I")]
         public IMyObjectSubStringLocalizerPattern MyObjectSubStringLocalizerProperty
         {
-            get => new MyObjectSubStringLocalizerPattern(this.stringLocalizer.GetSubLocalizer(nameof(MyObjectSubStringLocalizerProperty)));
+            get => new MyObjectSubStringLocalizerPattern(this.stringLocalizer, this.stringLocalizer.GetSubLocalizer(nameof(MyObjectSubStringLocalizerProperty)));
         }
 
         /// <summary>

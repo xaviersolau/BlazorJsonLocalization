@@ -18,15 +18,21 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf
     public interface IMyObjectSubStringLocalizerPattern : IStringLocalizer
     {
         /// <summary>
+        /// Get Sub localized argument.
+        /// </summary>
+        [Pattern<LocalizerArgumentSelector>]
+        string SomeArgument { get; }
+
+        /// <summary>
         /// Get MyObjectSub2StringLocalizerProperty Sub string localizer.
         /// </summary>
-        [Pattern(typeof(SubLocalizerPropertySelector))]
+        [Pattern<SubLocalizerPropertySelector>]
         IMyObjectSub2StringLocalizerPattern MyObjectSub2StringLocalizerProperty { get; }
 
         /// <summary>
         /// Get SomeSubProperty localized string.
         /// </summary>
-        [Pattern(typeof(StringPropertySelector))]
+        [Pattern<LocalizerPropertySelector>]
         string SomeSubProperty { get; }
 
         /// <summary>

@@ -6,24 +6,15 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using SoloX.BlazorJsonLocalization.Attributes;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
 {
-    internal class SelectorResolver : ISelectorResolver
+    internal class SelectorResolver : DefaultSelectorResolver
     {
-        public ISelector? GetSelector(string selectorName)
-        {
-            if (selectorName == typeof(SubLocalizerPropertySelector).FullName)
-            {
-                return new SubLocalizerPropertySelector();
-            }
-            else if (selectorName == typeof(StringPropertySelector).FullName)
-            {
-                return new StringPropertySelector();
-            }
-
-            return null;
-        }
+        public SelectorResolver()
+            : base(typeof(SubLocalizerPropertySelector), typeof(LocalizerPropertySelector), typeof(LocalizerArgumentSelector), typeof(LocalizerAttribute), typeof(SubLocalizerAttribute))
+        { }
     }
 }
