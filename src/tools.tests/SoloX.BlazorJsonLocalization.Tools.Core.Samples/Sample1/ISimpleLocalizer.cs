@@ -15,5 +15,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
     public interface ISimpleLocalizer : IStringLocalizer<Component>
     {
         string BasicProperty { get; }
+        string BasicMethod();
+        string BasicMethodArg(string arg);
+        string BasicMethodArg1Arg2(string arg1, string arg2);
     }
 }

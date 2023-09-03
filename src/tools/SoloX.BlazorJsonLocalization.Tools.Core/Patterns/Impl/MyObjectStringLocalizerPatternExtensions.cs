@@ -19,7 +19,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
     /// <summary>
     /// MyObjectStringLocalizerPatternExtensions generated extension methods.
     /// </summary>
-    [Pattern(typeof(AttributeSelector<LocalizerAttribute>))]
+    [Pattern<AttributeSelector<LocalizerAttribute>>]
     [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern), Prefix = "I")]
     [ReplacePattern(typeof(TypeReplaceHandler))]
     public static class MyObjectStringLocalizerPatternExtensions

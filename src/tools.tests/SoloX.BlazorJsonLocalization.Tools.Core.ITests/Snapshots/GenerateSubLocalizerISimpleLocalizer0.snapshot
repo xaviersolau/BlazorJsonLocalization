@@ -48,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
         /// </summary>
         public ISimpleSubLocalizer SubLocalizer1
         {
-            get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer1)));
+            get => new SimpleSubLocalizer(this.stringLocalizer, this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer1)));
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
         /// </summary>
         public ISimpleSubLocalizer SubLocalizer2
         {
-            get => new SimpleSubLocalizer(this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer2)));
+            get => new SimpleSubLocalizer(this.stringLocalizer, this.stringLocalizer.GetSubLocalizer(nameof(SubLocalizer2)));
         }
 
         /// <summary>
@@ -141,14 +141,17 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
     public class SimpleSubLocalizer : ISimpleSubLocalizer
     {
         private readonly IStringLocalizer stringLocalizer;
+        private readonly IStringLocalizer argumentStringLocalizer;
 
         /// <summary>
         /// Setup instance.
         /// </summary>
         /// <param name="stringLocalizer">Base string localizer.</param>
-        public SimpleSubLocalizer(IStringLocalizer stringLocalizer)
+        /// <param name="argumentStringLocalizer">argument String Localizer</param>
+        public SimpleSubLocalizer(IStringLocalizer stringLocalizer, IStringLocalizer argumentStringLocalizer)
         {
             this.stringLocalizer = stringLocalizer;
+            this.argumentStringLocalizer = argumentStringLocalizer;
         }
 
         /// <inheritdoc/>
@@ -166,17 +169,28 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
         /// <summary>
         /// Get BasicSubProperty1 localized string.
         /// </summary>
-        public string BasicSubProperty1
-        {
-            get => this.stringLocalizer[nameof(BasicSubProperty1)];
-        }
+        public string BasicSubProperty1 => GetLocalizerValue(nameof(BasicSubProperty1));
 
         /// <summary>
         /// Get BasicSubProperty2 localized string.
         /// </summary>
-        public string BasicSubProperty2
+        public string BasicSubProperty2 => GetLocalizerValue(nameof(BasicSubProperty2));
+
+        private string GetLocalizerValue(string name, params object[] arguments)
         {
-            get => this.stringLocalizer[nameof(BasicSubProperty2)];
+            var txt = this.stringLocalizer[name, arguments];
+
+            return ProcessLocalizerArgument(txt);
+        }
+
+        private string ProcessLocalizerArgument(string txt)
+        {
+            if (string.IsNullOrEmpty(txt))
+            {
+                return txt;
+            }
+
+            return txt;
         }
     }
 }

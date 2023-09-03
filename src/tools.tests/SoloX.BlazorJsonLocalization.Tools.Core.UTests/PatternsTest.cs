@@ -35,13 +35,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         public void IsShouldForwardMethodCallToStringLocalizer()
         {
             var expectedValue = "My Test Value";
-            var expectedName = "My Test Name";
+            var valueName = nameof(IMyObjectStringLocalizerPattern.SomeStringArgs);
 
             var argument = "My Argument";
 
             this.mock
                 .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument])
-                .Returns(new LocalizedString(expectedName, expectedValue));
+                .Returns(new LocalizedString(valueName, expectedValue));
 
             var value = this.pattern.SomeStringArgs(argument);
 
@@ -52,11 +52,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         public void IsShouldForwardPropertyGetToStringLocalizer()
         {
             var expectedValue = "My Test Value";
-            var expectedName = "My Test Name";
+            var propertyName = nameof(IMyObjectStringLocalizerPattern.SomeProperty);
 
             this.mock
                 .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeProperty)])
-                .Returns(new LocalizedString(expectedName, expectedValue));
+                .Returns(new LocalizedString(propertyName, expectedValue));
 
             var value = this.pattern.SomeProperty;
 
@@ -64,14 +64,53 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         }
 
         [Fact]
-        public void IsShouldForwardSubPropertyGetToStringLocalizer()
+        public void IsShouldForwardSubPropertyGetToRootStringLocalizer()
         {
             var expectedValue = "My Test Value";
-            var expectedName = "My Test Name";
+            var propertyName = nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty);
 
             this.mock
-                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty)])
-                .Returns(new LocalizedString(expectedName, expectedValue));
+                .Setup(x => x[nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+                .Returns(new LocalizedString(propertyName, expectedValue));
+
+            var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
+
+            value.Should().Be(expectedValue);
+        }
+
+        [Fact]
+        public void IsShouldForwardSubArgumentGetToRelativeStringLocalizer()
+        {
+            var expectedValue = "My Test Value";
+            var argName = nameof(IMyObjectSubStringLocalizerPattern.SomeArgument);
+
+            this.mock
+                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)])
+                .Returns(new LocalizedString(argName, expectedValue));
+
+            var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeArgument;
+
+            value.Should().Be(expectedValue);
+        }
+
+        [Fact]
+        public void IsShouldForwardSubPropertyGetToRootStringLocalizerAndReplaceArgument()
+        {
+            var propertyValue = "My Test Value Using The SomeArgument";
+            var propertyName = nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty);
+
+            var argValue = "My Arg Value";
+            var argName = nameof(IMyObjectSubStringLocalizerPattern.SomeArgument);
+
+            var expectedValue = "My Test Value Using The My Arg Value";
+
+            this.mock
+                .Setup(x => x[nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+                .Returns(new LocalizedString(propertyName, propertyValue));
+
+            this.mock
+                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)])
+                .Returns(new LocalizedString(argName, argValue));
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
 

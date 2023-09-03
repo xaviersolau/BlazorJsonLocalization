@@ -10,10 +10,10 @@ SimpleLocalizer
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
 using System.Collections.Generic;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
 {
     /// <summary>
     /// ISimpleLocalizer generated implementation.
@@ -83,10 +83,10 @@ SimpleLocalizerExtensions
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
 using System;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
 {
     /// <summary>
     /// SimpleLocalizerExtensions generated extension methods.
@@ -130,10 +130,10 @@ SimpleSubLocalizer
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
 using System.Collections.Generic;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
 {
     /// <summary>
     /// ISimpleSubLocalizer generated implementation.
@@ -167,6 +167,22 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
             => this.stringLocalizer.GetAllStrings(includeParentCultures);
 
         /// <summary>
+        /// Get Arg1 localized string.
+        /// </summary>
+        public string Arg1
+        {
+            get => this.argumentStringLocalizer[nameof(Arg1)] ?? this.stringLocalizer[nameof(Arg1)];
+        }
+
+        /// <summary>
+        /// Get Arg2 localized string.
+        /// </summary>
+        public string Arg2
+        {
+            get => this.argumentStringLocalizer[nameof(Arg2)] ?? this.stringLocalizer[nameof(Arg2)];
+        }
+
+        /// <summary>
         /// Get BasicSubProperty1 localized string.
         /// </summary>
         public string BasicSubProperty1 => GetLocalizerValue(nameof(BasicSubProperty1));
@@ -190,6 +206,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
                 return txt;
             }
 
+            txt = txt.Replace(nameof(Arg1), Arg1 ?? string.Empty);
+
+            txt = txt.Replace(nameof(Arg2), Arg2 ?? string.Empty);
+
             return txt;
         }
     }
@@ -200,43 +220,52 @@ Component
 ---------------------
 {
   "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
+    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent",
+    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent"
   },
   "SubLocalizer2": {
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent"
   },
-  "BasicProperty": "BasicPropertyValueForComponent",
-  "BasicPropertyUnused": "BasicPropertyValueForComponent"
+  "BasicProperty": "BasicPropertyValueForComponent"
 }
 ---------------------
 Component-fr
 ---------------------
 {
   "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
+    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent-fr",
+    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent-fr"
   },
   "SubLocalizer2": {
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-fr",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-fr"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-fr",
-  "BasicPropertyUnused": "BasicPropertyValueForComponent-fr"
+  "BasicProperty": "BasicPropertyValueForComponent-fr"
 }
 ---------------------
 Component-en
 ---------------------
 {
   "SubLocalizer1": {
-    "BasicSubProperty1": "BasicSubProperty1",
-    "BasicSubProperty2": "BasicSubProperty2"
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
+    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent-en",
+    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent-en"
   },
   "SubLocalizer2": {
+    "Arg1": "Arg1",
+    "Arg2": "Arg2",
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-en",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-en"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-en",
-  "BasicPropertyUnused": "BasicPropertyValueForComponent-en"
+  "BasicProperty": "BasicPropertyValueForComponent-en"
 }

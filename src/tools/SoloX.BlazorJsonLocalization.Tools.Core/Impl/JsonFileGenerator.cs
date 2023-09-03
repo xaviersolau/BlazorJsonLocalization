@@ -9,7 +9,6 @@
 using Microsoft.CodeAnalysis;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization;
 using SoloX.GeneratorTools.Core.CSharp.Generator;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Evaluator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using SoloX.GeneratorTools.Core.CSharp.Model;
 using SoloX.GeneratorTools.Core.CSharp.Model.Resolver;
@@ -81,13 +80,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                 var localizerAttribute = genericDeclaration.Attributes[0];
 
-                var attributeSyntax = localizerAttribute.SyntaxNodeProvider.SyntaxNode;
+                var folder = localizerAttribute.ConstructorArguments.ElementAtOrDefault(0) as string;
 
-                if (attributeSyntax.ArgumentList != null)
+                if (folder != null)
                 {
-                    var constEvaluator = new ConstantExpressionSyntaxEvaluator<string>();
-                    var folder = constEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.First().Expression);
-
                     if (string.IsNullOrEmpty(folder))
                     {
                         location = location.Replace(this.resourcesFolderName + Path.PathSeparator, string.Empty);
@@ -97,8 +93,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                         location = location.Replace(this.resourcesFolderName, folder);
                     }
 
-                    var constArrayEvaluator = new ConstantExpressionSyntaxEvaluator<string[]>();
-                    var languages = constArrayEvaluator.Visit(attributeSyntax.ArgumentList.Arguments.Skip(1).First().Expression);
+                    var languages = localizerAttribute.ConstructorArguments.ElementAtOrDefault(1) as string[];
 
                     var jsonName = ((IGenericDeclarationUse)genericDeclaration.Extends.First()).GenericParameters.First().Declaration.Name;
 
@@ -135,12 +130,17 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                     }
                     else
                     {
+                        //if (propertyDeclaration.Attr)
+
                         map.Add(propertyDeclaration.Name, new LocalizationValue(propertyDeclaration.Name));
                     }
                 }
                 else if (member is IMethodDeclaration methodDeclaration)
                 {
-                    map.Add(methodDeclaration.Name, new LocalizationValue(methodDeclaration.Name));
+                    var i = 0;
+                    var args = string.Join(" - ", methodDeclaration.Parameters.Select(p => $"{{{i++}}} = {p.Name}"));
+
+                    map.Add(methodDeclaration.Name, new LocalizationValue(methodDeclaration.Name + " - " + args));
                 }
             }
 

@@ -45,5 +45,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
         {
             throw new NotImplementedException();
         }
+
+        /// <inheritdoc/>
+        public IEnumerable<IConstantDeclaration> GetConstants(IGenericDeclaration<SyntaxNode> declaration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

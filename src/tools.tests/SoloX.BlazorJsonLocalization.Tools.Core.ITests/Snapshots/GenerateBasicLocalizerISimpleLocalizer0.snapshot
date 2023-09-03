@@ -50,6 +50,24 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
         {
             get => this.stringLocalizer[nameof(BasicProperty)];
         }
+
+        /// <summary>
+        /// Get BasicMethod localized string.
+        /// </summary>
+        public string BasicMethod()
+            => this.stringLocalizer[nameof(BasicMethod)];
+
+        /// <summary>
+        /// Get BasicMethodArg localized string.
+        /// </summary>
+        public string BasicMethodArg( string arg)
+            => this.stringLocalizer[nameof(BasicMethodArg), arg];
+
+        /// <summary>
+        /// Get BasicMethodArg1Arg2 localized string.
+        /// </summary>
+        public string BasicMethodArg1Arg2( string arg1,  string arg2)
+            => this.stringLocalizer[nameof(BasicMethodArg1Arg2), arg1, arg2];
     }
 
 
@@ -99,6 +117,51 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 
             return stringLocalizer[nameof(BasicProperty)];
         }
+
+        /// <summary>
+        /// Get BasicMethod localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string BasicMethod(this IStringLocalizer<Component> stringLocalizer)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(BasicMethod)];
+        }
+
+        /// <summary>
+        /// Get BasicMethodArg localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string BasicMethodArg(this IStringLocalizer<Component> stringLocalizer,  string arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(BasicMethodArg), arg];
+        }
+
+        /// <summary>
+        /// Get BasicMethodArg1Arg2 localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string BasicMethodArg1Arg2(this IStringLocalizer<Component> stringLocalizer,  string arg1,  string arg2)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(BasicMethodArg1Arg2), arg1, arg2];
+        }
     }
 }
 
@@ -106,17 +169,26 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 Component
 ---------------------
 {
-  "BasicProperty": "BasicProperty"
+  "BasicProperty": "BasicProperty",
+  "BasicMethod": "BasicMethod - ",
+  "BasicMethodArg": "BasicMethodArg - {0} = arg",
+  "BasicMethodArg1Arg2": "BasicMethodArg1Arg2 - {0} = arg1 - {1} = arg2"
 }
 ---------------------
 Component-fr
 ---------------------
 {
-  "BasicProperty": "BasicProperty"
+  "BasicProperty": "BasicProperty",
+  "BasicMethod": "BasicMethod - ",
+  "BasicMethodArg": "BasicMethodArg - {0} = arg",
+  "BasicMethodArg1Arg2": "BasicMethodArg1Arg2 - {0} = arg1 - {1} = arg2"
 }
 ---------------------
 Component-en
 ---------------------
 {
-  "BasicProperty": "BasicProperty"
+  "BasicProperty": "BasicProperty",
+  "BasicMethod": "BasicMethod - ",
+  "BasicMethodArg": "BasicMethodArg - {0} = arg",
+  "BasicMethodArg1Arg2": "BasicMethodArg1Arg2 - {0} = arg1 - {1} = arg2"
 }

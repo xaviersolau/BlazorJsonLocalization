@@ -130,6 +130,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             workspace.RegisterFile(GetContentFile("./Patterns/Itf/IMyObjectSubStringLocalizerPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectSubStringLocalizerPattern.cs"));
 
+            workspace.RegisterAssemblyTypes(
+                typeof(SubLocalizerPropertySelector).Assembly,
+                new[] { typeof(SubLocalizerPropertySelector), typeof(LocalizerPropertySelector), typeof(LocalizerArgumentSelector), typeof(LocalizerAttribute), typeof(SubLocalizerAttribute) });
+
             var resolver = workspace.DeepLoad();
 
             var generator1 = new AutomatedGenerator(
@@ -137,8 +141,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPattern),
-                this.logger,
-                new SelectorResolver());
+                new SelectorResolver(),
+                this.logger);
 
             generator1.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
@@ -149,8 +153,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPatternExtensions),
-                this.logger,
-                new SelectorResolver());
+                new SelectorResolver(),
+                this.logger);
 
             generator2.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
@@ -161,8 +165,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 locator,
                 resolver,
                 typeof(MyObjectSubStringLocalizerPattern),
-                this.logger,
-                new SelectorResolver());
+                new SelectorResolver(),
+                this.logger);
 
             generator3.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 

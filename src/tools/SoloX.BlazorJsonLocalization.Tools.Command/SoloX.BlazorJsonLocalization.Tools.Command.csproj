@@ -9,7 +9,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
 
-    <AssemblyName>dotnet-SoloX.BlazorJsonLocalization.Tools.Command</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>localizationgen</ToolCommandName>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
   <ItemGroup>
