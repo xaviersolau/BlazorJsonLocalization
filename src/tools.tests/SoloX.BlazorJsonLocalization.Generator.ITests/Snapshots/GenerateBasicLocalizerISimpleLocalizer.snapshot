@@ -60,13 +60,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
         /// <summary>
         /// Get BasicMethodArg localized string.
         /// </summary>
-        public string BasicMethodArg( string arg)
+        public string BasicMethodArg(string arg)
             => this.stringLocalizer[nameof(BasicMethodArg), arg];
 
         /// <summary>
         /// Get BasicMethodArg1Arg2 localized string.
         /// </summary>
-        public string BasicMethodArg1Arg2( string arg1,  string arg2)
+        public string BasicMethodArg1Arg2(string arg1, string arg2)
             => this.stringLocalizer[nameof(BasicMethodArg1Arg2), arg1, arg2];
     }
 
@@ -138,7 +138,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
         /// </summary>
         /// <param name="stringLocalizer">String localizer to get the value from.</param>
         /// <returns>The localized value.</returns>
-        public static string BasicMethodArg(this IStringLocalizer<Component> stringLocalizer,  string arg)
+        public static string BasicMethodArg(this IStringLocalizer<Component> stringLocalizer, string arg)
         {
             if (stringLocalizer == null)
             {
@@ -153,7 +153,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
         /// </summary>
         /// <param name="stringLocalizer">String localizer to get the value from.</param>
         /// <returns>The localized value.</returns>
-        public static string BasicMethodArg1Arg2(this IStringLocalizer<Component> stringLocalizer,  string arg1,  string arg2)
+        public static string BasicMethodArg1Arg2(this IStringLocalizer<Component> stringLocalizer, string arg1, string arg2)
         {
             if (stringLocalizer == null)
             {

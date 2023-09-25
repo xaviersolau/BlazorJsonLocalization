@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.CodeAnalysis;
+using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization;
 using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
@@ -115,6 +116,70 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         private static ALocalizationData BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
+            return BuildLocalizationMap(genericDeclaration, null);
+        }
+
+        private static ALocalizationData BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration, Dictionary<string, ALocalizationData> rootMap)
+        {
+            var map = new Dictionary<string, ALocalizationData>();
+
+            if (rootMap == null)
+            {
+                rootMap = map;
+            }
+
+            foreach (var member in genericDeclaration.Members)
+            {
+                if (member is IPropertyDeclaration propertyDeclaration)
+                {
+                    var propertyType = propertyDeclaration.PropertyType.Declaration;
+                    if (propertyType is IGenericDeclaration<SyntaxNode> genericSubDeclaration)
+                    {
+                        if (!rootMap.ContainsKey(propertyDeclaration.PropertyType.Declaration.FullName))
+                        {
+                            var subMap = BuildLocalizationMap(genericSubDeclaration, rootMap);
+
+                            rootMap.Add(propertyDeclaration.PropertyType.Declaration.FullName, subMap);
+                        }
+
+                        var argMap = BuildLocalizationArgumentMap(genericSubDeclaration, propertyDeclaration.Attributes);
+
+                        map.Add(propertyDeclaration.Name, argMap);
+                    }
+                    else if (propertyDeclaration.Attributes.Any(a => a.Name == nameof(TranslateArgAttribute)))
+                    {
+                        var attribute = propertyDeclaration.Attributes.First(a => a.Name == nameof(TranslateArgAttribute));
+                        var txtValue = (string?)attribute.ConstructorArguments.FirstOrDefault();
+
+                        map.Add(propertyDeclaration.Name, new LocalizationValue(txtValue ?? propertyDeclaration.Name));
+                    }
+                    else
+                    {
+                        var attribute = propertyDeclaration.Attributes.FirstOrDefault(a => a.Name == nameof(TranslateAttribute));
+                        var txtValue = (string?)attribute?.ConstructorArguments?.FirstOrDefault();
+
+                        map.Add(propertyDeclaration.Name, new LocalizationValue(txtValue ?? propertyDeclaration.Name));
+                    }
+                }
+                else if (member is IMethodDeclaration methodDeclaration)
+                {
+                    var attribute = methodDeclaration.Attributes.FirstOrDefault(a => a.Name == nameof(TranslateAttribute));
+                    var txtValue = (string?)attribute?.ConstructorArguments?.FirstOrDefault();
+
+                    var i = 0;
+                    var args = string.Join(" - ", methodDeclaration.Parameters.Select(p => $"{{{i++}}} = {p.Name}"));
+
+                    map.Add(methodDeclaration.Name, new LocalizationValue(txtValue ?? (methodDeclaration.Name + " - " + args)));
+                }
+            }
+
+            return new LocalizationMap(map);
+        }
+
+        private static ALocalizationData BuildLocalizationArgumentMap(IGenericDeclaration<SyntaxNode> genericDeclaration, IEnumerable<IAttributeUse> attributes)
+        {
+            var argumentMap = attributes.Where(a => a.Name == nameof(TranslateSubAttribute)).ToDictionary(x => (string)x.ConstructorArguments.First(), x => (string)x.ConstructorArguments.Skip(1).First());
+
             var map = new Dictionary<string, ALocalizationData>();
 
             foreach (var member in genericDeclaration.Members)
@@ -124,23 +189,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                     var propertyType = propertyDeclaration.PropertyType.Declaration;
                     if (propertyType is IGenericDeclaration<SyntaxNode> genericSubDeclaration)
                     {
-                        var subMap = BuildLocalizationMap(genericSubDeclaration);
+                        var subMap = BuildLocalizationArgumentMap(genericSubDeclaration, propertyDeclaration.Attributes);
 
                         map.Add(propertyDeclaration.Name, subMap);
                     }
-                    else
+                    else if (propertyDeclaration.Attributes.Any(a => a.Name == nameof(TranslateArgAttribute)))
                     {
-                        //if (propertyDeclaration.Attr)
+                        var txtValue = argumentMap.TryGetValue(propertyDeclaration.Name, out var attValue) ? attValue : propertyDeclaration.Name;
 
-                        map.Add(propertyDeclaration.Name, new LocalizationValue(propertyDeclaration.Name));
+                        map.Add(propertyDeclaration.Name, new LocalizationValue(txtValue));
                     }
-                }
-                else if (member is IMethodDeclaration methodDeclaration)
-                {
-                    var i = 0;
-                    var args = string.Join(" - ", methodDeclaration.Parameters.Select(p => $"{{{i++}}} = {p.Name}"));
-
-                    map.Add(methodDeclaration.Name, new LocalizationValue(methodDeclaration.Name + " - " + args));
                 }
             }
 

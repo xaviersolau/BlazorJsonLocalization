@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp.Extensions" Version="1.0.0-alpha.34" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp.Extensions" Version="1.0.0-alpha.35" />
     <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.0.16">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

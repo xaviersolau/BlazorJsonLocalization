@@ -9,6 +9,7 @@
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using System.Collections.Generic;
@@ -22,31 +23,33 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
     [Repeat(Pattern = nameof(IMyObjectSubStringLocalizerPattern), Prefix = "I")]
     public class MyObjectSubStringLocalizerPattern : IMyObjectSubStringLocalizerPattern
     {
-        private readonly IStringLocalizer stringLocalizer;
+        private readonly IStringLocalizer rootLocalizer;
+        private readonly IStringLocalizer elementLocalizer;
         private readonly IStringLocalizer argumentStringLocalizer;
 
         /// <summary>
         /// Setup instance.
         /// </summary>
-        /// <param name="stringLocalizer">Base string localizer.</param>
+        /// <param name="rootLocalizer">Base string localizer.</param>
         /// <param name="argumentStringLocalizer">argument String Localizer</param>
-        public MyObjectSubStringLocalizerPattern(IStringLocalizer stringLocalizer, IStringLocalizer argumentStringLocalizer)
+        public MyObjectSubStringLocalizerPattern(IStringLocalizer rootLocalizer, IStringLocalizer argumentStringLocalizer)
         {
-            this.stringLocalizer = stringLocalizer;
+            this.rootLocalizer = rootLocalizer;
+            this.elementLocalizer = rootLocalizer.GetSubLocalizer(typeof(IMyObjectSubStringLocalizerPattern).FullName);
             this.argumentStringLocalizer = argumentStringLocalizer;
         }
 
         /// <inheritdoc/>
         public LocalizedString this[string name]
-            => this.stringLocalizer[name];
+            => this.elementLocalizer[name];
 
         /// <inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => this.stringLocalizer[name, arguments];
+            => this.elementLocalizer[name, arguments];
 
         /// <inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+            => this.elementLocalizer.GetAllStrings(includeParentCultures);
 
         /// <summary>
         /// Get MyObjectSub2StringLocalizerProperty Sub string localizer.
@@ -54,7 +57,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         [Repeat(Pattern = nameof(IMyObjectSubStringLocalizerPattern.MyObjectSub2StringLocalizerProperty), Prefix = "I")]
         public IMyObjectSub2StringLocalizerPattern MyObjectSub2StringLocalizerProperty
         {
-            get => new MyObjectSub2StringLocalizerPattern(this.stringLocalizer, this.argumentStringLocalizer.GetSubLocalizer(nameof(MyObjectSub2StringLocalizerProperty)));
+            get => new MyObjectSub2StringLocalizerPattern(this.rootLocalizer, this.argumentStringLocalizer.GetSubLocalizer(nameof(MyObjectSub2StringLocalizerProperty)));
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         [Repeat(Pattern = nameof(IMyObjectSubStringLocalizerPattern.SomeArgument))]
         public string SomeArgument
         {
-            get => this.argumentStringLocalizer[nameof(SomeArgument)] ?? this.stringLocalizer[nameof(SomeArgument)];
+            get => this.argumentStringLocalizer[nameof(SomeArgument)] ?? this.elementLocalizer[nameof(SomeArgument)];
         }
 
         /// <summary>
@@ -76,17 +79,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         /// Get SomeSubStringArgs localized string.
         /// </summary>
         [Repeat(Pattern = nameof(IMyObjectSubStringLocalizerPattern.SomeSubStringArgs))]
-        public string SomeSubStringArgs([Repeat(Pattern = "someParameter")] object someParameter)
-            => GetLocalizerValue(nameof(SomeSubStringArgs), someParameter);
+        public string SomeSubStringArgs([Repeat(Pattern = nameof(someParameter))] object someParameter)
+            => GetLocalizerValue(nameof(SomeSubStringArgs), Repeat.Argument(nameof(someParameter), someParameter));
 
         private string GetLocalizerValue(string name, params object[] arguments)
         {
-            var txt = this.stringLocalizer[name, arguments];
+            var txt = this.elementLocalizer[name, arguments];
 
             return ProcessLocalizerArgument(txt);
         }
 
-        [RepeatStatements(Pattern = nameof(IMyObjectSubStringLocalizerPattern.SomeArgument))]
         private string ProcessLocalizerArgument(string txt)
         {
             if (string.IsNullOrEmpty(txt))
@@ -94,7 +96,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
                 return txt;
             }
 
-            txt = txt.Replace(nameof(SomeArgument), SomeArgument ?? string.Empty);
+            Repeat.Statements(nameof(IMyObjectSubStringLocalizerPattern.SomeArgument), () =>
+            {
+                txt = txt.Replace(nameof(SomeArgument), SomeArgument ?? string.Empty);
+            });
 
             return txt;
         }

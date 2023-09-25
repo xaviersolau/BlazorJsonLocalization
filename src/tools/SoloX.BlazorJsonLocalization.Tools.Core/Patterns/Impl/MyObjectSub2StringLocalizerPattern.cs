@@ -13,13 +13,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
 {
     internal class MyObjectSub2StringLocalizerPattern : IMyObjectSub2StringLocalizerPattern
     {
-        private readonly IStringLocalizer stringLocalizer;
-        private readonly IStringLocalizer argumentStringLocalizer;
-
         public MyObjectSub2StringLocalizerPattern(IStringLocalizer stringLocalizer, IStringLocalizer argumentStringLocalizer)
         {
-            this.stringLocalizer = stringLocalizer;
-            this.argumentStringLocalizer = argumentStringLocalizer;
         }
     }
 }
