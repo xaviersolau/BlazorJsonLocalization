@@ -18,6 +18,8 @@
 
     <Nullable>enable</Nullable>
 
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+
   </PropertyGroup>
 
 </Project>

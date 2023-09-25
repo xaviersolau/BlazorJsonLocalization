@@ -70,7 +70,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var propertyName = nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty);
 
             this.mock
-                .Setup(x => x[nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+                .Setup(x => x[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
                 .Returns(new LocalizedString(propertyName, expectedValue));
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
@@ -105,7 +105,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value Using The My Arg Value";
 
             this.mock
-                .Setup(x => x[nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+                .Setup(x => x[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
                 .Returns(new LocalizedString(propertyName, propertyValue));
 
             this.mock

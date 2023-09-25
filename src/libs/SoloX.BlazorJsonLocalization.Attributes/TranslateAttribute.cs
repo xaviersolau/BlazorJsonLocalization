@@ -13,7 +13,7 @@ namespace SoloX.BlazorJsonLocalization.Attributes
     /// <summary>
     /// Translate attribute to define translation from code.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public sealed class TranslateAttribute : Attribute
     {
         /// <summary>

@@ -6,14 +6,14 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+#pragma warning disable CA1040 // Avoid empty interfaces
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf
 {
     /// <summary>
     /// Code first sub string localizer definition pattern.
     /// </summary>
-#pragma warning disable CA1040 // Avoid empty interfaces
     public interface IMyObjectSub2StringLocalizerPattern
     {
     }
-#pragma warning restore CA1040 // Avoid empty interfaces
 }
+#pragma warning restore CA1040 // Avoid empty interfaces

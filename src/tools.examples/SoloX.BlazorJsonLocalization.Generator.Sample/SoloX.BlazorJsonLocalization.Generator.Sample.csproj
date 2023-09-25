@@ -1,18 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization.Attributes\SoloX.BlazorJsonLocalization.Attributes.csproj" />
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj" />
   </ItemGroup>
+
+  <Target Name="BeforeStateGenerator" BeforeTargets="BeforeBuild;BeforeRebuild">
+    <Exec Command="dotnet build ../../tools/SoloX.BlazorJsonLocalization.Tools.Command/SoloX.BlazorJsonLocalization.Tools.Command.csproj" />
+    <Exec
+      Command="dotnet run --no-build -- ../../tools.examples/SoloX.BlazorJsonLocalization.Generator.Sample/SoloX.BlazorJsonLocalization.Generator.Sample.csproj"
+      WorkingDirectory="../../tools/SoloX.BlazorJsonLocalization.Tools.Command" />
+  </Target>
 
 </Project>

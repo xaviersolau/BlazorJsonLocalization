@@ -10,6 +10,7 @@ using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Handlers;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
+using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using System;
@@ -54,14 +55,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
         /// <param name="stringLocalizer">String localizer to get the value from.</param>
         /// <returns>The localized value.</returns>
         [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern.SomeStringArgs))]
-        public static string SomeStringArgs(this IStringLocalizer<MyObject> stringLocalizer, [Repeat(Pattern = "someParameter")] object someParameter)
+        public static string SomeStringArgs(this IStringLocalizer<MyObject> stringLocalizer, [Repeat(Pattern = nameof(someParameter))] object someParameter)
         {
             if (stringLocalizer == null)
             {
                 throw new ArgumentNullException(nameof(stringLocalizer));
             }
 
-            return stringLocalizer[nameof(SomeStringArgs), someParameter];
+            return stringLocalizer[nameof(SomeStringArgs), Repeat.Argument(nameof(someParameter), someParameter)];
         }
     }
 }

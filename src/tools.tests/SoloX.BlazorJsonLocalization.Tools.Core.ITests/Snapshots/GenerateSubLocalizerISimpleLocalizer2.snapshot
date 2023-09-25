@@ -140,31 +140,33 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
     /// </summary>
     public class SimpleSubLocalizer : ISimpleSubLocalizer
     {
-        private readonly IStringLocalizer stringLocalizer;
+        private readonly IStringLocalizer rootLocalizer;
+        private readonly IStringLocalizer elementLocalizer;
         private readonly IStringLocalizer argumentStringLocalizer;
 
         /// <summary>
         /// Setup instance.
         /// </summary>
-        /// <param name="stringLocalizer">Base string localizer.</param>
+        /// <param name="rootLocalizer">Base string localizer.</param>
         /// <param name="argumentStringLocalizer">argument String Localizer</param>
-        public SimpleSubLocalizer(IStringLocalizer stringLocalizer, IStringLocalizer argumentStringLocalizer)
+        public SimpleSubLocalizer(IStringLocalizer rootLocalizer, IStringLocalizer argumentStringLocalizer)
         {
-            this.stringLocalizer = stringLocalizer;
+            this.rootLocalizer = rootLocalizer;
+            this.elementLocalizer = rootLocalizer.GetSubLocalizer(typeof(ISimpleSubLocalizer).FullName);
             this.argumentStringLocalizer = argumentStringLocalizer;
         }
 
         /// <inheritdoc/>
         public LocalizedString this[string name]
-            => this.stringLocalizer[name];
+            => this.elementLocalizer[name];
 
         /// <inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => this.stringLocalizer[name, arguments];
+            => this.elementLocalizer[name, arguments];
 
         /// <inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+            => this.elementLocalizer.GetAllStrings(includeParentCultures);
 
         /// <summary>
         /// Get BasicSubProperty1 localized string.
@@ -178,7 +180,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 
         private string GetLocalizerValue(string name, params object[] arguments)
         {
-            var txt = this.stringLocalizer[name, arguments];
+            var txt = this.elementLocalizer[name, arguments];
 
             return ProcessLocalizerArgument(txt);
         }
@@ -199,10 +201,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2
 Component
 ---------------------
 {
-  "SubLocalizer1": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
+  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent"
@@ -214,10 +217,11 @@ Component
 Component-fr
 ---------------------
 {
-  "SubLocalizer1": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
+  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-fr",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-fr"
@@ -229,10 +233,11 @@ Component-fr
 Component-en
 ---------------------
 {
-  "SubLocalizer1": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
+  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-en",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-en"
