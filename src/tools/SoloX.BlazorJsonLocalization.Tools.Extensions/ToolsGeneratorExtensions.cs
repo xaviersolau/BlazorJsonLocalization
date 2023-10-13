@@ -27,7 +27,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Extensions
         {
             return services
                 .AddCSharpToolsGenerator()
-                .AddTransient<IToolsGenerator, ToolsGenerator>();
+                .AddTransient<ILocalizationGenerator, LocalizationGenerator>();
         }
     }
 }

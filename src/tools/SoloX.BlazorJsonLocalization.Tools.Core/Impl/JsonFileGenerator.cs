@@ -235,6 +235,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                     textWriter.Write(JsonSerializer.Serialize(targetMap, new JsonSerializerOptions { WriteIndented = true }));
                 });
             }
+            else
+            {
+                this.writer.Generate(location, jsonName, textWriter =>
+                {
+                    textWriter.Write(JsonSerializer.Serialize(sourceMap, new JsonSerializerOptions { WriteIndented = true }));
+                });
+            }
         }
     }
 }

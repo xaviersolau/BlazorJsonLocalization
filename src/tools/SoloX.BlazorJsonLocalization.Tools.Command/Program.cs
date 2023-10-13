@@ -57,11 +57,16 @@ namespace SoloX.BlazorJsonLocalization.Tools
             var rootCommand = new RootCommand("Localization generation tool");
 
             var projectArgument = new Argument<FileInfo>("projectFile", "CS Project to run generation.");
-
             rootCommand.AddArgument(projectArgument);
 
+            var outputCodeOption = new Option<FileInfo>("--outputCode", "File to store CS output file list.");
+            rootCommand.AddOption(outputCodeOption);
+
+            var outputResourceOption = new Option<FileInfo>("--outputResource", "File to store Json output resource file list.");
+            rootCommand.AddOption(outputResourceOption);
+
             rootCommand.SetHandler(
-                ctx =>
+                async ctx =>
                 {
                     var projectFile = ctx.BindingContext.ParseResult.GetValueForArgument(projectArgument);
 
@@ -75,9 +80,22 @@ namespace SoloX.BlazorJsonLocalization.Tools
                         ctx.ExitCode = -1;
                     }
 
-                    var generator = this.Service.GetService<IToolsGenerator>();
-                    generator.Generate(projectFile.FullName);
+                    var generator = this.Service.GetRequiredService<ILocalizationGenerator>();
+                    var results = generator.Generate(projectFile.FullName);
 
+                    var full = projectFile.Directory?.FullName ?? Environment.CurrentDirectory;
+
+                    var outputResourceFile = ctx.BindingContext.ParseResult.GetValueForOption(outputResourceOption);
+                    if (outputResourceFile != null)
+                    {
+                        await File.WriteAllLinesAsync(outputResourceFile.FullName, results.GeneratedResourceFiles.Select(f => Path.GetRelativePath(full, f))).ConfigureAwait(false);
+                    }
+
+                    var outputCodeFile = ctx.BindingContext.ParseResult.GetValueForOption(outputCodeOption);
+                    if (outputCodeFile != null)
+                    {
+                        await File.WriteAllLinesAsync(outputCodeFile.FullName, results.GeneratedCodeFiles.Select(f => Path.GetRelativePath(full, f))).ConfigureAwait(false);
+                    }
                 });
 
             await rootCommand.InvokeAsync(args).ConfigureAwait(false);
