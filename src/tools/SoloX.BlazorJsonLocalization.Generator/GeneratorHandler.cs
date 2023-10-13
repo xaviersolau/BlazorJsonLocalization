@@ -60,7 +60,7 @@ namespace SoloX.GeneratorTools.Test
 
             var csharpWorkspaceFactory = new CSharpWorkspaceFactory(logFactory);
 
-            var generator = new ToolsGenerator(logFactory.CreateLogger<ToolsGenerator>(), csharpWorkspaceFactory);
+            var generator = new LocalizationGenerator(logFactory.CreateLogger<LocalizationGenerator>(), csharpWorkspaceFactory);
 
             generator.Generate(compilation, classes, context);
         }

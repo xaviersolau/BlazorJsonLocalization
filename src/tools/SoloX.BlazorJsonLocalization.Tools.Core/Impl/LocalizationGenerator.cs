@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ToolsGenerator.cs" company="Xavier Solau">
+// <copyright file="LocalizationGenerator.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -29,19 +29,19 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
     /// <summary>
     /// Json localizer generator that will generate the String localizer classes and the Json resources.
     /// </summary>
-    public class ToolsGenerator : IToolsGenerator
+    public class LocalizationGenerator : ILocalizationGenerator
     {
-        private readonly IGeneratorLogger<ToolsGenerator> logger;
+        private readonly IGeneratorLogger<LocalizationGenerator> logger;
         private readonly ICSharpWorkspaceFactory workspaceFactory;
 
         private const string ResourcesFolderName = "JsonResourcesFolder";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToolsGenerator"/> class.
+        /// Initializes a new instance of the <see cref="LocalizationGenerator"/> class.
         /// </summary>
         /// <param name="logger">Logger that will be used for logs.</param>
         /// <param name="workspaceFactory">The workspace factory to use.</param>
-        public ToolsGenerator(IGeneratorLogger<ToolsGenerator> logger, ICSharpWorkspaceFactory workspaceFactory)
+        public LocalizationGenerator(IGeneratorLogger<LocalizationGenerator> logger, ICSharpWorkspaceFactory workspaceFactory)
         {
             this.logger = logger;
             this.workspaceFactory = workspaceFactory;
@@ -51,8 +51,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// Process generation for the given project file. It can be used from a CLI tool.
         /// </summary>
         /// <param name="projectFile">The project file to process.</param>
-        public void Generate(string projectFile)
+        public ILocalizationGeneratorResults Generate(string projectFile)
         {
+            var inputFiles = new List<string>();
+            var generatedCodeFiles = new List<string>();
+            var generatedResourceFiles = new List<string>();
+
             var projectFolder = Path.GetDirectoryName(projectFile);
 
             this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
@@ -62,10 +66,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var project = workspace.RegisterProject(projectFile);
 
             var locator = new RelativeLocator(Path.Combine(projectFolder), project.RootNameSpace);
-            var fileWriter = new FileWriter(".g.cs");
+            var fileWriter = new FileWriter(".g.cs", generatedCodeFiles.Add);
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), project.RootNameSpace);
-            var jsonWriter = new FileWriter(".json");
+            var jsonWriter = new FileWriter(".json", generatedResourceFiles.Add);
             var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -77,6 +81,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonReader,
                 jsonWriter,
                 project.Files);
+
+            return new LocalizationGeneratorResults(
+                inputFiles,
+                generatedCodeFiles,
+                generatedResourceFiles);
         }
 
         /// <summary>
@@ -85,12 +94,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// <param name="compilation">Compilation unit to process.</param>
         /// <param name="classes">Targeted interfaces.</param>
         /// <param name="context">Source production context to generate the C# code.</param>
-        public void Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
+        public ILocalizationGeneratorResults Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
         {
             if (compilation == null)
             {
                 throw new ArgumentNullException(nameof(compilation));
             }
+
+            var inputFiles = new List<string>();
+            var generatedCodeFiles = new List<string>();
+            var generatedResourceFiles = new List<string>();
 
             var (ns, projectFolder) = ProbRootNamespaceAndProjectFolder(compilation);
 
@@ -99,6 +112,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var locator = new RelativeLocator(Path.Combine(projectFolder), ns);
             var fileWriter = new MemoryWriter(".g.cs", (l, s) =>
             {
+                generatedCodeFiles.Add(l);
+
                 var name = l.StartsWith(projectFolder, StringComparison.Ordinal) ? l.Substring(projectFolder.Length) : l;
 
                 name = name.Replace('/', '.').Replace('\\', '.').TrimStart('.');
@@ -107,7 +122,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             });
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), ns);
-            var jsonWriter = new FileWriter(".json");
+            var jsonWriter = new FileWriter(".json", generatedResourceFiles.Add);
             var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -119,6 +134,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonReader,
                 jsonWriter,
                 workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)));
+
+            return new LocalizationGeneratorResults(
+                inputFiles,
+                generatedCodeFiles,
+                generatedResourceFiles);
         }
 
         internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IReader jsonReader, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
@@ -186,7 +206,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         private static string GetContentFile(string contentFile)
         {
-            var assembly = typeof(ToolsGenerator).Assembly;
+            var assembly = typeof(LocalizationGenerator).Assembly;
 
             var file = Path.Combine(Path.GetDirectoryName(assembly.Location), contentFile);
 

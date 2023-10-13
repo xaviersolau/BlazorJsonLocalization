@@ -2,7 +2,7 @@
   "profiles": {
     "SoloX.BlazorJsonLocalization.Tools.Command": {
       "commandName": "Project",
-      "commandLineArgs": "SoloX.BlazorJsonLocalization.Generator.Sample.csproj",
+      "commandLineArgs": "SoloX.BlazorJsonLocalization.Generator.Sample.csproj --outputCode cslist.output --outputResource reslist.output",
       "workingDirectory": "C:\\Work\\Net\\BlazorJsonLocalization\\src\\tools.examples\\SoloX.BlazorJsonLocalization.Generator.Sample"
     }
   }

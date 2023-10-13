@@ -27,11 +27,37 @@
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj" />
   </ItemGroup>
 
-  <Target Name="BeforeStateGenerator" BeforeTargets="BeforeBuild;BeforeRebuild">
-    <Exec Command="dotnet build ../../tools/SoloX.BlazorJsonLocalization.Tools.Command/SoloX.BlazorJsonLocalization.Tools.Command.csproj" />
-    <Exec
-      Command="dotnet run --no-build -- ../../tools.examples/SoloX.BlazorJsonLocalization.Generator.Sample/SoloX.BlazorJsonLocalization.Generator.Sample.csproj"
-      WorkingDirectory="../../tools/SoloX.BlazorJsonLocalization.Tools.Command" />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <Target Name="LocalizationGenerator" BeforeTargets="BeforeBuild;BeforeRebuild">
+    <PropertyGroup>
+		<GeneratorProject>../../tools/SoloX.BlazorJsonLocalization.Tools.Command/SoloX.BlazorJsonLocalization.Tools.Command.csproj</GeneratorProject>
+		<CsOutputFile>obj/cslist.output</CsOutputFile>
+		<ResOutputFile>obj/reslist.output</ResOutputFile>
+    </PropertyGroup>
+
+    <Exec Command="dotnet build $(GeneratorProject)" />
+    <Exec Command="dotnet run --no-build --project $(GeneratorProject) -- SoloX.BlazorJsonLocalization.Generator.Sample.csproj --outputCode $(CsOutputFile) --outputResource $(ResOutputFile)" />
+
+	  <ReadLinesFromFile File="$(CsOutputFile)">
+		  <Output TaskParameter="Lines" ItemName="CsOutputs" />
+	  </ReadLinesFromFile>
+	  <ReadLinesFromFile File="$(ResOutputFile)">
+		  <Output TaskParameter="Lines" ItemName="ResOutputs" />
+	  </ReadLinesFromFile>
+
+	  <ItemGroup>
+		  <Compile Remove="@(CsOutputs)" />
+		  <Compile Include="@(CsOutputs)" />
+
+		  <None Remove="@(ResOutputs)" />
+		  <EmbeddedResource Remove="@(ResOutputs)" />
+		  <EmbeddedResource Include="@(ResOutputs)" />
+
+	  </ItemGroup>
+	  
   </Target>
 
 </Project>

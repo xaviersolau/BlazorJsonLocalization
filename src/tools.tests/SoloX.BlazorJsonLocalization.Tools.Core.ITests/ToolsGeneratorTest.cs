@@ -108,8 +108,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                     workspace.RegisterFile(file);
                 }
 
-                var generator = new ToolsGenerator(
-                    sp.GetService<IGeneratorLogger<ToolsGenerator>>(),
+                var generator = new LocalizationGenerator(
+                    sp.GetService<IGeneratorLogger<LocalizationGenerator>>(),
                     workspaceFactory);
 
                 var inputs = new HashSet<string>();
