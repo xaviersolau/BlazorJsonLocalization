@@ -34,6 +34,17 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         [Fact]
         public void IsShouldForwardMethodCallToStringLocalizer()
         {
+            AssertForwardMethodCallToStringLocalizer((argument) => this.pattern.SomeStringArgs(argument));
+        }
+
+        [Fact]
+        public void IsShouldForwardMethodCallToStringLocalizerUsingExtension()
+        {
+            AssertForwardMethodCallToStringLocalizer((argument) => this.mock.Object.SomeStringArgs(argument));
+        }
+
+        public void AssertForwardMethodCallToStringLocalizer(Func<string, string> processWithArg)
+        {
             var expectedValue = "My Test Value";
             var valueName = nameof(IMyObjectStringLocalizerPattern.SomeStringArgs);
 
@@ -43,13 +54,24 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
                 .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument])
                 .Returns(new LocalizedString(valueName, expectedValue));
 
-            var value = this.pattern.SomeStringArgs(argument);
+            var value = processWithArg(argument);
 
             value.Should().Be(expectedValue);
         }
 
         [Fact]
         public void IsShouldForwardPropertyGetToStringLocalizer()
+        {
+            AssertForwardPropertyGetToStringLocalizer(() => this.pattern.SomeProperty);
+        }
+
+        [Fact]
+        public void IsShouldForwardPropertyGetToStringLocalizerUsingExtension()
+        {
+            AssertForwardPropertyGetToStringLocalizer(() => this.mock.Object.SomeProperty());
+        }
+
+        private void AssertForwardPropertyGetToStringLocalizer(Func<string> process)
         {
             var expectedValue = "My Test Value";
             var propertyName = nameof(IMyObjectStringLocalizerPattern.SomeProperty);
@@ -58,7 +80,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
                 .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeProperty)])
                 .Returns(new LocalizedString(propertyName, expectedValue));
 
-            var value = this.pattern.SomeProperty;
+            var value = process();
 
             value.Should().Be(expectedValue);
         }
