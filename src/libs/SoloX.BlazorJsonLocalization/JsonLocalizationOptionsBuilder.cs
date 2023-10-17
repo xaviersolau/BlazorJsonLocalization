@@ -19,10 +19,12 @@ namespace SoloX.BlazorJsonLocalization
     /// </summary>
     public sealed class JsonLocalizationOptionsBuilder
     {
-        private readonly IList<IExtensionOptionsContainer> extensionOptions = new List<IExtensionOptionsContainer>();
-        private readonly IList<(string baseName, Assembly assembly)> fallbackList = new List<(string baseName, Assembly assembly)>();
+        private readonly List<IExtensionOptionsContainer> extensionOptions = new List<IExtensionOptionsContainer>();
+        private readonly List<(string baseName, Assembly assembly)> fallbackList = new List<(string baseName, Assembly assembly)>();
+        private readonly List<string> skipBaseNamePrefixList = new List<string> { "Microsoft.AspNetCore.Components" };
 
         private bool enableDisplayKeysWhileLoadingAsynchronously;
+        private bool enableLogger;
 
 
         /// <summary>
@@ -33,6 +35,41 @@ namespace SoloX.BlazorJsonLocalization
         public JsonLocalizationOptionsBuilder EnableDisplayKeysWhileLoadingAsynchronously(bool enable = true)
         {
             this.enableDisplayKeysWhileLoadingAsynchronously = enable;
+            return this;
+        }
+
+        /// <summary>
+        /// Enable (or not) the option to use logger.
+        /// </summary>
+        /// <param name="enable">Enable or not the option.</param>
+        /// <returns>The current builder.</returns>
+        public JsonLocalizationOptionsBuilder EnableLogger(bool enable = true)
+        {
+            this.enableLogger = enable;
+            return this;
+        }
+
+        /// <summary>
+        /// Clear the base name prefix skip list.
+        /// </summary>
+        /// <remarks>
+        /// The default skip list is:
+        /// * Microsoft.AspNetCore.Components
+        /// </remarks>
+        /// <returns>The current builder.</returns>
+        public JsonLocalizationOptionsBuilder ClearBaseNamePrefixSkipList()
+        {
+            this.skipBaseNamePrefixList.Clear();
+            return this;
+        }
+
+        /// <summary>
+        /// Add a base name prefix to skip in the loading process.
+        /// </summary>
+        /// <returns>The current builder.</returns>
+        public JsonLocalizationOptionsBuilder AddInBaseNamePrefixSkipList(IEnumerable<string> baseNamePrefixToSkip)
+        {
+            this.skipBaseNamePrefixList.AddRange(baseNamePrefixToSkip);
             return this;
         }
 
@@ -80,6 +117,8 @@ namespace SoloX.BlazorJsonLocalization
                 opt.IsDisplayKeysWhileLoadingAsynchronouslyEnabled = this.enableDisplayKeysWhileLoadingAsynchronously;
                 opt.ExtensionOptions = this.extensionOptions;
                 opt.Fallbacks = this.fallbackList;
+                opt.SkipBaseNamePrefix = this.skipBaseNamePrefixList;
+                opt.IsLoggerEnabled = this.enableLogger;
             }
         }
     }

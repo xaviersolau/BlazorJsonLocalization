@@ -34,5 +34,16 @@ namespace SoloX.BlazorJsonLocalization
         /// Tells if the keys must be displayed while resources are loading asynchronously.
         /// </summary>
         public bool IsDisplayKeysWhileLoadingAsynchronouslyEnabled { get; internal set; }
+
+        /// <summary>
+        /// Skip base name prefix to be loaded and prevent excessive loading error logs.
+        /// </summary>
+        public IEnumerable<string> SkipBaseNamePrefix { get; internal set; }
+            = Array.Empty<string>();
+
+        /// <summary>
+        /// Tells if logger must be used.
+        /// </summary>
+        public bool IsLoggerEnabled { get; internal set; }
     }
 }

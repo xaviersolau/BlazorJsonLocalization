@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization.Helpers;
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Core.Impl;
+using Microsoft.Extensions.Options;
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -31,9 +33,14 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
         /// </summary>
         /// <param name="logger">Logger where to log processing messages.</param>
-        public EmbeddedJsonLocalizationExtensionService(ILogger<EmbeddedJsonLocalizationExtensionService> logger)
+        public EmbeddedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<EmbeddedJsonLocalizationExtensionService> logger)
         {
-            this.logger = logger;
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            this.logger = options.Value.GetLogger(logger);
         }
 
         ///<inheritdoc/>

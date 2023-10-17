@@ -17,6 +17,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
@@ -98,9 +99,9 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 throw new ArgumentNullException(nameof(options));
             }
 
-            this.logger = logger;
-            this.loggerForStringLocalizerProxy = loggerForStringLocalizerProxy;
             this.options = options.Value;
+            this.logger = this.options.GetLogger(logger);
+            this.loggerForStringLocalizerProxy = this.options.GetLogger(loggerForStringLocalizerProxy);
             this.extensionResolverService = extensionResolverService;
             this.cultureInfoService = cultureInfoService;
             this.cacheService = cacheService;
@@ -212,6 +213,11 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private async Task<IReadOnlyDictionary<string, string>?> LoadStringLocalizerAsync(Assembly assembly, string baseName, CultureInfo cultureInfo)
         {
+            if (this.options.SkipBaseNamePrefix.Any(p => baseName.StartsWith(p, StringComparison.Ordinal)))
+            {
+                return null;
+            }
+
             var hadErrors = false;
             foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {

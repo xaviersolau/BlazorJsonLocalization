@@ -6,7 +6,6 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using SoloX.BlazorJsonLocalization.Services;
+using SoloX.BlazorJsonLocalization.Services.Impl;
+using Microsoft.Extensions.Options;
 
 namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 {
@@ -30,17 +32,25 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
         /// <summary>
         /// Setup with the IWebHostEnvironment.
         /// </summary>
+        /// <param name="options">Localizer options.</param>
         /// <param name="webHostEnvironment">The IWebHostEnvironment.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
         /// <param name="httpCacheService">Http loading task cache service.</param>
         public HttpHostedJsonLocalizationExtensionService(
+            IOptions<JsonLocalizationOptions> options,
             IWebHostEnvironment webHostEnvironment,
             ILogger<HttpHostedJsonLocalizationExtensionService> logger,
             IHttpCacheService httpCacheService)
-            : base(logger, httpCacheService)
+            : base(options, logger, httpCacheService)
         {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            this.logger = options.Value.GetLogger(logger);
+
             this.webHostEnvironment = webHostEnvironment;
-            this.logger = logger;
         }
 
         ///<inheritdoc/>

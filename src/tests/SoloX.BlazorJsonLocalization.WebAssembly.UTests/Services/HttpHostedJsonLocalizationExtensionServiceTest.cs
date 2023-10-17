@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl;
@@ -76,7 +77,10 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
             httpCacheServiceMock.Setup(x => x.ProcessLoadingTask(It.IsAny<Uri>(), It.IsAny<Func<Task<IReadOnlyDictionary<string, string>?>>>()))
                 .Returns<Uri, Func<Task<IReadOnlyDictionary<string, string>?>>>((uri, loader) => loader());
 
-            var service = new HttpHostedJsonLocalizationExtensionService(httpClient, Logger, httpCacheServiceMock.Object);
+            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+            optionsMock.SetupGet(o => o.Value).Returns(new JsonLocalizationOptions());
+
+            var service = new HttpHostedJsonLocalizationExtensionService(optionsMock.Object, httpClient, Logger, httpCacheServiceMock.Object);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {
