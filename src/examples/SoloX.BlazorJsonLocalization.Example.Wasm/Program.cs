@@ -35,6 +35,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                 builder =>
                 {
                     builder
+                        .EnableLogger(false)
                         .EnableDisplayKeysWhileLoadingAsynchronously()
                         // Add a localization fallback.
                         .AddFallback("Fallback", typeof(SharedLocalizationExtensions).Assembly)

@@ -8,6 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Services.Impl;
+using SoloX.BlazorJsonLocalization.UTests.Core;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System.Globalization;
 using System.Reflection;
@@ -46,7 +47,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var service = new EmbeddedJsonLocalizationExtensionService(Logger);
+            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock().Object, Logger);
 
             var options = new EmbeddedJsonLocalizationOptions();
             options.ResourcesPath = resourcePath;
@@ -76,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var service = new EmbeddedJsonLocalizationExtensionService(Logger);
+            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock().Object, Logger);
 
             var options = new EmbeddedJsonLocalizationOptions();
             options.ResourcesPath = resourcePath;

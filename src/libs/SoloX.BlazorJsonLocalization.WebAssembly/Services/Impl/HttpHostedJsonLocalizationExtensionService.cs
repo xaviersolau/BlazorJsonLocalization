@@ -7,7 +7,9 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using SoloX.BlazorJsonLocalization.ServerSide;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.Services.Impl;
@@ -32,14 +34,24 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
         /// <summary>
         /// Setup with the HttpClient.
         /// </summary>
+        /// <param name="options">Localizer options.</param>
         /// <param name="httpClient">The Host HttpClient.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
         /// <param name="httpCacheService">Http loading task cache service.</param>
-        public HttpHostedJsonLocalizationExtensionService(HttpClient httpClient, ILogger<HttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
-            : base(logger, httpCacheService)
+        public HttpHostedJsonLocalizationExtensionService(
+            IOptions<JsonLocalizationOptions> options,
+            HttpClient httpClient,
+            ILogger<HttpHostedJsonLocalizationExtensionService> logger,
+            IHttpCacheService httpCacheService)
+            : base(options, logger, httpCacheService)
         {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            this.logger = options.Value.GetLogger(logger);
             this.httpClient = httpClient;
-            this.logger = logger;
         }
 
         ///<inheritdoc/>

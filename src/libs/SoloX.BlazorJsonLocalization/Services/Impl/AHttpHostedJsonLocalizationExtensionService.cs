@@ -7,7 +7,9 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SoloX.BlazorJsonLocalization.Helpers;
+using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,11 +31,17 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <summary>
         /// Setup EmbeddedJsonLocalizationExtensionService with the given logger.
         /// </summary>
+        /// <param name="options">Localizer options.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
         /// <param name="httpCacheService">Http loading task cache service.</param>
-        protected AHttpHostedJsonLocalizationExtensionService(ILogger<AHttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
+        protected AHttpHostedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<AHttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
         {
-            this.logger = logger;
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            this.logger = options.Value.GetLogger(logger);
             this.httpCacheService = httpCacheService;
         }
 

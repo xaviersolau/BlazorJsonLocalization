@@ -9,6 +9,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using SoloX.BlazorJsonLocalization.ServerSide.Services.Impl;
 using SoloX.BlazorJsonLocalization.Services;
@@ -86,7 +87,10 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
             var hostEnvMock = new Mock<IWebHostEnvironment>();
             hostEnvMock.SetupGet(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
 
-            var service = new HttpHostedJsonLocalizationExtensionService(hostEnvMock.Object, Logger, httpCacheServiceMock.Object);
+            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+            optionsMock.SetupGet(o => o.Value).Returns(new JsonLocalizationOptions());
+
+            var service = new HttpHostedJsonLocalizationExtensionService(optionsMock.Object, hostEnvMock.Object, Logger, httpCacheServiceMock.Object);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {

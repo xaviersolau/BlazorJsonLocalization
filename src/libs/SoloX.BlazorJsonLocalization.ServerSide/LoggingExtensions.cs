@@ -38,7 +38,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide
         public int EventId { get; set; }
     }
 
-    partial class LoggingExtensions 
+    internal partial class LoggingExtensions
     {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Extensions.Logging.Generators", "6.0.7.2304")]
         private static readonly global::System.Action<global::Microsoft.Extensions.Logging.ILogger, global::System.Uri, global::System.Exception?> __LoadingLocalizationDataFromHostCallback =
