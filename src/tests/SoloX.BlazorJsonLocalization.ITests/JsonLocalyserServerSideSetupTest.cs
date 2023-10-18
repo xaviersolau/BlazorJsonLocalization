@@ -68,7 +68,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                 .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.json"))
                 .Returns(fileInfoMock.Object);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest-fr.json"))
+                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.fr.json"))
                 .Returns(fileInfoFrMock.Object);
 
             var hostEnvMock = new Mock<IWebHostEnvironment>();

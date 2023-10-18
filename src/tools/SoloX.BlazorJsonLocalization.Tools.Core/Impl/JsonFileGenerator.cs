@@ -104,7 +104,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                     foreach (var language in languages)
                     {
-                        var name = $"{jsonName}-{language}";
+                        var name = $"{jsonName}.{language}";
 
                         WriteLanguageJsonFile(location, map, name);
                     }

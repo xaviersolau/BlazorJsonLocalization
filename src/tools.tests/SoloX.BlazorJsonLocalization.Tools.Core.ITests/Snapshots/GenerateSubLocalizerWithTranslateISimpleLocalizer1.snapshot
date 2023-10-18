@@ -246,7 +246,7 @@ Component
   "BasicProperty": "BasicPropertyValueForComponent"
 }
 ---------------------
-Component-fr
+Component.fr
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
@@ -258,19 +258,19 @@ Component-fr
   "SubLocalizer1": {
     "Arg1": "Argument 1 translation from SubLocalizer1",
     "Arg2": "Argument 2 translation from SubLocalizer1",
-    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent-fr",
-    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent-fr"
+    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent.fr",
+    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent.fr"
   },
   "SubLocalizer2": {
     "Arg1": "Argument 1 translation from SubLocalizer2",
     "Arg2": "Argument 2 translation from SubLocalizer2",
-    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-fr",
-    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-fr"
+    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.fr",
+    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.fr"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-fr"
+  "BasicProperty": "BasicPropertyValueForComponent.fr"
 }
 ---------------------
-Component-en
+Component.en
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
@@ -282,14 +282,14 @@ Component-en
   "SubLocalizer1": {
     "Arg1": "Argument 1 translation from SubLocalizer1",
     "Arg2": "Argument 2 translation from SubLocalizer1",
-    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent-en",
-    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent-en"
+    "BasicSubProperty1": "SubLocalizer1BasicSubProperty1ValueForComponent.en",
+    "BasicSubProperty2": "SubLocalizer1BasicSubProperty2ValueForComponent.en"
   },
   "SubLocalizer2": {
     "Arg1": "Argument 1 translation from SubLocalizer2",
     "Arg2": "Argument 2 translation from SubLocalizer2",
-    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-en",
-    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-en"
+    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.en",
+    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.en"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-en"
+  "BasicProperty": "BasicPropertyValueForComponent.en"
 }

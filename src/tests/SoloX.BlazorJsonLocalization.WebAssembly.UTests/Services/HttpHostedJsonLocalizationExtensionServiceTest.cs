@@ -64,7 +64,7 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
                     response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"English test.\"}")));
                     return response;
                 })
-                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest-fr.json")
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.fr.json")
                 .Responding(request =>
                 {
                     var response = new HttpResponseMessage();

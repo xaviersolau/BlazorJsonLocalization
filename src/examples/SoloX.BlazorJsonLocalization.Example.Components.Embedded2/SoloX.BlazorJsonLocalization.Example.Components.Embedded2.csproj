@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Resources\Pages\Component1-fr.json" />
+    <Content Remove="Resources\Pages\Component1.fr.json" />
     <Content Remove="Resources\Pages\Component1.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Pages\Component1.json" />
-    <EmbeddedResource Include="Resources\Pages\Component1-fr.json" />
+    <EmbeddedResource Include="Resources\Pages\Component1.fr.json" />
   </ItemGroup>
 
 

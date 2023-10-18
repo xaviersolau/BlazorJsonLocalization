@@ -179,15 +179,15 @@ ISO2 language code:
 
 | File name     | Description              |
 |---------------|--------------------------|
-| Index-fr.json | French translated text.  |
-| Index-de.json | German translated text.  |
-| Index-en.json | English translated text. |
+| Index.fr.json | French translated text.  |
+| Index.de.json | German translated text.  |
+| Index.en.json | English translated text. |
 | Index.json    | Since there is no language code, this file is going to be used as fall back when the language is unknown. |
 
 > Note that if you want to get the localization resources for your
 > component `MyComponent` and for the French `CultureInfo` (fr-FR) the
-> factory will first try to load `MyComponent-fr-FR.json`. If the file
-> is not found, it will try to load `MyComponent-fr.json` and finally
+> factory will first try to load `MyComponent.fr-FR.json`. If the file
+> is not found, it will try to load `MyComponent.fr.json` and finally
 > if the file is still not found, it will fall back to the file `MyComponent.json`
 
 The content of the file is using a conventional Json syntax for example
@@ -216,7 +216,7 @@ the Assembly. You can do it this way in your csproj file specifying every json f
 
 ```xml
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Pages\Index-fr.json" />
+    <EmbeddedResource Include="Resources\Pages\Index.fr.json" />
     <EmbeddedResource Include="Resources\Pages\Index.json" />
   </ItemGroup>
 ```
@@ -337,11 +337,10 @@ builder.Services.AddWebAssemblyJsonLocalization(
 ```
 
 > Note that naming your static asset file, you can change the expected file name by using
-> the `NamingPolicy` delegate. So instead of naming your file `MyComponent-fr.json` you can customize it
+> the `NamingPolicy` delegate. So instead of naming your file `MyComponent.fr.json` you can customize it
 > like this `MyComponent.fr.json?v=1.0.0.1` just by setting the `NamingPolicy` delegate to something like:
 > ```csharp
-> // Here we are going to change the culture separator to a dot `.` instead of a `-` 
-> // and add a version querystring to help with cache busting
+> // Here we are going to add a version querystring to help with cache busting
 > builder.Services.AddWebAssemblyJsonLocalization(
 >     builder => builder.UseHttpHostedJson(
 >         options =>
@@ -446,7 +445,7 @@ var txt = Localizer["GlobalKey"]
 
 #### Using a fall back
 
-Finally you can setup a fall back localizer in the localization options to use the fall back
+You can setup a fall back localizer in the localization options to use the fall back
 localizer any time where a message key is not found in a specific Localizer.
 
 Here is an example that set up a fall back to the Fallback Json files defined in a given assembly.
@@ -485,5 +484,21 @@ builder.Services.AddWebAssemblyJsonLocalization(
                 options.AssemblyNames = new[] { AssemblyWithHttpHostedJson.GetName().Name };
                 //...
             });
+    });
+```
+
+#### Using Logs
+
+In order to get logs while loading messages, you can setup a logger options to enable or disable logging. Default is false.
+
+Here is an example that set up use of the logger.
+
+```csharp
+builder.Services.AddWebAssemblyJsonLocalization(
+    optionBuilder =>
+    {
+        optionBuilder
+            // Enable logger.
+            .EnableLogger(true);
     });
 ```

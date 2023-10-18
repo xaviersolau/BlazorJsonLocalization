@@ -27,10 +27,6 @@
     <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-
   <Target Name="LocalizationGenerator" BeforeTargets="BeforeBuild;BeforeRebuild">
     <PropertyGroup>
 		<GeneratorProject>../../tools/SoloX.BlazorJsonLocalization.Tools.Command/SoloX.BlazorJsonLocalization.Tools.Command.csproj</GeneratorProject>

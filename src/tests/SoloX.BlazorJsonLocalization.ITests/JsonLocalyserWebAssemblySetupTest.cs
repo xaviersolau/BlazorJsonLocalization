@@ -34,7 +34,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                 new Dictionary<string, string>
                 {
                     ["JsonLocalyserWebAssemblySetupTest.json"] = "{\"Test\": \"This is a test...\", \"TestWithArg\": \"This is a test with an argument: {0}...\"}",
-                    ["JsonLocalyserWebAssemblySetupTest-fr.json"] = "{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}",
+                    ["JsonLocalyserWebAssemblySetupTest.fr.json"] = "{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}",
                 },
                 async localizer =>
                 {

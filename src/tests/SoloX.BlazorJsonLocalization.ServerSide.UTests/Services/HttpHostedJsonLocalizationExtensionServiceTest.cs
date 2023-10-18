@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
                 .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json"))
                 .Returns(fileInfoMock.Object);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest-fr.json"))
+                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.fr.json"))
                 .Returns(fileInfoFrMock.Object);
 
             var httpCacheServiceMock = new Mock<IHttpCacheService>();

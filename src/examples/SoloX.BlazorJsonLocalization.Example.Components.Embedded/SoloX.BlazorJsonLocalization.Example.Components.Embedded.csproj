@@ -5,16 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Resources\Pages\Index-fr.json" />
+    <Content Remove="Resources\Pages\Index.fr.json" />
     <Content Remove="Resources\Pages\Index.json" />
-    <Content Remove="Resources\SharedResource-fr.json" />
+    <Content Remove="Resources\SharedResource.fr.json" />
     <Content Remove="Resources\SharedResource.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\SharedResource-fr.json" />
+    <EmbeddedResource Include="Resources\SharedResource.fr.json" />
     <EmbeddedResource Include="Resources\SharedResource.json" />
-    <EmbeddedResource Include="Resources\Pages\Index-fr.json" />
+    <EmbeddedResource Include="Resources\Pages\Index.fr.json" />
     <EmbeddedResource Include="Resources\Pages\Index.json" />
   </ItemGroup>
 

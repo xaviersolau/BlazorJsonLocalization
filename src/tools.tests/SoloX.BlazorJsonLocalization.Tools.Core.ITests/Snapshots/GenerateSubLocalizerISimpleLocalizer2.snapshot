@@ -214,7 +214,7 @@ Component
   "BasicPropertyUnused": "BasicPropertyValueForComponent"
 }
 ---------------------
-Component-fr
+Component.fr
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
@@ -223,14 +223,14 @@ Component-fr
   },
   "SubLocalizer1": {},
   "SubLocalizer2": {
-    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-fr",
-    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-fr"
+    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.fr",
+    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.fr"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-fr",
-  "BasicPropertyUnused": "BasicPropertyValueForComponent-fr"
+  "BasicProperty": "BasicPropertyValueForComponent.fr",
+  "BasicPropertyUnused": "BasicPropertyValueForComponent.fr"
 }
 ---------------------
-Component-en
+Component.en
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
@@ -239,9 +239,9 @@ Component-en
   },
   "SubLocalizer1": {},
   "SubLocalizer2": {
-    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent-en",
-    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent-en"
+    "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.en",
+    "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.en"
   },
-  "BasicProperty": "BasicPropertyValueForComponent-en",
-  "BasicPropertyUnused": "BasicPropertyValueForComponent-en"
+  "BasicProperty": "BasicPropertyValueForComponent.en",
+  "BasicPropertyUnused": "BasicPropertyValueForComponent.en"
 }
