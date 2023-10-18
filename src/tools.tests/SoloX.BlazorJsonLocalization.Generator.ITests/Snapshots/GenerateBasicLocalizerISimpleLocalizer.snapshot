@@ -175,7 +175,7 @@ Component.json
   "BasicMethodArg1Arg2": "BasicMethodArg1Arg2 - {0} = arg1 - {1} = arg2"
 }
 ---------------------
-Component-en.json
+Component.en.json
 ---------------------
 {
   "BasicProperty": "BasicProperty",
@@ -184,7 +184,7 @@ Component-en.json
   "BasicMethodArg1Arg2": "BasicMethodArg1Arg2 - {0} = arg1 - {1} = arg2"
 }
 ---------------------
-Component-fr.json
+Component.fr.json
 ---------------------
 {
   "BasicProperty": "BasicProperty",

@@ -210,7 +210,7 @@ Component
   "BasicProperty": "BasicProperty"
 }
 ---------------------
-Component-fr
+Component.fr
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {
@@ -222,7 +222,7 @@ Component-fr
   "BasicProperty": "BasicProperty"
 }
 ---------------------
-Component-en
+Component.en
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample2.ISimpleSubLocalizer": {

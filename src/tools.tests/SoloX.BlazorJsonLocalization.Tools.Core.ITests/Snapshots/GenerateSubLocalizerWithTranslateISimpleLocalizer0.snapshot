@@ -242,7 +242,7 @@ Component
   "BasicProperty": "Basic property translation."
 }
 ---------------------
-Component-fr
+Component.fr
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
@@ -262,7 +262,7 @@ Component-fr
   "BasicProperty": "Basic property translation."
 }
 ---------------------
-Component-en
+Component.en
 ---------------------
 {
   "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {

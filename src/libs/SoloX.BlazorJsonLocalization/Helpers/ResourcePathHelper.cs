@@ -57,7 +57,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         {
             return string.IsNullOrEmpty(cultureName)
                 ? new Uri($"{basePath}.json", UriKind.Relative)
-                : new Uri($"{basePath}-{cultureName}.json", UriKind.Relative);
+                : new Uri($"{basePath}.{cultureName}.json", UriKind.Relative);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         {
             return string.IsNullOrEmpty(cultureName)
                 ? $"{basePath}.json"
-                : $"{basePath}-{cultureName}.json";
+                : $"{basePath}.{cultureName}.json";
         }
     }
 }
