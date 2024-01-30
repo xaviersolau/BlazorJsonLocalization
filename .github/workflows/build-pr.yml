@@ -49,12 +49,13 @@ jobs:
     - name: Test Coverage ${{ matrix.test_path }}
       run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
     - name: Moving test results
-      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.info ${{ matrix.test_path }}/TestResults/coverage.info
+      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
     - name: Send to coverals
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2.2.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ matrix.test_path }}/TestResults/coverage.info
+        file: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
+        format: cobertura
         flag-name: test-${{ matrix.test_path }}
         parallel: true
 
@@ -63,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Finish coverals
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2.2.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
