@@ -18,9 +18,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
     public class SatelliteFileProviderFactoryTest
     {
         [Theory]
-        [InlineData("fr", @"Resources\SatelliteFileProvider\Test.fr.json", "TestValueFromFr")]
-        [InlineData("fr", @"Resources\SatelliteFileProvider\Test.json", "TestValue")]
-        [InlineData("en", @"Resources\SatelliteFileProvider\Test.json", "TestValue")]
+        [InlineData("fr", @"Resources/SatelliteFileProvider/Test.fr.json", "TestValueFromFr")]
+        [InlineData("fr", @"Resources/SatelliteFileProvider/Test.json", "TestValue")]
+        [InlineData("en", @"Resources/SatelliteFileProvider/Test.json", "TestValue")]
         public void ItShouldLoadResouvesFromSatelliteAssembly(string cultureName, string filePath, string exprectedValue)
         {
             var ci = CultureInfo.GetCultureInfo(cultureName);

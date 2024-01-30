@@ -9,6 +9,10 @@
 using System;
 using System.Reflection;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Helpers
 {
     /// <summary>
@@ -25,14 +29,8 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         /// <returns>The converted resource base path to load.</returns>
         public static string ComputeBasePath(Assembly assembly, string baseName, string rootNameSpace)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-            if (baseName == null)
-            {
-                throw new ArgumentNullException(nameof(baseName));
-            }
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
 
             var basePath = baseName;
 

@@ -10,6 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
     /// <summary>
@@ -20,15 +24,12 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <summary>
         /// Cache to avoid Json file reload.
         /// </summary>
-        private readonly IDictionary<Uri, Task<IReadOnlyDictionary<string, string>?>> cache = new Dictionary<Uri, Task<IReadOnlyDictionary<string, string>?>>();
+        private readonly Dictionary<Uri, Task<IReadOnlyDictionary<string, string>?>> cache = new Dictionary<Uri, Task<IReadOnlyDictionary<string, string>?>>();
 
         /// <inheritdoc/>
         public Task<IReadOnlyDictionary<string, string>?> ProcessLoadingTask(Uri uri, Func<Task<IReadOnlyDictionary<string, string>?>> loadingHandler)
         {
-            if (loadingHandler == null)
-            {
-                throw new ArgumentNullException(nameof(loadingHandler));
-            }
+            ArgumentNullException.ThrowIfNull(loadingHandler, nameof(loadingHandler));
 
             lock (this.cache)
             {

@@ -17,6 +17,10 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
     /// <summary>
@@ -36,10 +40,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <param name="httpCacheService">Http loading task cache service.</param>
         protected AHttpHostedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<AHttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             this.logger = options.Value.GetLogger(logger);
             this.httpCacheService = httpCacheService;
@@ -52,14 +53,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             string baseName,
             CultureInfo cultureInfo)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             var assemblyName = assembly.GetName().Name;
 

@@ -29,6 +29,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
     /// </summary>
     public class JsonFileGenerator
     {
+        private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
+
         private readonly IReader reader;
         private readonly IWriter writer;
         private readonly ILocator locator;
@@ -114,12 +116,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return generatedItems;
         }
 
-        private static ALocalizationData BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration)
+        private static LocalizationMap BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration)
         {
             return BuildLocalizationMap(genericDeclaration, null);
         }
 
-        private static ALocalizationData BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration, Dictionary<string, ALocalizationData> rootMap)
+        private static LocalizationMap BuildLocalizationMap(IGenericDeclaration<SyntaxNode> genericDeclaration, Dictionary<string, ALocalizationData> rootMap)
         {
             var map = new Dictionary<string, ALocalizationData>();
 
@@ -176,7 +178,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             return new LocalizationMap(map);
         }
 
-        private static ALocalizationData BuildLocalizationArgumentMap(IGenericDeclaration<SyntaxNode> genericDeclaration, IEnumerable<IAttributeUse> attributes)
+        private static LocalizationMap BuildLocalizationArgumentMap(IGenericDeclaration<SyntaxNode> genericDeclaration, IEnumerable<IAttributeUse> attributes)
         {
             var argumentMap = attributes.Where(a => a.Name == nameof(TranslateSubAttribute)).ToDictionary(x => (string)x.ConstructorArguments.First(), x => (string)x.ConstructorArguments.Skip(1).First());
 
@@ -232,14 +234,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             {
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
-                    textWriter.Write(JsonSerializer.Serialize(targetMap, new JsonSerializerOptions { WriteIndented = true }));
+                    textWriter.Write(JsonSerializer.Serialize(targetMap, DefaultJsonSerializerOptions));
                 });
             }
             else
             {
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
-                    textWriter.Write(JsonSerializer.Serialize(sourceMap, new JsonSerializerOptions { WriteIndented = true }));
+                    textWriter.Write(JsonSerializer.Serialize(sourceMap, DefaultJsonSerializerOptions));
                 });
             }
         }

@@ -10,6 +10,10 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Helpers
 {
     /// <summary>
@@ -26,14 +30,8 @@ namespace SoloX.BlazorJsonLocalization.Helpers
         /// <returns>The loaded data or null if not fund/loaded.</returns>
         public static async ValueTask<TData?> WalkThoughCultureInfoParentsAsync<TData>(CultureInfo cultureInfo, Func<CultureInfo, Task<TData?>> loadDataAsync) where TData : class
         {
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
-            }
-            if (loadDataAsync == null)
-            {
-                throw new ArgumentNullException(nameof(loadDataAsync));
-            }
+            ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
+            ArgumentNullException.ThrowIfNull(loadDataAsync, nameof(loadDataAsync));
 
             TData? data;
             bool done;

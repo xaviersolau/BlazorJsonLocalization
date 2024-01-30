@@ -9,6 +9,10 @@
 using Microsoft.Extensions.Logging;
 using System;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Helpers.Impl
 {
     /// <summary>
@@ -25,10 +29,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
         /// <returns></returns>
         public static ILogger<T> GetLogger<T>(this JsonLocalizationOptions options, ILogger<T> logger)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             if (options.IsLoggerEnabled)
             {

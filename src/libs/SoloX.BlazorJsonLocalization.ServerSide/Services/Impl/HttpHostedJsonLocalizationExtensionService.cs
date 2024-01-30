@@ -19,6 +19,10 @@ using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using Microsoft.Extensions.Options;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
 {
     /// <summary>
@@ -43,12 +47,11 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
             IHttpCacheService httpCacheService)
             : base(options, logger, httpCacheService)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
+#pragma warning disable CA1062 // Validate arguments of public methods
             this.logger = options.Value.GetLogger(logger);
+#pragma warning restore CA1062 // Validate arguments of public methods
 
             this.webHostEnvironment = webHostEnvironment;
         }
@@ -56,14 +59,13 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
         ///<inheritdoc/>
         protected override async Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions)
         {
-            if (uri == null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
+            ArgumentNullException.ThrowIfNull(uri, nameof(uri));
 
             this.logger.LoadingLocalizationDataFromHost(uri);
 
+#pragma warning disable CA1062 // Validate arguments of public methods
             var fileInfo = this.webHostEnvironment.WebRootFileProvider.GetFileInfo(uri.OriginalString);
+#pragma warning restore CA1062 // Validate arguments of public methods
 
             if (!fileInfo.Exists)
             {

@@ -8,6 +8,10 @@
 
 using System;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization
 {
     /// <summary>
@@ -34,10 +38,7 @@ namespace SoloX.BlazorJsonLocalization
             this JsonLocalizationOptionsBuilder builder,
             Action<EmbeddedJsonLocalizationOptions>? setup)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
             var optExt = new EmbeddedJsonLocalizationOptions();
 

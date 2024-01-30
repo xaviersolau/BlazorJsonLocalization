@@ -27,10 +27,12 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
             this.testOutputHelper = testOutputHelper;
         }
 
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
         [Theory]
         [InlineData(
             @"Sample1/ISimpleLocalizer.cs", @"Sample1/Component.cs",
             "Resources/Sample1", new string[] { "Component.json", "Component.en.json", "Component.fr.json" })]
+#pragma warning restore CA1861 // Avoid constant arrays as arguments
         public void GenerateBasicLocalizer(string interfaceFile, string componentFile, string expectedResourcePath, string[] expectedJsonFiles)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizer)

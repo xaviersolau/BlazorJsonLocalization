@@ -12,8 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
+
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
@@ -47,10 +51,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <returns>The file provider to get resources from satellite assembly.</returns>
         public IFileProvider GetFileProvider(CultureInfo cultureInfo)
         {
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
-            }
+            ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
 
             var providerMap = new List<KeyValuePair<string, EmbeddedFileProvider>>();
 
@@ -69,7 +70,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 ci = ci.Parent;
             }
 
-            if (providerMap.Any())
+            if (providerMap.Count != 0)
             {
                 providerMap.Add(
                     new KeyValuePair<string, EmbeddedFileProvider>(

@@ -9,7 +9,6 @@
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.Globalization;
-using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -19,6 +18,12 @@ using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Microsoft.Extensions.Options;
 using SoloX.BlazorJsonLocalization.Helpers.Impl;
+
+#if NET6_0_OR_GREATER
+using System;
+#else
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -35,10 +40,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <param name="logger">Logger where to log processing messages.</param>
         public EmbeddedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<EmbeddedJsonLocalizationExtensionService> logger)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             this.logger = options.Value.GetLogger(logger);
         }
@@ -50,18 +52,9 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             string baseName,
             CultureInfo cultureInfo)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            if (cultureInfo == null)
-            {
-                throw new ArgumentNullException(nameof(cultureInfo));
-            }
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
+            ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
 
             var rootNameSpace = options.RootNameSpaceResolver?.Invoke(assembly) ?? assembly.GetName().Name;
 
