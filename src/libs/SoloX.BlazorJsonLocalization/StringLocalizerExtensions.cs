@@ -6,11 +6,16 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Core.Impl;
+
+#if NET6_0_OR_GREATER
+using System;
+#else
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
 
 namespace SoloX.BlazorJsonLocalization
 {
@@ -28,10 +33,8 @@ namespace SoloX.BlazorJsonLocalization
         /// <returns>The HTML Markup String.</returns>
         public static MarkupString Html(this IStringLocalizer localizer, string key, params object[] arguments)
         {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
+            ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
+
             var txt = localizer[key, arguments];
             return new MarkupString(txt ?? string.Empty);
         }
@@ -45,10 +48,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <remarks>The parent culture is actually used as fall back if a key is not found.</remarks>
         public static ValueTask LoadAsync(this IStringLocalizer localizer, bool loadParentCulture = false)
         {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
+            ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
 
             return JsonStringLocalizerAsync.LoadAsync(localizer, loadParentCulture);
         }
@@ -61,10 +61,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <remarks>The sub localizer can be used to access structured Json object.</remarks>
         public static IStringLocalizer GetSubLocalizer(this IStringLocalizer localizer, params string[] structuredKey)
         {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
+            ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
 
             if (structuredKey == null || structuredKey.Length == 0)
             {

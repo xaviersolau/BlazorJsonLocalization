@@ -10,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using SoloX.BlazorJsonLocalization.Core;
 using System;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
     /// <summary>
@@ -31,10 +35,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         ///<inheritdoc/>
         public IJsonLocalizationExtensionService GetExtensionService(IExtensionOptionsContainer optionsContainer)
         {
-            if (optionsContainer == null)
-            {
-                throw new ArgumentNullException(nameof(optionsContainer));
-            }
+            ArgumentNullException.ThrowIfNull(optionsContainer, nameof(optionsContainer));
 
             var extensionService = this.serviceProvider
                 .GetRequiredService(optionsContainer.ExtensionServiceType);

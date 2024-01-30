@@ -21,6 +21,10 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
 {
     /// <summary>
@@ -45,12 +49,11 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl
             IHttpCacheService httpCacheService)
             : base(options, logger, httpCacheService)
         {
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
+#pragma warning disable CA1062 // Validate arguments of public methods
             this.logger = options.Value.GetLogger(logger);
+#pragma warning restore CA1062 // Validate arguments of public methods
             this.httpClient = httpClient;
         }
 

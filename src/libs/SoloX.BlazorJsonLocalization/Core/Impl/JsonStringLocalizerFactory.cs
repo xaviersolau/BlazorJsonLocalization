@@ -20,6 +20,10 @@ using SoloX.BlazorJsonLocalization.Helpers;
 using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
     /// <summary>
@@ -94,10 +98,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             ILogger<JsonStringLocalizerFactory> logger,
             ILogger<StringLocalizerProxy> loggerForStringLocalizerProxy)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             this.options = options.Value;
             this.logger = this.options.GetLogger(logger);
@@ -110,10 +111,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer Create(Type resourceSource)
         {
-            if (resourceSource == null)
-            {
-                throw new ArgumentNullException(nameof(resourceSource));
-            }
+            ArgumentNullException.ThrowIfNull(resourceSource, nameof(resourceSource));
 
             this.logger.CreateStringLocalizer(resourceSource.GetBaseName());
 

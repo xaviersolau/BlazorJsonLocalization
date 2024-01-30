@@ -8,6 +8,10 @@
 
 using System;
 
+#if !NET6_0_OR_GREATER
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
+
 namespace SoloX.BlazorJsonLocalization
 {
     /// <summary>
@@ -29,10 +33,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <exception cref="ArgumentException"></exception>
         public static string Path(params string[] structuredKey)
         {
-            if (structuredKey == null)
-            {
-                throw new ArgumentNullException(nameof(structuredKey));
-            }
+            ArgumentNullException.ThrowIfNull(structuredKey, nameof(structuredKey));
 
             if (structuredKey.Length == 0)
             {

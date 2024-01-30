@@ -7,10 +7,15 @@
 // ----------------------------------------------------------------------
 
 using SoloX.BlazorJsonLocalization.Core;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+
+#if NET6_0_OR_GREATER
+using System;
+#else
+using ArgumentNullException = SoloX.BlazorJsonLocalization.Helpers.ArgumentNullExceptionLegacy;
+#endif
 
 namespace SoloX.BlazorJsonLocalization.Services.Impl
 {
@@ -24,18 +29,9 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         ///<inheritdoc/>
         public void Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizerInternal localizer)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-            if (baseName == null)
-            {
-                throw new ArgumentNullException(nameof(baseName));
-            }
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
+            ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
 
             lock (this.cacheMap)
             {
@@ -46,14 +42,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         ///<inheritdoc/>
         public IStringLocalizerInternal? Match(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-            if (baseName == null)
-            {
-                throw new ArgumentNullException(nameof(baseName));
-            }
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
 
             lock (this.cacheMap)
             {
@@ -64,14 +54,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         ///<inheritdoc/>
         public bool Reset(Assembly assembly, string baseName, CultureInfo? cultureInfo)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-            if (baseName == null)
-            {
-                throw new ArgumentNullException(nameof(baseName));
-            }
+            ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
+            ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
 
             lock (this.cacheMap)
             {

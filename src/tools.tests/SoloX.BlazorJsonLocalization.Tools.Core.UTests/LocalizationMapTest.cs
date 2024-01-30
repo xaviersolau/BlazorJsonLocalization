@@ -133,7 +133,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             mergedMap.Should().NotBeNull();
 
+#pragma warning disable CA1869 // Cache and reuse 'JsonSerializerOptions' instances
             var output = JsonSerializer.Serialize(mergedMap, new JsonSerializerOptions { WriteIndented = true });
+#pragma warning restore CA1869 // Cache and reuse 'JsonSerializerOptions' instances
 
             output.Should().Be(expected);
         }

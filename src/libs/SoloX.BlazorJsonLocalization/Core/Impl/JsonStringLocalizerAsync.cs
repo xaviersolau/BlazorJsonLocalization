@@ -160,10 +160,10 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
         }
 
-        private static readonly IDictionary<string, JsonStringLocalizerAsync> PendingAsyncLocalizers =
+        private static readonly Dictionary<string, JsonStringLocalizerAsync> PendingAsyncLocalizers =
             new Dictionary<string, JsonStringLocalizerAsync>();
 
-        private static readonly IDictionary<string, Task> LoadingTasks =
+        private static readonly Dictionary<string, Task> LoadingTasks =
             new Dictionary<string, Task>();
 
         internal static async ValueTask LoadAsync(IStringLocalizer localizer, bool loadParentCulture)
