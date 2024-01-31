@@ -8,6 +8,8 @@
 
 using SoloX.BlazorJsonLocalization.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
@@ -38,8 +40,23 @@ namespace SoloX.BlazorJsonLocalization
         public NamingPolicyHandler? NamingPolicy { get; set; }
 
         /// <summary>
-        /// Gets/Sets the application assembly.
+        /// Gets/Sets the application assembly. It will set/reset ApplicationAssemblies or it will get the first from ApplicationAssemblies.
         /// </summary>
-        public Assembly? ApplicationAssembly { get; set; }
+        public Assembly? ApplicationAssembly
+        {
+            get
+            {
+                return ApplicationAssemblies.FirstOrDefault();
+            }
+            set
+            {
+                ApplicationAssemblies = value != null ? [value] : Array.Empty<Assembly>();
+            }
+        }
+
+        /// <summary>
+        /// Gets/Sets the application assemblies.
+        /// </summary>
+        public IEnumerable<Assembly> ApplicationAssemblies { get; set; } = Array.Empty<Assembly>();
     }
 }
