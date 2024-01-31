@@ -13,6 +13,7 @@ using SoloX.BlazorJsonLocalization.Helpers.Impl;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -58,7 +59,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
             var assemblyName = assembly.GetName().Name;
 
-            var rootPath = (options.ApplicationAssembly == assembly)
+            var rootPath = (options.ApplicationAssemblies.Contains(assembly))
                 ? string.Empty
                 : $"_content/{assemblyName}/";
 
