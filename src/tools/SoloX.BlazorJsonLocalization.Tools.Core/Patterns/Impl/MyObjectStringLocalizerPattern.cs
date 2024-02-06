@@ -6,7 +6,9 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+#pragma warning disable IDE0005 // Using directive is unnecessary.
 using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.BlazorJsonLocalization.Tools.Core.Handlers;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
@@ -14,6 +16,7 @@ using SoloX.GeneratorTools.Core.CSharp.Generator;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Attributes;
 using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
 using System.Collections.Generic;
+#pragma warning restore IDE0005 // Using directive is unnecessary.
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
 {
