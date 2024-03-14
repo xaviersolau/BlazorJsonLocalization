@@ -59,17 +59,28 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             var projectFolder = Path.GetDirectoryName(projectFile);
 
-            this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}...");
+            this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}.");
 
             var workspace = this.workspaceFactory.CreateWorkspace();
 
             var project = workspace.RegisterProject(projectFile);
 
             var locator = new RelativeLocator(Path.Combine(projectFolder), project.RootNameSpace);
-            var fileWriter = new FileWriter(".g.cs", generatedCodeFiles.Add);
+            var fileWriter = new FileWriter(".g.cs", f =>
+            {
+                this.logger.LogInformation($"Writing CS file: {f}.");
+
+                generatedCodeFiles.Add(f);
+            });
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), project.RootNameSpace);
-            var jsonWriter = new FileWriter(".json", generatedResourceFiles.Add);
+            var jsonWriter = new FileWriter(".json", f =>
+            {
+                this.logger.LogInformation($"Writing JSON file: {f}.");
+
+                generatedResourceFiles.Add(f);
+            });
+
             var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -118,11 +129,18 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
                 name = name.Replace('/', '.').Replace('\\', '.').TrimStart('.');
 
+                this.logger.LogInformation($"Adding source file: {name}.");
+
                 context.AddSource(name, s.ReadToEnd());
             });
 
             var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), ns);
-            var jsonWriter = new FileWriter(".json", generatedResourceFiles.Add);
+            var jsonWriter = new FileWriter(".json", f =>
+            {
+                this.logger.LogInformation($"Writing JSON file: {f}.");
+
+                generatedResourceFiles.Add(f);
+            });
             var jsonReader = new FileReader(".json");
 
             // Generate with a filter on current project interface declarations.
@@ -143,6 +161,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IReader jsonReader, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
         {
+            this.logger.LogDebug($"Register pattern files.");
+
             workspace.RegisterFile(GetContentFile("./Patterns/Itf/IMyObjectStringLocalizerPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectStringLocalizerPattern.cs"));
             workspace.RegisterFile(GetContentFile("./Patterns/Impl/MyObjectStringLocalizerPatternExtensions.cs"));
@@ -154,43 +174,55 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 typeof(SubLocalizerPropertySelector).Assembly,
                 new[] { typeof(SubLocalizerPropertySelector), typeof(LocalizerPropertySelector), typeof(LocalizerArgumentSelector), typeof(LocalizerAttribute), typeof(SubLocalizerAttribute) });
 
+            this.logger.LogInformation($"Processing data loading.");
+
             var resolver = workspace.DeepLoad();
+
+            this.logger.LogInformation($"Generating localization source files.");
+
+            this.logger.LogDebug($"Generating from pattern MyObjectStringLocalizerPattern.");
 
             var generator1 = new AutomatedGenerator(
                 fileWriter,
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPattern),
-                new SelectorResolver(),
-                this.logger);
+                this.logger,
+                new SelectorResolver());
 
             generator1.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
             var gen1Items = generator1.Generate(files);
+
+            this.logger.LogDebug($"Generating from pattern MyObjectStringLocalizerPatternExtensions.");
 
             var generator2 = new AutomatedGenerator(
                 fileWriter,
                 locator,
                 resolver,
                 typeof(MyObjectStringLocalizerPatternExtensions),
-                new SelectorResolver(),
-                this.logger);
+                this.logger,
+                new SelectorResolver());
 
             generator2.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
             var gen2Items = generator2.Generate(files);
+
+            this.logger.LogDebug($"Generating from pattern MyObjectSubStringLocalizerPattern.");
 
             var generator3 = new AutomatedGenerator(
                 fileWriter,
                 locator,
                 resolver,
                 typeof(MyObjectSubStringLocalizerPattern),
-                new SelectorResolver(),
-                this.logger);
+                this.logger,
+                new SelectorResolver());
 
             generator3.AddIgnoreUsing("SoloX.BlazorJsonLocalization.Attributes", "SoloX.BlazorJsonLocalization.Tools.Core.Handlers", "SoloX.BlazorJsonLocalization.Tools.Core.Selectors");
 
             var gen3Items = generator3.Generate(files);
+
+            this.logger.LogInformation($"Generating localization resource files.");
 
             var jsonGenerator = new JsonFileGenerator(
                 jsonReader,

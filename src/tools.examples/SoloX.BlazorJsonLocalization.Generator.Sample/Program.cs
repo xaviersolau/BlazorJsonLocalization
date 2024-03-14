@@ -7,7 +7,7 @@ namespace SoloX.BlazorJsonLocalization.Generator.Sample
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static Task Main(string[] args)
         {
             var services = new ServiceCollection();
 
@@ -28,6 +28,8 @@ namespace SoloX.BlazorJsonLocalization.Generator.Sample
             logger.LogInformation("typedLocalizer.MyProperty: " + typedLocalizer.MyProperty);
             logger.LogInformation("typedLocalizer.SubLocalizer.SubProperty: " + typedLocalizer.SubLocalizer.SubProperty);
             logger.LogInformation("typedLocalizer.MyStringWithArgs: " + typedLocalizer.MyStringWithArgs(5, "five"));
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -52,5 +52,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Handlers
             this.target = ((IGenericDeclarationUse)declaration.Extends.First()).GenericParameters.First().Declaration.Name;
             return this;
         }
+
+        /// <inheritdoc/>
+        public IReplacePatternHandler Setup(IMethodDeclaration pattern, IMethodDeclaration declaration)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
