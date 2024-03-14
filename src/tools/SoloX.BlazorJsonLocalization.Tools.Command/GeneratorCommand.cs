@@ -147,7 +147,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
 
 #pragma warning disable CA1848 // Use the LoggerMessage delegates
 #pragma warning disable CA2254 // Template should be a static expression
-            logger.LogInformation("v2.0.2");
+            logger.LogInformation("v2.0.3");
 #pragma warning restore CA2254 // Template should be a static expression
 #pragma warning restore CA1848 // Use the LoggerMessage delegates
 
