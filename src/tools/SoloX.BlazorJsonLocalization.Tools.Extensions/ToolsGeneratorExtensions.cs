@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SoloX.BlazorJsonLocalization.Tools.Core;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
 using SoloX.GeneratorTools.Core.CSharp.Extensions;
@@ -22,11 +23,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Extensions
         /// Add dependency injections for the state generator.
         /// </summary>
         /// <param name="services">The service collection where to setup dependencies.</param>
+        /// <param name="loggerFactory"></param>
         /// <returns>The input services once setup is done.</returns>
-        public static IServiceCollection AddToolsGenerator(this IServiceCollection services)
+        public static IServiceCollection AddToolsGenerator(this IServiceCollection services, ILoggerFactory loggerFactory = null)
         {
             return services
-                .AddCSharpToolsGenerator()
+                .AddCSharpToolsGenerator(loggerFactory)
                 .AddTransient<ILocalizationGenerator, LocalizationGenerator>();
         }
     }
