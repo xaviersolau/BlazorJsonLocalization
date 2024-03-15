@@ -7,7 +7,12 @@
     },
     "SoloX.BlazorJsonLocalization.Tools.Command Version": {
       "commandName": "Project",
-      "commandLineArgs": "version",
+      "commandLineArgs": "--version",
+      "workingDirectory": "C:\\Work\\Net\\BlazorJsonLocalization\\src\\tools.examples\\SoloX.BlazorJsonLocalization.Generator.Sample"
+    },
+    "SoloX.BlazorJsonLocalization.Tools.Command Help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
       "workingDirectory": "C:\\Work\\Net\\BlazorJsonLocalization\\src\\tools.examples\\SoloX.BlazorJsonLocalization.Generator.Sample"
     }
   }

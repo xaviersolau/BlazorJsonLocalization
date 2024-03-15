@@ -32,8 +32,6 @@ namespace SoloX.BlazorJsonLocalization.Tools
         private readonly Option<FileInfo> logFileOption = new Option<FileInfo>("--logFile", "File to write logging.");
         private readonly Option<bool> logDebugOption = new Option<bool>("--logDebug", "Enable debug logging.");
 
-        private readonly Command versionCommand = new Command("version", "Display software version.");
-
         /// <summary>
         /// Setup GeneratorCommand instance.
         /// </summary>
@@ -47,10 +45,6 @@ namespace SoloX.BlazorJsonLocalization.Tools
             this.rootCommand.AddOption(this.outputResourceOption);
 
             this.rootCommand.SetHandler(RunGeneratorCommandHandlerAsync);
-
-            this.versionCommand.SetHandler(RunVersionCommandHandlerAsync);
-
-            this.rootCommand.AddCommand(this.versionCommand);
         }
 
         /// <summary>
@@ -69,11 +63,6 @@ namespace SoloX.BlazorJsonLocalization.Tools
         private Task RunGeneratorCommandHandlerAsync(InvocationContext invocationContext)
         {
             return SetupServiceCollectionAndRunCommandAsync(invocationContext, RunGeneratorCommandHandlerAsync);
-        }
-
-        private Task RunVersionCommandHandlerAsync(InvocationContext invocationContext)
-        {
-            return SetupServiceCollectionAndRunCommandAsync(invocationContext, RunVersionCommandHandlerAsync);
         }
 
         private async Task SetupServiceCollectionAndRunCommandAsync(InvocationContext invocationContext, Func<InvocationContext, IServiceProvider, Task> commandHandler)
@@ -139,22 +128,6 @@ namespace SoloX.BlazorJsonLocalization.Tools
         }
 
         /// <summary>
-        /// Run version command.
-        /// </summary>
-        private static Task RunVersionCommandHandlerAsync(InvocationContext invocationContext, IServiceProvider serviceProvider)
-        {
-            var logger = serviceProvider.GetRequiredService<ILogger<GeneratorCommand>>();
-
-#pragma warning disable CA1848 // Use the LoggerMessage delegates
-#pragma warning disable CA2254 // Template should be a static expression
-            logger.LogInformation("v2.0.3");
-#pragma warning restore CA2254 // Template should be a static expression
-#pragma warning restore CA1848 // Use the LoggerMessage delegates
-
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
         /// Run generator command.
         /// </summary>
         private async Task RunGeneratorCommandHandlerAsync(InvocationContext invocationContext, IServiceProvider serviceProvider)
@@ -166,9 +139,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
             if (!projectFile.Exists)
             {
 #pragma warning disable CA1848 // Use the LoggerMessage delegates
-#pragma warning disable CA2254 // Template should be a static expression
-                logger.LogError($"Could not find project file {projectFile}");
-#pragma warning restore CA2254 // Template should be a static expression
+                logger.LogError("Could not find project file {ProjectFile}", projectFile);
 #pragma warning restore CA1848 // Use the LoggerMessage delegates
                 invocationContext.ExitCode = -1;
                 return;
@@ -218,7 +189,17 @@ namespace SoloX.BlazorJsonLocalization.Tools
         /// <inheritdoc/>
         public override void Write<TState>(in LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider, TextWriter textWriter)
         {
-            var txt = logEntry.Formatter(logEntry.State, logEntry.Exception);
+#pragma warning disable IDE0072 // Add missing cases
+            var prefix = logEntry.LogLevel switch
+            {
+                LogLevel.Critical => "Critical: ",
+                LogLevel.Error => "Error: ",
+                LogLevel.Warning => "Warning: ",
+                _ => string.Empty,
+            };
+#pragma warning restore IDE0072 // Add missing cases
+
+            var txt = prefix + logEntry.Formatter(logEntry.State, logEntry.Exception);
 
 #pragma warning disable CA1062 // Validate arguments of public methods
             textWriter.WriteLine(txt);
