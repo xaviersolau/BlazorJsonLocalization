@@ -14,6 +14,11 @@
       "commandName": "Project",
       "commandLineArgs": "--help",
       "workingDirectory": "C:\\Work\\Net\\BlazorJsonLocalization\\src\\tools.examples\\SoloX.BlazorJsonLocalization.Generator.Sample"
+    },
+    "Command JudoPlessisBouchard": {
+      "commandName": "Project",
+      "commandLineArgs": "SoloX.JudoPlessisBouchard.Client.csproj --outputCode obj/cslist.output --outputResource obj/reslist.output",
+      "workingDirectory": "C:\\Work\\Net\\JudoPlessisBouchard\\SoloX.JudoPlessisBouchard\\SoloX.JudoPlessisBouchard.Client"
     }
   }
 }

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.40" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.41" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.1" />
     <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.1.0">
