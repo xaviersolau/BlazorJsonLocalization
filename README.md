@@ -34,10 +34,7 @@ BlazorJsonLocalization project is written by Xavier Solau. It's licensed under t
 * Localizer inheritance.
 * Localizer fall back.
 * Both WebAssembly and Server Side support.
-
-## Coming soon
-
-* Code first localization support
+* [Code first localization support](documents/LocalizationGen.md).
 
 ## Installation
 

@@ -19,6 +19,11 @@
       "commandName": "Project",
       "commandLineArgs": "SoloX.JudoPlessisBouchard.Client.csproj --outputCode obj/cslist.output --outputResource obj/reslist.output",
       "workingDirectory": "C:\\Work\\Net\\JudoPlessisBouchard\\SoloX.JudoPlessisBouchard\\SoloX.JudoPlessisBouchard.Client"
+    },
+    "Command Sample": {
+      "commandName": "Project",
+      "commandLineArgs": "MyWebApp.Client\\MyWebApp.Client.csproj",
+      "workingDirectory": "C:\\Work\\Web\\Temp\\MyWebApp"
     }
   }
 }
