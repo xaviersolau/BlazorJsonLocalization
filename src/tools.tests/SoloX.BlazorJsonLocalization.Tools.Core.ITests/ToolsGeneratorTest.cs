@@ -35,9 +35,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             var snapshotName = nameof(this.GenerateBasicLocalizer)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, interfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, componentFile);
         }
-
 
         private const string SimpleSubJson1 = @"
         {
@@ -75,7 +74,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             var snapshotName = nameof(this.GenerateSubLocalizer)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, interfaceFile, subInterfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, subInterfaceFile, componentFile);
         }
 
         [Theory]
@@ -86,10 +85,20 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             var snapshotName = nameof(this.GenerateSubLocalizerWithTranslate)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, interfaceFile, subInterfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, subInterfaceFile, componentFile);
         }
 
-        private void GenerateSnapshot(string snapshotName, string jsonLocalization, params string[] files)
+        [Theory]
+        [InlineData(@"Sample4/ISimpleLocalizer.cs", 0, @"Sample4/Component.cs", null)]
+        public void GenerateBasicLocalizerWithTranslateAndSpecialChars(string interfaceFile, int idx, string componentFile, string jsonLocalization)
+        {
+            var snapshotName = nameof(this.GenerateBasicLocalizerWithTranslateAndSpecialChars)
+                + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
+
+            this.GenerateSnapshot(snapshotName, jsonLocalization, true, interfaceFile, componentFile);
+        }
+
+        private void GenerateSnapshot(string snapshotName, string jsonLocalization, bool useRelaxedJsonEscaping, params string[] files)
         {
             SnapshotHelper.IsOverwriteEnable = true;
 
@@ -118,7 +127,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                 var snapshotWriter = new SnapshotWriter();
                 var jsonReader = new TestReader(jsonLocalization);
 
-                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files);
+                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files, new GeneratorOptions(useRelaxedJsonEscaping));
 
                 var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
                 SnapshotHelper.AssertSnapshot(snapshotWriter.GetAllGenerated(), snapshotName, location);

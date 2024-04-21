@@ -31,6 +31,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
         private readonly Option<FileInfo> outputResourceOption = new Option<FileInfo>("--outputResource", "File to store Json output resource file list.");
         private readonly Option<FileInfo> logFileOption = new Option<FileInfo>("--logFile", "File to write logging.");
         private readonly Option<bool> logDebugOption = new Option<bool>("--logDebug", "Enable debug logging.");
+        private readonly Option<bool> useRelaxedJsonEscaping = new Option<bool>("--useRelaxedJsonEscaping", "Use Relaxed Json Escaping.");
 
         /// <summary>
         /// Setup GeneratorCommand instance.
@@ -43,6 +44,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
             this.rootCommand.AddArgument(this.projectArgument);
             this.rootCommand.AddOption(this.outputCodeOption);
             this.rootCommand.AddOption(this.outputResourceOption);
+            this.rootCommand.AddOption(this.useRelaxedJsonEscaping);
 
             this.rootCommand.SetHandler(RunGeneratorCommandHandlerAsync);
         }
@@ -145,8 +147,10 @@ namespace SoloX.BlazorJsonLocalization.Tools
                 return;
             }
 
+            var useRelaxedJsonEscapingOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.useRelaxedJsonEscaping);
+
             var generator = serviceProvider.GetRequiredService<ILocalizationGenerator>();
-            var results = generator.Generate(projectFile.FullName);
+            var results = generator.Generate(projectFile.FullName, new GeneratorOptions(useRelaxedJsonEscapingOptionValue));
 
             var full = projectFile.Directory?.FullName ?? Environment.CurrentDirectory;
 

@@ -20,6 +20,7 @@ using SoloX.GeneratorTools.Core.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
@@ -30,6 +31,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
     public class JsonFileGenerator
     {
         private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
+        private static readonly JsonSerializerOptions RelaxedJsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
         private readonly IReader reader;
         private readonly IWriter writer;
@@ -38,6 +40,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         private readonly ISelector selector;
         private readonly IGeneratorLogger logger;
         private readonly string resourcesFolderName;
+        private readonly JsonSerializerOptions jsonSerializerOptions;
 
         /// <summary>
         /// Setup instance.
@@ -49,7 +52,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// <param name="selector">Declaration selector to get the Declarations to generate the resource from.</param>
         /// <param name="logger">Logger to log messages.</param>
         /// <param name="resourcesFolderName">Resource folder name used in the provided locator.</param>
-        public JsonFileGenerator(IReader reader, IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName)
+        /// <param name="useRelaxedJsonEscaping"></param>
+        public JsonFileGenerator(IReader reader, IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName, bool useRelaxedJsonEscaping)
         {
             this.reader = reader;
             this.writer = writer;
@@ -58,6 +62,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             this.selector = selector;
             this.logger = logger;
             this.resourcesFolderName = resourcesFolderName;
+            this.jsonSerializerOptions = useRelaxedJsonEscaping ? RelaxedJsonSerializerOptions : DefaultJsonSerializerOptions;
         }
 
         /// <summary>
@@ -234,14 +239,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             {
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
-                    textWriter.Write(JsonSerializer.Serialize(targetMap, DefaultJsonSerializerOptions));
+                    textWriter.Write(JsonSerializer.Serialize(targetMap, this.jsonSerializerOptions));
                 });
             }
             else
             {
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
-                    textWriter.Write(JsonSerializer.Serialize(sourceMap, DefaultJsonSerializerOptions));
+                    textWriter.Write(JsonSerializer.Serialize(sourceMap, this.jsonSerializerOptions));
                 });
             }
         }

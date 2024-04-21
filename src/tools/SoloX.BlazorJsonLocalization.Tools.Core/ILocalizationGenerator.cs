@@ -21,12 +21,42 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core
         /// Apply the generator tools on the given project.
         /// </summary>
         /// <param name="projectFile">Project file.</param>
-        ILocalizationGeneratorResults Generate(string projectFile);
+        /// <param name="generatorOptions">Generator options.</param>
+        ILocalizationGeneratorResults Generate(
+            string projectFile,
+            GeneratorOptions? generatorOptions = null);
 
         /// <summary>
         /// Apply the generator tools on the given compilation instance.
         /// </summary>
         /// <param name="compilation">Compilation instance.</param>
-        ILocalizationGeneratorResults Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context);
+        /// <param name="classes">Input classes.</param>
+        /// <param name="context">Source production context.</param>
+        /// <param name="generatorOptions">Generator options.</param>
+        ILocalizationGeneratorResults Generate(
+            Compilation compilation,
+            ImmutableArray<InterfaceDeclarationSyntax> classes,
+            SourceProductionContext context,
+            GeneratorOptions? generatorOptions = null);
+    }
+
+    /// <summary>
+    /// Generator options.
+    /// </summary>
+    public class GeneratorOptions
+    {
+        /// <summary>
+        /// Tells to use Relaxed Json Escaping.
+        /// </summary>
+        public bool UseRelaxedJsonEscaping { get; }
+
+        /// <summary>
+        /// Setup options.
+        /// </summary>
+        /// <param name="useRelaxedJsonEscaping"></param>
+        public GeneratorOptions(bool useRelaxedJsonEscaping)
+        {
+            UseRelaxedJsonEscaping = useRelaxedJsonEscaping;
+        }
     }
 }

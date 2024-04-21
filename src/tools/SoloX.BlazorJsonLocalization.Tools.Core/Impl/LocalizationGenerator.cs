@@ -36,6 +36,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         private const string ResourcesFolderName = "JsonResourcesFolder";
 
+        private static readonly GeneratorOptions DefaultOptions = new GeneratorOptions(false);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationGenerator"/> class.
         /// </summary>
@@ -51,8 +53,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// Process generation for the given project file. It can be used from a CLI tool.
         /// </summary>
         /// <param name="projectFile">The project file to process.</param>
-        public ILocalizationGeneratorResults Generate(string projectFile)
+        /// <param name="generatorOptions">Generator options.</param>
+        public ILocalizationGeneratorResults Generate(string projectFile, GeneratorOptions? generatorOptions = null)
         {
+            if (generatorOptions == null)
+            {
+                generatorOptions = DefaultOptions;
+            }
+
             var inputFiles = new List<string>();
             var generatedCodeFiles = new List<string>();
             var generatedResourceFiles = new List<string>();
@@ -91,7 +99,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonLocator,
                 jsonReader,
                 jsonWriter,
-                project.Files);
+                project.Files,
+                generatorOptions);
 
             return new LocalizationGeneratorResults(
                 inputFiles,
@@ -105,11 +114,21 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// <param name="compilation">Compilation unit to process.</param>
         /// <param name="classes">Targeted interfaces.</param>
         /// <param name="context">Source production context to generate the C# code.</param>
-        public ILocalizationGeneratorResults Generate(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
+        /// <param name="generatorOptions">Generator options.</param>
+        public ILocalizationGeneratorResults Generate(
+            Compilation compilation,
+            ImmutableArray<InterfaceDeclarationSyntax> classes,
+            SourceProductionContext context,
+            GeneratorOptions? generatorOptions = null)
         {
             if (compilation == null)
             {
                 throw new ArgumentNullException(nameof(compilation));
+            }
+
+            if (generatorOptions == null)
+            {
+                generatorOptions = DefaultOptions;
             }
 
             var inputFiles = new List<string>();
@@ -151,7 +170,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonLocator,
                 jsonReader,
                 jsonWriter,
-                workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)));
+                workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)),
+                generatorOptions);
 
             return new LocalizationGeneratorResults(
                 inputFiles,
@@ -159,7 +179,15 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 generatedResourceFiles);
         }
 
-        internal void Generate(ICSharpWorkspace workspace, ILocator locator, IWriter fileWriter, ILocator jsonLocator, IReader jsonReader, IWriter jsonWriter, IEnumerable<ICSharpFile> files)
+        internal void Generate(
+            ICSharpWorkspace workspace,
+            ILocator locator,
+            IWriter fileWriter,
+            ILocator jsonLocator,
+            IReader jsonReader,
+            IWriter jsonWriter,
+            IEnumerable<ICSharpFile> files,
+            GeneratorOptions generatorOptions)
         {
             this.logger.LogDebug($"Register pattern files.");
 
@@ -231,7 +259,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 resolver,
                 new AttributeSelector<LocalizerAttribute>(),
                 this.logger,
-                ResourcesFolderName);
+                ResourcesFolderName,
+                generatorOptions.UseRelaxedJsonEscaping);
 
             var jsonItems = jsonGenerator.Generate(files);
         }

@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	ProjectSection(SolutionItems) = preProject
 		documents\BreakingChanges.md = documents\BreakingChanges.md
 		LICENSE = LICENSE
+		LocalizationGen.md = LocalizationGen.md
 		README.md = README.md
 		src\SharedProperties.props = src\SharedProperties.props
 	EndProjectSection
@@ -75,7 +76,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalizatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded2", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded2\SoloX.BlazorJsonLocalization.Example.Components.Embedded2.csproj", "{CCDA128E-8111-4F30-B664-07511B8351A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded3", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded3\SoloX.BlazorJsonLocalization.Example.Components.Embedded3.csproj", "{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded3", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded3\SoloX.BlazorJsonLocalization.Example.Components.Embedded3.csproj", "{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
