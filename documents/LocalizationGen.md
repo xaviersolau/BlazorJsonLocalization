@@ -120,7 +120,9 @@ dotnet localizationgen --help
 ## resources
 
 Please find a full working example of a Blazor Web App using the tool:
+
 https://github.com/xaviersolau/DevArticles/tree/code_first_json_localization
 
 And the step by step guide to setup the project:
+
 https://medium.com/younited-tech-blog/code-first-json-localization-on-blazor-web-app-a1b18352dd67
