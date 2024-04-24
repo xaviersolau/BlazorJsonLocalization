@@ -29,13 +29,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         }
 
         [Theory]
-        [InlineData(@"Sample1/ISimpleLocalizer.cs", 0, @"Sample1/Component.cs", null)]
+        [InlineData(@"Sample1/ISimpleLocalizer.cs", 0, @"Component.cs", null)]
         public void GenerateBasicLocalizer(string interfaceFile, int idx, string componentFile, string jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizer)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, false, interfaceFile, componentFile);
         }
 
         private const string SimpleSubJson1 = @"
@@ -64,41 +64,70 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
         private const string SimpleSubJson3 = @"Bad Json";
 
+        private const string MultiLineJson1 = @"
+        {
+          ""BasicProperty"":  ""\n            Word11\n            word12\n            word13.""
+        }";
+
+        private const string MultiLineJson2 = @"
+        {
+          ""BasicProperty"":  [
+            ""            Word21"",
+            ""            word22"",
+            ""            word23.""
+          ]
+        }";
+
         [Theory]
-        [InlineData(@"Sample2/ISimpleLocalizer.cs", 0, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", null)]
-        [InlineData(@"Sample2/ISimpleLocalizer.cs", 1, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson1)]
-        [InlineData(@"Sample2/ISimpleLocalizer.cs", 2, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson2)]
-        [InlineData(@"Sample2/ISimpleLocalizer.cs", 3, @"Sample2/ISimpleSubLocalizer.cs", @"Sample2/Component.cs", SimpleSubJson3)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 0, @"Sample2/ISimpleSubLocalizer.cs", @"Component.cs", null)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 1, @"Sample2/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson1)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 2, @"Sample2/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson2)]
+        [InlineData(@"Sample2/ISimpleLocalizer.cs", 3, @"Sample2/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson3)]
         public void GenerateSubLocalizer(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizer)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, subInterfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, false, interfaceFile, subInterfaceFile, componentFile);
         }
 
         [Theory]
-        [InlineData(@"Sample3/ISimpleLocalizer.cs", 0, @"Sample3/ISimpleSubLocalizer.cs", @"Sample3/Component.cs", null)]
-        [InlineData(@"Sample3/ISimpleLocalizer.cs", 1, @"Sample3/ISimpleSubLocalizer.cs", @"Sample3/Component.cs", SimpleSubJson1)]
+        [InlineData(@"Sample3/ISimpleLocalizer.cs", 0, @"Sample3/ISimpleSubLocalizer.cs", @"Component.cs", null)]
+        [InlineData(@"Sample3/ISimpleLocalizer.cs", 1, @"Sample3/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson1)]
         public void GenerateSubLocalizerWithTranslate(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizerWithTranslate)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, false, interfaceFile, subInterfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, false, interfaceFile, subInterfaceFile, componentFile);
         }
 
         [Theory]
-        [InlineData(@"Sample4/ISimpleLocalizer.cs", 0, @"Sample4/Component.cs", null)]
-        public void GenerateBasicLocalizerWithTranslateAndSpecialChars(string interfaceFile, int idx, string componentFile, string jsonLocalization)
+        [InlineData(@"Sample4/ISimpleLocalizer.cs", 0, @"Component.cs")]
+        public void GenerateBasicLocalizerWithTranslateAndSpecialChars(string interfaceFile, int idx, string componentFile)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizerWithTranslateAndSpecialChars)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
 
-            this.GenerateSnapshot(snapshotName, jsonLocalization, true, interfaceFile, componentFile);
+            this.GenerateSnapshot(snapshotName, null, true, false, interfaceFile, componentFile);
         }
 
-        private void GenerateSnapshot(string snapshotName, string jsonLocalization, bool useRelaxedJsonEscaping, params string[] files)
+        [Theory]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 0, @"Component.cs", false, null)]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 1, @"Component.cs", true, null)]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 2, @"Component.cs", false, MultiLineJson1)]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 3, @"Component.cs", true, MultiLineJson2)]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 4, @"Component.cs", false, MultiLineJson2)]
+        [InlineData(@"Sample5/IMultiLineLocalizer.cs", 5, @"Component.cs", true, MultiLineJson1)]
+        public void GenerateBasicLocalizerWithTranslateAndMultiLine(string interfaceFile, int idx, string componentFile, bool multiLine, string jsonLocalization)
+        {
+            var snapshotName = nameof(this.GenerateBasicLocalizerWithTranslateAndMultiLine)
+                + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
+
+            this.GenerateSnapshot(snapshotName, jsonLocalization, true, multiLine, interfaceFile, componentFile);
+        }
+
+        private void GenerateSnapshot(string snapshotName, string jsonLocalization, bool useRelaxedJsonEscaping, bool useMultiLine, params string[] files)
         {
             SnapshotHelper.IsOverwriteEnable = true;
 
@@ -127,7 +156,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                 var snapshotWriter = new SnapshotWriter();
                 var jsonReader = new TestReader(jsonLocalization);
 
-                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files, new GeneratorOptions(useRelaxedJsonEscaping));
+                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files, new GeneratorOptions(useRelaxedJsonEscaping, useMultiLine) { NewLineSeparator = "\n" });
 
                 var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
                 SnapshotHelper.AssertSnapshot(snapshotWriter.GetAllGenerated(), snapshotName, location);

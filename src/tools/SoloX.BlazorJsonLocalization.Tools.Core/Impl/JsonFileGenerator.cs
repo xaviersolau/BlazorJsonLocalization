@@ -17,6 +17,7 @@ using SoloX.GeneratorTools.Core.CSharp.Model.Use;
 using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using SoloX.GeneratorTools.Core.Generator;
 using SoloX.GeneratorTools.Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         private readonly IGeneratorLogger logger;
         private readonly string resourcesFolderName;
         private readonly JsonSerializerOptions jsonSerializerOptions;
+        private readonly bool multiLineEnabled;
+        private readonly string? newLineSeparator;
 
         /// <summary>
         /// Setup instance.
@@ -52,9 +55,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
         /// <param name="selector">Declaration selector to get the Declarations to generate the resource from.</param>
         /// <param name="logger">Logger to log messages.</param>
         /// <param name="resourcesFolderName">Resource folder name used in the provided locator.</param>
-        /// <param name="useRelaxedJsonEscaping"></param>
-        public JsonFileGenerator(IReader reader, IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName, bool useRelaxedJsonEscaping)
+        /// <param name="options">Generator options.</param>
+        public JsonFileGenerator(IReader reader, IWriter writer, ILocator locator, IDeclarationResolver resolver, ISelector selector, IGeneratorLogger logger, string resourcesFolderName, GeneratorOptions options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             this.reader = reader;
             this.writer = writer;
             this.locator = locator;
@@ -62,7 +70,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             this.selector = selector;
             this.logger = logger;
             this.resourcesFolderName = resourcesFolderName;
-            this.jsonSerializerOptions = useRelaxedJsonEscaping ? RelaxedJsonSerializerOptions : DefaultJsonSerializerOptions;
+            this.jsonSerializerOptions = options.UseRelaxedJsonEscaping ? RelaxedJsonSerializerOptions : DefaultJsonSerializerOptions;
+            this.multiLineEnabled = options.UseMultiLine;
+
+            this.newLineSeparator = options.NewLineSeparator;
         }
 
         /// <summary>
@@ -237,6 +248,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
             if (dirty)
             {
+                targetMap.SetMultiLine(this.multiLineEnabled);
+                targetMap.SetNewLineSeparator(this.newLineSeparator);
+
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
                     textWriter.Write(JsonSerializer.Serialize(targetMap, this.jsonSerializerOptions));
@@ -244,6 +258,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             }
             else
             {
+                sourceMap?.SetMultiLine(this.multiLineEnabled);
+                sourceMap?.SetNewLineSeparator(this.newLineSeparator);
+
                 this.writer.Generate(location, jsonName, textWriter =>
                 {
                     textWriter.Write(JsonSerializer.Serialize(sourceMap, this.jsonSerializerOptions));

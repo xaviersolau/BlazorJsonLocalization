@@ -33,6 +33,29 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
         }
 
         /// <inheritdoc/>
+        public override void SetMultiLine(bool multiLine)
+        {
+            foreach (var item in ValueMap)
+            {
+                item.Value.SetMultiLine(multiLine);
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void SetNewLineSeparator(string? newLineSeparator = null)
+        {
+            if (newLineSeparator == null)
+            {
+                return;
+            }
+
+            foreach (var item in ValueMap)
+            {
+                item.Value.SetNewLineSeparator(newLineSeparator);
+            }
+        }
+
+        /// <inheritdoc/>
         public override ALocalizationData Merge(ALocalizationData source, string path, out bool dirty)
         {
             dirty = false;

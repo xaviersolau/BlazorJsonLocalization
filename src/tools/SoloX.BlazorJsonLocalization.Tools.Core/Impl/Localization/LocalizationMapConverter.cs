@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -27,6 +29,15 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
 
                 return new LocalizationValue(strValue);
             }
+            else if (reader.TokenType == JsonTokenType.StartArray)
+            {
+                if (!reader.Read())
+                {
+                    throw new JsonException();
+                }
+
+                return new LocalizationValue(LocalizationMapConverter.ReadStringArray(ref reader));
+            }
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
                 if (!reader.Read())
@@ -40,6 +51,42 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
             {
                 throw new JsonException($"Unexpected token {reader.TokenType}");
             }
+        }
+
+        private static string ReadStringArray(ref Utf8JsonReader reader)
+        {
+            var stringBuilder = new StringBuilder();
+            var first = true;
+
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    var strValue = reader.GetString();
+
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        stringBuilder.AppendLine();
+                    }
+
+                    stringBuilder.Append(strValue);
+
+                    if (!reader.Read())
+                    {
+                        throw new JsonException();
+                    }
+                }
+                else
+                {
+                    throw new JsonException($"Unexpected token {reader.TokenType} only string are supported in Json array");
+                }
+            }
+
+            return stringBuilder.ToString();
         }
 
         /// <inheritdoc/>
@@ -97,7 +144,38 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
                     break;
                 case LocalizationValue mapValue:
                     {
-                        writer.WriteStringValue(mapValue.Value);
+                        if (mapValue.MultiLine)
+                        {
+                            var lines = mapValue.Value.Split(["\r\n", "\n"], StringSplitOptions.None);
+
+                            if (lines.Length > 2)
+                            {
+                                if (string.IsNullOrEmpty(lines[0]))
+                                {
+                                    lines = lines.Skip(1).ToArray();
+                                }
+                            }
+
+                            if (lines.Length > 1)
+                            {
+                                writer.WriteStartArray();
+                                foreach (var line in lines)
+                                {
+                                    writer.WriteStringValue(line);
+                                }
+                                writer.WriteEndArray();
+                            }
+                            else
+                            {
+                                writer.WriteStringValue(mapValue.Value);
+                            }
+                        }
+                        else
+                        {
+                            var txt = mapValue.NewLineSeparator != null && mapValue.NewLineSeparator != "\r\n" ? mapValue.Value.Replace("\r\n", mapValue.NewLineSeparator) : mapValue.Value;
+
+                            writer.WriteStringValue(txt);
+                        }
                     }
                     break;
                 default:

@@ -1,5 +1,5 @@
 ---------------------
-Sample1.SimpleLocalizer.g.cs
+SimpleLocalizer.g.cs
 ---------------------
 // ----------------------------------------------------------------------
 // <copyright file="SimpleLocalizer.cs" company="Xavier Solau">
@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample1
 }
 
 ---------------------
-Sample1.SimpleLocalizerExtensions.g.cs
+SimpleLocalizerExtensions.g.cs
 ---------------------
 // ----------------------------------------------------------------------
 // <copyright file="SimpleLocalizerExtensions.cs" company="Xavier Solau">

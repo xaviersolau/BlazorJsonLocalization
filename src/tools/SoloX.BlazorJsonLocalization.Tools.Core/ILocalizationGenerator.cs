@@ -51,12 +51,24 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core
         public bool UseRelaxedJsonEscaping { get; }
 
         /// <summary>
+        /// Tells to use Multi-Line Json values.
+        /// </summary>
+        public bool UseMultiLine { get; }
+
+        /// <summary>
+        /// New line separator. Use default if null
+        /// </summary>
+        public string? NewLineSeparator { get; set; }
+
+        /// <summary>
         /// Setup options.
         /// </summary>
-        /// <param name="useRelaxedJsonEscaping"></param>
-        public GeneratorOptions(bool useRelaxedJsonEscaping)
+        /// <param name="useRelaxedJsonEscaping">Use special chars in the Json string values.</param>
+        /// <param name="useMultiLine">Use Multi-Line in the Json string values.</param>
+        public GeneratorOptions(bool useRelaxedJsonEscaping, bool useMultiLine)
         {
             UseRelaxedJsonEscaping = useRelaxedJsonEscaping;
+            UseMultiLine = useMultiLine;
         }
     }
 }
