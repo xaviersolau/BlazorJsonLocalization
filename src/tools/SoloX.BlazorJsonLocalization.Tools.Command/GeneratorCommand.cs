@@ -32,6 +32,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
         private readonly Option<FileInfo> logFileOption = new Option<FileInfo>("--logFile", "File to write logging.");
         private readonly Option<bool> logDebugOption = new Option<bool>("--logDebug", "Enable debug logging.");
         private readonly Option<bool> useRelaxedJsonEscaping = new Option<bool>("--useRelaxedJsonEscaping", "Use Relaxed Json Escaping.");
+        private readonly Option<bool> useMultiLine = new Option<bool>("--useMultiLine", "Use Multi-Line Json resources.");
 
         /// <summary>
         /// Setup GeneratorCommand instance.
@@ -45,6 +46,7 @@ namespace SoloX.BlazorJsonLocalization.Tools
             this.rootCommand.AddOption(this.outputCodeOption);
             this.rootCommand.AddOption(this.outputResourceOption);
             this.rootCommand.AddOption(this.useRelaxedJsonEscaping);
+            this.rootCommand.AddOption(this.useMultiLine);
 
             this.rootCommand.SetHandler(RunGeneratorCommandHandlerAsync);
         }
@@ -149,8 +151,10 @@ namespace SoloX.BlazorJsonLocalization.Tools
 
             var useRelaxedJsonEscapingOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.useRelaxedJsonEscaping);
 
+            var useMultiLineOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.useMultiLine);
+
             var generator = serviceProvider.GetRequiredService<ILocalizationGenerator>();
-            var results = generator.Generate(projectFile.FullName, new GeneratorOptions(useRelaxedJsonEscapingOptionValue));
+            var results = generator.Generate(projectFile.FullName, new GeneratorOptions(useRelaxedJsonEscapingOptionValue, useMultiLineOptionValue));
 
             var full = projectFile.Directory?.FullName ?? Environment.CurrentDirectory;
 

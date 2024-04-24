@@ -33,6 +33,7 @@ BlazorJsonLocalization project is written by Xavier Solau. It's licensed under t
 * Structured Json support with complex objects.
 * Localizer inheritance.
 * Localizer fall back.
+* Multi-Line Json string value.
 * Both WebAssembly and Server Side support.
 * [Code first localization support](documents/LocalizationGen.md).
 
@@ -224,6 +225,38 @@ Or using the wildcards version:
   <ItemGroup>
     <EmbeddedResource Include="Resources\**\*.json" />
   </ItemGroup>
+```
+
+##### Multi-line Json value
+
+Multi-line Json value is supported. Let's say you have a message with multiple lines to associate on a Key.
+We are going to use some HTML text for example:
+
+```html
+<p>
+    Some text.
+<p>
+```
+
+We have two solutions to write you Json file, first you can use escaped new line separator `\n` (or the windows `\r\n`).
+
+Here is the resulting Json:
+
+```json
+{
+  "HtmlKey" : "<p>\r\n    Some text.\r\n<p>"
+}
+```
+
+But you have a second option using an array. In that case the Json could be like this:
+
+```json
+{
+  "HtmlKey" : [
+    "<p>",
+    "    Some text.",
+    "<p>"]
+}
 ```
 
 

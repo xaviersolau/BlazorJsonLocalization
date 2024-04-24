@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -25,6 +26,15 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
 
                 return new JsonMapDataValue { Value = strValue };
             }
+            else if (reader.TokenType == JsonTokenType.StartArray)
+            {
+                if (!reader.Read())
+                {
+                    throw new JsonException();
+                }
+
+                return new JsonMapDataValue { Value = JsonMapDataConverter.ReadStringArray(ref reader) };
+            }
             else if (reader.TokenType == JsonTokenType.StartObject)
             {
                 if (!reader.Read())
@@ -38,6 +48,42 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
             {
                 throw new JsonException($"Unexpected token {reader.TokenType}");
             }
+        }
+
+        private static string ReadStringArray(ref Utf8JsonReader reader)
+        {
+            var stringBuilder = new StringBuilder();
+            var first = true;
+
+            while (reader.TokenType != JsonTokenType.EndArray)
+            {
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    var strValue = reader.GetString();
+
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        stringBuilder.AppendLine();
+                    }
+
+                    stringBuilder.Append(strValue);
+
+                    if (!reader.Read())
+                    {
+                        throw new JsonException();
+                    }
+                }
+                else
+                {
+                    throw new JsonException($"Unexpected token {reader.TokenType} only string are supported in Json array");
+                }
+            }
+
+            return stringBuilder.ToString();
         }
 
         private static Dictionary<string, AJsonMapData> ReadMap(ref Utf8JsonReader reader, JsonSerializerOptions options)

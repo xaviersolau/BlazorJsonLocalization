@@ -36,7 +36,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         private const string ResourcesFolderName = "JsonResourcesFolder";
 
-        private static readonly GeneratorOptions DefaultOptions = new GeneratorOptions(false);
+        private static readonly GeneratorOptions DefaultOptions = new GeneratorOptions(false, false);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationGenerator"/> class.
@@ -260,7 +260,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 new AttributeSelector<LocalizerAttribute>(),
                 this.logger,
                 ResourcesFolderName,
-                generatorOptions.UseRelaxedJsonEscaping);
+                generatorOptions);
 
             var jsonItems = jsonGenerator.Generate(files);
         }

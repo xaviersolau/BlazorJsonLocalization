@@ -1,0 +1,137 @@
+---------------------
+MultiLineLocalizer
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="MultiLineLocalizer.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+#pragma warning disable IDE0005 // Using directive is unnecessary.
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5;
+using System.Collections.Generic;
+#pragma warning restore IDE0005 // Using directive is unnecessary.
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5
+{
+    /// <summary>
+    /// IMultiLineLocalizer generated implementation.
+    /// </summary>
+    public class MultiLineLocalizer : IMultiLineLocalizer
+    {
+        private readonly IStringLocalizer<Component> stringLocalizer;
+
+        /// <summary>
+        /// Setup instance.
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
+        public MultiLineLocalizer(IStringLocalizer<Component> stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
+
+        /// <inheritdoc/>
+        public LocalizedString this[string name]
+            => this.stringLocalizer[name];
+
+        /// <inheritdoc/>
+        public LocalizedString this[string name, params object[] arguments]
+            => this.stringLocalizer[name, arguments];
+
+        /// <inheritdoc/>
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+
+        /// <summary>
+        /// Get BasicProperty localized string.
+        /// </summary>
+        public string BasicProperty
+        {
+            get => this.stringLocalizer[nameof(BasicProperty)];
+        }
+    }
+
+
+}
+
+---------------------
+MultiLineLocalizerExtensions
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="MultiLineLocalizerExtensions.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5;
+using System;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5
+{
+    /// <summary>
+    /// MultiLineLocalizerExtensions generated extension methods.
+    /// </summary>
+    public static class MultiLineLocalizerExtensions
+    {
+        /// <summary>
+        /// Convert StringLocalizer to IMultiLineLocalizer
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
+        /// <returns>The localizer instance.</returns>
+        public static IMultiLineLocalizer ToMultiLineLocalizer(this IStringLocalizer<Component> stringLocalizer)
+            => new MultiLineLocalizer(stringLocalizer);
+
+        /// <summary>
+        /// Get BasicProperty localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string BasicProperty(this IStringLocalizer<Component> stringLocalizer)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(BasicProperty)];
+        }
+    }
+}
+
+---------------------
+Component
+---------------------
+{
+  "BasicProperty": [
+    "            Basic property",
+    "            translation with",
+    "            multi lines."
+  ]
+}
+---------------------
+Component.fr
+---------------------
+{
+  "BasicProperty": [
+    "            Basic property",
+    "            translation with",
+    "            multi lines."
+  ]
+}
+---------------------
+Component.en
+---------------------
+{
+  "BasicProperty": [
+    "            Basic property",
+    "            translation with",
+    "            multi lines."
+  ]
+}
