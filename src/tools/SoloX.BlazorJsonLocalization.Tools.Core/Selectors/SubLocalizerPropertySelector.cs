@@ -13,6 +13,8 @@ using SoloX.GeneratorTools.Core.CSharp.Workspace;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Attributes;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
 {
@@ -35,9 +37,21 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Selectors
                 throw new ArgumentNullException(nameof(declaration));
             }
 
-            // TODO enhance sub localizer property detection.
+            return declaration.Properties.Where(p => p.HasGetter && !p.HasSetter && ExtendsStringLocalizer(p.PropertyType.Declaration));
+        }
 
-            return declaration.Properties.Where(p => p.HasGetter && !p.HasSetter && p.PropertyType.Declaration.Name.EndsWith("Localizer", StringComparison.Ordinal));
+        private static bool ExtendsStringLocalizer(IDeclaration<SyntaxNode> declaration)
+        {
+            if (declaration is IGenericDeclaration<SyntaxNode> genericDeclaration)
+            {
+                if (genericDeclaration.Attributes.FirstOrDefault(a => a.Name == nameof(SubLocalizerAttribute)) != null
+                    && genericDeclaration.Extends?.FirstOrDefault(e => e.Declaration.Name == nameof(IStringLocalizer)) != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <inheritdoc/>

@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ISimpleLocalizer.cs" company="Xavier Solau">
+// <copyright file="ISimpleSubLocalizer.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -9,15 +9,12 @@
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizer
 {
-    [Localizer("Resources", new[] { "fr", "en" })]
-    public interface IMultiLineLocalizer : IStringLocalizer<Component>
+    [SubLocalizer]
+    public interface ISimpleSubLocalizer : IStringLocalizer
     {
-        [Translate(@"
-            Basic property
-            translation with
-            multi lines.")]
-        string BasicProperty { get; }
+        string BasicSubProperty1 { get; }
+        string BasicSubProperty2 { get; }
     }
 }

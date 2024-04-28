@@ -12,11 +12,11 @@ SimpleLocalizer
 #pragma warning disable IDE0005 // Using directive is unnecessary.
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate;
 using System.Collections.Generic;
 #pragma warning restore IDE0005 // Using directive is unnecessary.
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate
 {
     /// <summary>
     /// ISimpleLocalizer generated implementation.
@@ -86,10 +86,10 @@ SimpleLocalizerExtensions
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate;
 using System;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate
 {
     /// <summary>
     /// SimpleLocalizerExtensions generated extension methods.
@@ -135,11 +135,11 @@ SimpleSubLocalizer
 #pragma warning disable IDE0005 // Using directive is unnecessary.
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate;
 using System.Collections.Generic;
 #pragma warning restore IDE0005 // Using directive is unnecessary.
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate
 {
     /// <summary>
     /// ISimpleSubLocalizer generated implementation.
@@ -231,7 +231,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3
 Component
 ---------------------
 {
-  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate.ISimpleSubLocalizer": {
     "Arg1": "default arg1",
     "Arg2": "default arg2",
     "BasicSubProperty1": "Basic sub property 1 translation. Arg1",
@@ -255,7 +255,7 @@ Component
 Component.fr
 ---------------------
 {
-  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate.ISimpleSubLocalizer": {
     "Arg1": "default arg1",
     "Arg2": "default arg2",
     "BasicSubProperty1": "Basic sub property 1 translation. Arg1",
@@ -279,7 +279,7 @@ Component.fr
 Component.en
 ---------------------
 {
-  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample3.ISimpleSubLocalizer": {
+  "SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithSubLocalizerTranslate.ISimpleSubLocalizer": {
     "Arg1": "default arg1",
     "Arg2": "default arg2",
     "BasicSubProperty1": "Basic sub property 1 translation. Arg1",
