@@ -24,7 +24,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
     /// </summary>
     [Pattern<AttributeSelector<SubLocalizerAttribute>>]
     [Repeat(Pattern = nameof(IMyObjectSubStringLocalizerPattern), Prefix = "I")]
-    public class MyObjectSubStringLocalizerPattern : IMyObjectSubStringLocalizerPattern
+    public partial class MyObjectSubStringLocalizerPattern : IMyObjectSubStringLocalizerPattern
     {
         private readonly IStringLocalizer rootLocalizer;
         private readonly IStringLocalizer elementLocalizer;

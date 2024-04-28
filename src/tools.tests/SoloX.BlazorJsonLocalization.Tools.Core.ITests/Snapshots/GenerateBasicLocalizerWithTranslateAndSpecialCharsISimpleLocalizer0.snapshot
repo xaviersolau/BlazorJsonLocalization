@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithTranslate
     /// <summary>
     /// ISimpleLocalizer generated implementation.
     /// </summary>
-    public class SimpleLocalizer : ISimpleLocalizer
+    public partial class SimpleLocalizer : ISimpleLocalizer
     {
         private readonly IStringLocalizer<Component> stringLocalizer;
 

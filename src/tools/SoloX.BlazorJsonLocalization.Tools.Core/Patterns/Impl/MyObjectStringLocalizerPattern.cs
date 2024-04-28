@@ -26,7 +26,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl
     [Pattern<AttributeSelector<LocalizerAttribute>>]
     [Repeat(Pattern = nameof(IMyObjectStringLocalizerPattern), Prefix = "I")]
     [ReplacePattern(typeof(TypeReplaceHandler))]
-    public class MyObjectStringLocalizerPattern : IMyObjectStringLocalizerPattern
+    public partial class MyObjectStringLocalizerPattern : IMyObjectStringLocalizerPattern
     {
         private readonly IStringLocalizer<MyObject> stringLocalizer;
 

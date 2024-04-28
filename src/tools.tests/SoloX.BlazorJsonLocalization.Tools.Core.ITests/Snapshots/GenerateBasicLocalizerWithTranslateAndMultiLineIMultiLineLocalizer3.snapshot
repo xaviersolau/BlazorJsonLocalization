@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithMultiLine
     /// <summary>
     /// IMultiLineLocalizer generated implementation.
     /// </summary>
-    public class MultiLineLocalizer : IMultiLineLocalizer
+    public partial class MultiLineLocalizer : IMultiLineLocalizer
     {
         private readonly IStringLocalizer<Component> stringLocalizer;
 
