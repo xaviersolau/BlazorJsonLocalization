@@ -71,5 +71,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
                     throw new NotSupportedException();
             }
         }
+
+        /// <inheritdoc/>
+        public override bool Trim()
+        {
+            return false;
+        }
     }
 }

@@ -211,7 +211,6 @@ Component
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent"
@@ -227,7 +226,6 @@ Component.fr
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.fr",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.fr"
@@ -243,7 +241,6 @@ Component.en
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
   "SubLocalizer2": {
     "BasicSubProperty1": "SubLocalizer2BasicSubProperty1ValueForComponent.en",
     "BasicSubProperty2": "SubLocalizer2BasicSubProperty2ValueForComponent.en"
