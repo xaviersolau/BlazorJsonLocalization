@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleSubLocalizerName
     /// <summary>
     /// ISimple generated implementation.
     /// </summary>
-    public class Simple : ISimple
+    public partial class Simple : ISimple
     {
         private readonly IStringLocalizer<Component> stringLocalizer;
 
@@ -144,7 +144,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleSubLocalizerName
     /// <summary>
     /// ISimpleSub generated implementation.
     /// </summary>
-    public class SimpleSub : ISimpleSub
+    public partial class SimpleSub : ISimpleSub
     {
         private readonly IStringLocalizer rootLocalizer;
         private readonly IStringLocalizer elementLocalizer;
