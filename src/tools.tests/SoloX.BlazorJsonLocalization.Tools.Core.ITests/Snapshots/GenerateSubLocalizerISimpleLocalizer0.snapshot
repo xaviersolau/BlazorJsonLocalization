@@ -211,8 +211,6 @@ Component
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
-  "SubLocalizer2": {},
   "BasicProperty": "BasicProperty"
 }
 ---------------------
@@ -223,8 +221,6 @@ Component.fr
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
-  "SubLocalizer2": {},
   "BasicProperty": "BasicProperty"
 }
 ---------------------
@@ -235,7 +231,5 @@ Component.en
     "BasicSubProperty1": "BasicSubProperty1",
     "BasicSubProperty2": "BasicSubProperty2"
   },
-  "SubLocalizer1": {},
-  "SubLocalizer2": {},
   "BasicProperty": "BasicProperty"
 }

@@ -246,26 +246,20 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 : map.Merge(sourceMap, string.Empty, out dirty);
 #pragma warning restore CA1508 // Avoid dead conditional code
 
-            if (dirty)
+            if (!dirty)
             {
-                targetMap.SetMultiLine(this.multiLineEnabled);
-                targetMap.SetNewLineSeparator(this.newLineSeparator);
-
-                this.writer.Generate(location, jsonName, textWriter =>
-                {
-                    textWriter.Write(JsonSerializer.Serialize(targetMap, this.jsonSerializerOptions));
-                });
+                targetMap = sourceMap!;
             }
-            else
+
+            targetMap.SetMultiLine(this.multiLineEnabled);
+            targetMap.SetNewLineSeparator(this.newLineSeparator);
+
+            targetMap.Trim();
+
+            this.writer.Generate(location, jsonName, textWriter =>
             {
-                sourceMap?.SetMultiLine(this.multiLineEnabled);
-                sourceMap?.SetNewLineSeparator(this.newLineSeparator);
-
-                this.writer.Generate(location, jsonName, textWriter =>
-                {
-                    textWriter.Write(JsonSerializer.Serialize(sourceMap, this.jsonSerializerOptions));
-                });
-            }
+                textWriter.Write(JsonSerializer.Serialize(targetMap, this.jsonSerializerOptions));
+            });
         }
     }
 }

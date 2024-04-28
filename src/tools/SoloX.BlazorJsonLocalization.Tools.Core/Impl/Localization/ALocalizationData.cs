@@ -38,5 +38,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
         /// <returns>The merged localization data.</returns>
         public abstract ALocalizationData Merge(ALocalizationData source, string path, out bool dirty);
 #pragma warning restore CA1021 // Avoid out parameters
+
+        /// <summary>
+        /// Remove empty entries from data tree.
+        /// </summary>
+        /// <returns>True if the resulting tree is empty.</returns>
+        public abstract bool Trim();
     }
 }

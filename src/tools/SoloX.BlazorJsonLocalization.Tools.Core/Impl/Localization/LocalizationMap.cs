@@ -21,7 +21,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
         /// <summary>
         /// The Mapped values.
         /// </summary>
-        public IReadOnlyDictionary<string, ALocalizationData> ValueMap { get; }
+        public IReadOnlyDictionary<string, ALocalizationData> ValueMap { get; private set; }
 
         /// <summary>
         /// Setup LocalizationMap instance.
@@ -101,6 +101,27 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        /// <inheritdoc/>
+        public override bool Trim()
+        {
+            var isEmpty = true;
+
+            var trimedMap = new Dictionary<string, ALocalizationData>();
+
+            foreach (var item in ValueMap)
+            {
+                if (!item.Value.Trim())
+                {
+                    isEmpty = false;
+                    trimedMap.Add(item.Key, item.Value);
+                }
+            }
+
+            ValueMap = trimedMap;
+
+            return isEmpty;
         }
     }
 }
