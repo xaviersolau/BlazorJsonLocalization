@@ -14,25 +14,31 @@
     <Compile Update="Component.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample5\IMultiLineLocalizer.cs">
+    <Compile Update="SampleWithMultiLine\IMultiLineLocalizer.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample4\ISimpleLocalizer.cs">
+    <Compile Update="SampleSubLocalizerName\ISimple.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample1\ISimpleLocalizer.cs">
+    <Compile Update="SampleSubLocalizerName\ISimpleSub.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample2\ISimpleSubLocalizer.cs">
+    <Compile Update="SampleWithTranslate\ISimpleLocalizer.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample2\ISimpleLocalizer.cs">
+    <Compile Update="SampleBasic\ISimpleLocalizer.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample3\ISimpleLocalizer.cs">
+    <Compile Update="SampleWithSubLocalizer\ISimpleSubLocalizer.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Sample3\ISimpleSubLocalizer.cs">
+    <Compile Update="SampleWithSubLocalizer\ISimpleLocalizer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="SampleWithSubLocalizerTranslate\ISimpleLocalizer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="SampleWithSubLocalizerTranslate\ISimpleSubLocalizer.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

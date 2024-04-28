@@ -12,11 +12,11 @@ SimpleLocalizer
 #pragma warning disable IDE0005 // Using directive is unnecessary.
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample4;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithTranslate;
 using System.Collections.Generic;
 #pragma warning restore IDE0005 // Using directive is unnecessary.
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample4
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithTranslate
 {
     /// <summary>
     /// ISimpleLocalizer generated implementation.
@@ -70,10 +70,10 @@ SimpleLocalizerExtensions
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample4;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithTranslate;
 using System;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample4
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithTranslate
 {
     /// <summary>
     /// SimpleLocalizerExtensions generated extension methods.

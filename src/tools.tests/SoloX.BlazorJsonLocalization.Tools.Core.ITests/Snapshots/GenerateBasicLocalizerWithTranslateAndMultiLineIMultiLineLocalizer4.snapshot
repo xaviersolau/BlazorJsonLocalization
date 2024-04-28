@@ -12,11 +12,11 @@ MultiLineLocalizer
 #pragma warning disable IDE0005 // Using directive is unnecessary.
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithMultiLine;
 using System.Collections.Generic;
 #pragma warning restore IDE0005 // Using directive is unnecessary.
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithMultiLine
 {
     /// <summary>
     /// IMultiLineLocalizer generated implementation.
@@ -70,10 +70,10 @@ MultiLineLocalizerExtensions
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Localization;
-using SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithMultiLine;
 using System;
 
-namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.Sample5
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleWithMultiLine
 {
     /// <summary>
     /// MultiLineLocalizerExtensions generated extension methods.
