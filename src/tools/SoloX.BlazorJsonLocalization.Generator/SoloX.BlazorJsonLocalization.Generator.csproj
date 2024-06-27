@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" Visible="false" />
-    <PackageReference Include="SoloX.GeneratorTools.Core" Version="1.0.0-alpha.41" GeneratePathProperty="true" />
-    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.41" GeneratePathProperty="true" />
+    <PackageReference Include="SoloX.GeneratorTools.Core" Version="1.0.0-alpha.42" GeneratePathProperty="true" />
+    <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.42" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.1" GeneratePathProperty="true" />
     <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" GeneratePathProperty="true" />
     <PackageReference Include="System.Text.Json" Version="8.0.1" GeneratePathProperty="true" />
