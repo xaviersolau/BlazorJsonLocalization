@@ -17,7 +17,7 @@
     },
     "Command JudoPlessisBouchard": {
       "commandName": "Project",
-      "commandLineArgs": "SoloX.JudoPlessisBouchard.Client.csproj --outputCode obj/cslist.output --outputResource obj/reslist.output",
+      "commandLineArgs": "SoloX.JudoPlessisBouchard.Client.csproj --outputCode obj/cslist.output --outputResource obj/reslist.output --logDebug",
       "workingDirectory": "C:\\Work\\Net\\JudoPlessisBouchard\\SoloX.JudoPlessisBouchard\\SoloX.JudoPlessisBouchard.Client"
     },
     "Command Sample": {
