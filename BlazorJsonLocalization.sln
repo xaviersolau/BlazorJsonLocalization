@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{F8C0C88A-0F31-493C-AC26-921133378F75}"
 	ProjectSection(SolutionItems) = preProject
 		documents\BreakingChanges.md = documents\BreakingChanges.md
+		coverlet.runsettings = coverlet.runsettings
 		LICENSE = LICENSE
 		documents\LocalizationGen.md = documents\LocalizationGen.md
 		README.md = README.md
@@ -77,6 +78,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded2", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded2\SoloX.BlazorJsonLocalization.Example.Components.Embedded2.csproj", "{CCDA128E-8111-4F30-B664-07511B8351A8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Example.Components.Embedded3", "src\examples\SoloX.BlazorJsonLocalization.Example.Components.Embedded3\SoloX.BlazorJsonLocalization.Example.Components.Embedded3.csproj", "{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.WebApp", "src\examples\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp.csproj", "{A4F286D8-4003-48EB-87F5-715384D82092}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.WebApp.Client", "src\examples\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp.Client\SoloX.BlazorJsonLocalization.Example.WebApp.Client.csproj", "{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,6 +185,14 @@ Global
 		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F286D8-4003-48EB-87F5-715384D82092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F286D8-4003-48EB-87F5-715384D82092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F286D8-4003-48EB-87F5-715384D82092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F286D8-4003-48EB-87F5-715384D82092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +222,8 @@ Global
 		{E633FA15-35AD-493E-A3AA-3AFD06729F3D} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
 		{CCDA128E-8111-4F30-B664-07511B8351A8} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
+		{A4F286D8-4003-48EB-87F5-715384D82092} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
+		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}

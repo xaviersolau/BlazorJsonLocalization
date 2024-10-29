@@ -1,0 +1,30 @@
+﻿@page "/counter"
+
+@rendermode InteractiveAuto
+
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Counter> Localizer
+
+<PageTitle>@Localizer["Counter"]</PageTitle>
+
+<h1>@Localizer["Counter"]</h1>
+
+<p role="status">@Localizer["Current count", currentCount]</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">@Localizer["Click"]</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Localizer.LoadAsync();
+        await base.OnInitializedAsync();
+    }
+}
