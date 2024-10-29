@@ -64,8 +64,18 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
             this.logger.LoadingLocalizationDataFromHost(uri);
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-            var fileInfo = this.webHostEnvironment.WebRootFileProvider.GetFileInfo(uri.OriginalString);
+            var filePath = uri.OriginalString;
 #pragma warning restore CA1062 // Validate arguments of public methods
+
+            // Since we actually load the resource files from the WebRootFileProvider we can remove the query part of the URI.
+            var queryIndex = filePath.IndexOf('?', StringComparison.InvariantCulture);
+
+            if (queryIndex >= 0)
+            {
+                filePath = filePath.Remove(queryIndex);
+            }
+
+            var fileInfo = this.webHostEnvironment.WebRootFileProvider.GetFileInfo(filePath);
 
             if (!fileInfo.Exists)
             {

@@ -1,0 +1,12 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Home> Localizer
+
+<PageTitle>@Localizer["Home"]</PageTitle>
+
+<h1>@Localizer["Hello"]</h1>
+
+@Localizer["Welcome"]
