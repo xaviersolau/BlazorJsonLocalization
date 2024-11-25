@@ -73,6 +73,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
         }
 
+        private static readonly Dictionary<string, string> EmptyMap = new Dictionary<string, string>();
+
         private readonly JsonLocalizationOptions options;
         private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
@@ -257,7 +259,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 this.cacheService.Reset(assembly, baseName, cultureInfo);
             }
 
-            return null;
+            return EmptyMap;
         }
     }
 }
