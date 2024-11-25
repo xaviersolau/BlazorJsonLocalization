@@ -124,5 +124,51 @@ namespace SoloX.BlazorJsonLocalization.ITests
                 },
                 this.testOutputHelper).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task ItShouldLoadAsyncThroughHierarchyEvenIfNoSpecificResources()
+        {
+            await SetupHelper.ProcessHttpLocalizerTestAsync<ISpecific>(
+                "en-US",
+                new Dictionary<string, string>
+                {
+                    ["IGlobal.json"] = "{\"Global\": \"This is global message...\"}",
+                },
+                async (localizer, unlocker) =>
+                {
+                    Assert.NotNull(localizer);
+
+                    var globalLocalized = localizer["Global"];
+                    Assert.Equal("...", globalLocalized);
+
+                    // Start loading async
+                    var loadingTask = localizer.LoadAsync();
+
+                    // We are sure that it is not loaded at this point (since we didn't signal any one).
+
+                    unlocker("IGlobal.json"); // Signal Global
+
+                    // Make sure Global string is available.
+                    var nbRetry = 5;
+                    for (var i = 0; i <= nbRetry; i++)
+                    {
+                        await Task.Delay(100).ConfigureAwait(false);
+
+                        globalLocalized = localizer["Global"];
+                        if ("This is global message..." == globalLocalized)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Assert.True(i < nbRetry);
+                        }
+                    }
+
+                    // Loading task must not be completed.
+                    Assert.True(loadingTask.IsCompleted);
+                },
+                this.testOutputHelper).ConfigureAwait(false);
+        }
     }
 }
