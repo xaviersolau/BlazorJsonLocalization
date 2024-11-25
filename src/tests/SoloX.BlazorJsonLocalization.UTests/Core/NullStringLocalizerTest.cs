@@ -27,6 +27,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.Equal("SomeInput", localizer["SomeInput"]);
             Assert.Equal("SomeInput", localizer["SomeInput", "With some argument"]);
+            Assert.Equal(null, localizer.TryGet("SomeInput"));
+            Assert.Equal(null, localizer.TryGet("SomeInput", ["With some argument"], cultureInfo));
         }
 
         [Theory]

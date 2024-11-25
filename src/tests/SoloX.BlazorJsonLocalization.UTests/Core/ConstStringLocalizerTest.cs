@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System.Globalization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
@@ -19,12 +20,15 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         public void IsShouldReturnTheGivenConstText()
         {
             var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var cultureInfo = CultureInfo.GetCultureInfo("en");
 
             var constText = "Some constant text...";
             var localizer = new ConstStringLocalizer(constText, localizerFactoryMock.Object);
 
             Assert.Equal(constText, localizer["SomeInput"]);
             Assert.Equal(constText, localizer["SomeInput", "With some argument"]);
+            Assert.Equal(constText, localizer.TryGet("SomeInput"));
+            Assert.Equal(constText, localizer.TryGet("SomeInput", ["With some argument"], cultureInfo));
         }
     }
 }
