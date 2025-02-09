@@ -32,12 +32,34 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
 
             var service = new CacheService();
 
-            service.Cache(Assembly, BaseName, CultureInfo, localizer);
-
-            var cacheEntry = service.Match(Assembly, BaseName, CultureInfo);
+            var cacheEntry = service.Cache(Assembly, BaseName, CultureInfo, localizer);
 
             Assert.NotNull(cacheEntry);
             Assert.Same(localizer, cacheEntry);
+
+            cacheEntry = service.Match(Assembly, BaseName, CultureInfo);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer, cacheEntry);
+        }
+
+        [Fact]
+        public void ItShouldNotRegisterLocalizerIfOneAlreadyRegistered()
+        {
+            var localizer1 = Mock.Of<IStringLocalizerInternal>();
+            var localizer2 = Mock.Of<IStringLocalizerInternal>();
+
+            var service = new CacheService();
+
+            var cacheEntry = service.Cache(Assembly, BaseName, CultureInfo, localizer1);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer1, cacheEntry);
+
+            cacheEntry = service.Cache(Assembly, BaseName, CultureInfo, localizer2);
+
+            Assert.NotNull(cacheEntry);
+            Assert.Same(localizer1, cacheEntry);
         }
 
         [Fact]

@@ -16,10 +16,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// Null string localization implementation.
     /// </summary>
-    public class NullStringLocalizer : IStringLocalizer, IStringLocalizerInternal
+    public class NullStringLocalizer : AStringLocalizerInternal, IStringLocalizer
     {
-        private readonly CultureInfo cultureInfo;
-        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
         private readonly bool resourceNotFound;
 
         /// <summary>
@@ -28,24 +26,28 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <param name="cultureInfo">The target culture.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
         /// <param name="resourceNotFound">Tells if resourceNotFound property must be set.</param>
-        public NullStringLocalizer(CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, bool resourceNotFound)
+        /// <param name="stringLocalizerGuid">String localizer identity to use.</param>
+        public NullStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, bool resourceNotFound, string? stringLocalizerGuid)
+            : base(resourceSource, cultureInfo, localizerFactory, stringLocalizerGuid)
         {
-            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
-
-            this.cultureInfo = cultureInfo;
             this.resourceNotFound = resourceNotFound;
         }
 
         ///<inheritdoc/>
         public LocalizedString this[string name]
-            => new LocalizedString(name, name, this.resourceNotFound);
+            => BuildLocalizedString(l => l.TryGet(name)) ?? new LocalizedString(name, name, this.resourceNotFound);
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => new LocalizedString(name, string.Format(this.cultureInfo, name, arguments), this.resourceNotFound);
+            => BuildLocalizedString(l => l.TryGet(name, arguments, CultureInfo)) ?? new LocalizedString(name, string.Format(CultureInfo, name, arguments), this.resourceNotFound);
+
+        private LocalizedString? BuildLocalizedString(Func<IStringLocalizerInternal, LocalizedString?> forward)
+        {
+            return LocalizerFactoryInternal.FindThroughStringLocalizerHierarchy(this, CultureInfo, forward);
+        }
 
         ///<inheritdoc/>
-        public IStringLocalizer AsStringLocalizer => this;
+        public override IStringLocalizer AsStringLocalizer => this;
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
@@ -54,22 +56,22 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         }
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name)
+        protected override LocalizedString? TryGetInternal(string name)
         {
-            return null;
+            return this.resourceNotFound ? null : new LocalizedString(name, name, this.resourceNotFound);
         }
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        public override LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
         {
-            return null;
+            return this.resourceNotFound ? null : new LocalizedString(name, string.Format(CultureInfo, name, arguments), this.resourceNotFound);
         }
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
+            return LocalizerFactoryInternal.CreateStringLocalizer(ResourceSource, culture).AsStringLocalizer;
         }
 #endif
     }

@@ -23,12 +23,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfo = CultureInfo.GetCultureInfo("en");
 
             var constText = "Some constant text...";
-            var localizer = new ConstStringLocalizer(constText, localizerFactoryMock.Object);
+            var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
+            var localizer = new ConstStringLocalizer(resourceSource, cultureInfo, localizerFactoryMock.Object, constText, false, null);
 
             Assert.Equal(constText, localizer["SomeInput"]);
             Assert.Equal(constText, localizer["SomeInput", "With some argument"]);
-            Assert.Equal(constText, localizer.TryGet("SomeInput"));
-            Assert.Equal(constText, localizer.TryGet("SomeInput", ["With some argument"], cultureInfo));
+            Assert.Equal(constText, localizer.TryGet("SomeInput")!);
+            Assert.Equal(constText, localizer.TryGet("SomeInput", ["With some argument"], cultureInfo)!);
         }
     }
 }

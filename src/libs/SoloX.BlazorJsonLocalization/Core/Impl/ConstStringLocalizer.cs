@@ -16,31 +16,36 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// Constant string localizer.
     /// </summary>
-    public class ConstStringLocalizer : IStringLocalizer, IStringLocalizerInternal
+    public class ConstStringLocalizer : AStringLocalizerInternal, IStringLocalizer
     {
         private readonly string constValue;
-        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
+        private readonly bool resourceNotFound;
 
         /// <summary>
         /// Setup the ConstStringLocalizer with the constant value
         /// </summary>
-        /// <param name="constValue">Constant value to use.</param>
+        /// <param name="resourceSource"></param>
+        /// <param name="cultureInfo">The target culture.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
-        public ConstStringLocalizer(string constValue, IJsonStringLocalizerFactoryInternal localizerFactory)
+        /// <param name="constValue">Constant value to use.</param>
+        /// <param name="stringLocalizerGuid">String localizer identity to use.</param>
+        public ConstStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory, string constValue, bool resourceNotFound, string? stringLocalizerGuid)
+            : base(resourceSource, cultureInfo, localizerFactory, stringLocalizerGuid)
         {
-            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
-
             this.constValue = constValue;
+            this.resourceNotFound = resourceNotFound;
         }
 
         ///<inheritdoc/>
-        public LocalizedString this[string name] => new LocalizedString(name, this.constValue);
+        public LocalizedString this[string name]
+            => TryGet(name)!;
 
         ///<inheritdoc/>
-        public LocalizedString this[string name, params object[] arguments] => new LocalizedString(name, this.constValue);
+        public LocalizedString this[string name, params object[] arguments]
+            => TryGet(name, arguments, CultureInfo)!;
 
         ///<inheritdoc/>
-        public IStringLocalizer AsStringLocalizer => this;
+        public override IStringLocalizer AsStringLocalizer => this;
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
@@ -49,22 +54,22 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         }
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name)
+        protected override LocalizedString? TryGetInternal(string name)
         {
-            return new LocalizedString(name, this.constValue);
+            return new LocalizedString(name, this.constValue, this.resourceNotFound);
         }
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        public override LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
         {
-            return new LocalizedString(name, this.constValue);
+            return new LocalizedString(name, this.constValue, this.resourceNotFound);
         }
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
+            return LocalizerFactoryInternal.CreateStringLocalizer(ResourceSource, culture).AsStringLocalizer;
         }
 #endif
     }

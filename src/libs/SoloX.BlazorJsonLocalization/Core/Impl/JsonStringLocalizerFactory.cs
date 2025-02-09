@@ -30,51 +30,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// IStringLocalizerFactory implementation that will create the IStringLocalizer instance
     /// from the extension configured in the JsonLocalization options.
     /// </summary>
-    public sealed class JsonStringLocalizerFactory : IStringLocalizerFactory
+    public sealed class JsonStringLocalizerFactory : IStringLocalizerFactory, IJsonStringLocalizerFactoryInternal
     {
-        private class FactoryInternal : IJsonStringLocalizerFactoryInternal
-        {
-            private readonly string baseName;
-            private readonly Assembly assembly;
-            private readonly IEnumerable<(string baseName, Assembly assembly)> parents;
-            private readonly Func<string, Assembly, CultureInfo, IJsonStringLocalizerFactoryInternal, IStringLocalizerInternal> createHandler;
-
-            public FactoryInternal(string baseName, Assembly assembly,
-                IEnumerable<(string baseName, Assembly assembly)> parents,
-                Func<string, Assembly, CultureInfo, IJsonStringLocalizerFactoryInternal, IStringLocalizerInternal> createHandler)
-            {
-                this.baseName = baseName;
-                this.assembly = assembly;
-                this.parents = parents;
-                this.createHandler = createHandler;
-            }
-
-            public IStringLocalizerInternal CreateStringLocalizer(CultureInfo cultureInfo)
-            {
-                return this.createHandler(this.baseName, this.assembly, cultureInfo, this);
-            }
-
-            public LocalizedString? ProcessThroughStringLocalizerHierarchy(CultureInfo cultureInfo, Func<IStringLocalizerInternal, LocalizedString?> forward)
-            {
-                foreach (var item in this.parents)
-                {
-                    var factory = new FactoryInternal(item.baseName, item.assembly, Enumerable.Empty<(string baseName, Assembly assembly)>(), this.createHandler);
-
-                    var itemStringLocalizer = this.createHandler(item.baseName, item.assembly, cultureInfo, factory);
-
-                    var localizedString = forward(itemStringLocalizer);
-                    if (localizedString != null)
-                    {
-                        return localizedString;
-                    }
-                }
-
-                return null;
-            }
-        }
-
-        private static readonly Dictionary<string, string> EmptyMap = new Dictionary<string, string>();
-
         private readonly JsonLocalizationOptions options;
         private readonly IExtensionResolverService extensionResolverService;
         private readonly ICultureInfoService cultureInfoService;
@@ -115,24 +72,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             ArgumentNullException.ThrowIfNull(resourceSource, nameof(resourceSource));
 
-            this.logger.CreateStringLocalizer(resourceSource.GetBaseName());
-
             var assembly = resourceSource.Assembly;
             var baseName = resourceSource.GetBaseName();
 
-            var parents = new List<(string baseName, Assembly assembly)>();
+            this.logger.CreateStringLocalizer(baseName);
 
-            var baseType = resourceSource.BaseType;
-            if (baseType != null && baseType != typeof(object))
-            {
-                parents.Add((baseType.GetBaseName(), baseType.Assembly));
-            }
-
-            parents.AddRange(resourceSource.GetInterfaces().Select(x => (x.GetBaseName(), x.Assembly)));
-
-            parents.AddRange(this.options.Fallbacks);
-
-            return CreateStringLocalizerProxy(baseName, assembly, parents);
+            return CreateStringLocalizerProxy(new StringLocalizerResourceSource(baseName, assembly, resourceSource));
         }
 
         ///<inheritdoc/>
@@ -142,70 +87,70 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             var assembly = Assembly.Load(location);
 
-            return CreateStringLocalizerProxy(baseName, assembly, this.options.Fallbacks);
+            return CreateStringLocalizerProxy(new StringLocalizerResourceSource(baseName, assembly, null));
         }
 
-        private IStringLocalizer CreateStringLocalizerProxy(string baseName, Assembly assembly, IEnumerable<(string baseName, Assembly assembly)> parents)
+        private IStringLocalizer CreateStringLocalizerProxy(StringLocalizerResourceSource resourceSource)
         {
             // First use the cache.
-            var localizer = this.cacheService.Match(assembly, baseName, null);
+            var localizer = this.cacheService.Match(resourceSource.Assembly, resourceSource.BaseName, null);
             if (localizer != null)
             {
-                this.logger.GotStringLocalizerProxyFromCache(baseName, assembly);
+                this.logger.GotStringLocalizerProxyFromCache(resourceSource.BaseName, resourceSource.Assembly);
 
                 return localizer.AsStringLocalizer;
             }
 
-            this.logger.CreateStringLocalizerProxy(baseName, assembly);
+            this.logger.CreateStringLocalizerProxy(resourceSource.BaseName, resourceSource.Assembly);
 
             localizer = new StringLocalizerProxy(
+                resourceSource,
                 this.loggerForStringLocalizerProxy,
                 this.cultureInfoService,
-                new FactoryInternal(baseName, assembly, parents, CreateStringLocalizer));
+                this);
 
-            this.cacheService.Cache(assembly, baseName, null, localizer);
+            this.cacheService.Cache(resourceSource.Assembly, resourceSource.BaseName, null, localizer);
 
             return localizer.AsStringLocalizer;
         }
 
-        private IStringLocalizerInternal CreateStringLocalizer(string baseName, Assembly assembly, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal factoryInternal)
+        /// <inheritdoc/>
+        public IStringLocalizerInternal CreateStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo)
         {
+            ArgumentNullException.ThrowIfNull(resourceSource, nameof(resourceSource));
+
             // First use the cache.
-            var localizer = this.cacheService.Match(assembly, baseName, cultureInfo);
+            var localizer = this.cacheService.Match(resourceSource.Assembly, resourceSource.BaseName, cultureInfo);
             if (localizer != null)
             {
-                this.logger.GotStringLocalizerFromCache(baseName, assembly, cultureInfo);
+                this.logger.GotStringLocalizerFromCache(resourceSource.BaseName, resourceSource.Assembly, cultureInfo);
 
                 return localizer;
             }
 
-            var task = LoadStringLocalizerAsync(assembly, baseName, cultureInfo);
+            var task = LoadStringLocalizerAsync(resourceSource.Assembly, resourceSource.BaseName, cultureInfo);
 
             if (task.Status == TaskStatus.RanToCompletion)
             {
-                this.logger.LoadingTaskCompletedSynchronously(baseName, assembly, cultureInfo);
+                this.logger.LoadingTaskCompletedSynchronously(resourceSource.BaseName, resourceSource.Assembly, cultureInfo);
 
                 var map = task.Result;
                 if (map != null)
                 {
-                    localizer = new JsonStringLocalizer(map, cultureInfo, factoryInternal);
-                    this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
+                    localizer = new JsonStringLocalizer(resourceSource, map, cultureInfo, this);
+                    localizer = this.cacheService.Cache(resourceSource.Assembly, resourceSource.BaseName, cultureInfo, localizer);
                 }
                 else
                 {
-                    localizer = new NullStringLocalizer(cultureInfo, factoryInternal, true);
+                    localizer = this.CreateDefaultStringLocalizer(resourceSource, cultureInfo, null);
                 }
             }
             else
             {
-                this.logger.LoadingDataAsynchronously(baseName, assembly, cultureInfo);
+                this.logger.LoadingDataAsynchronously(resourceSource.BaseName, resourceSource.Assembly, cultureInfo);
 
-                IStringLocalizerInternal loadingLocalizer = this.options.IsDisplayKeysWhileLoadingAsynchronouslyEnabled
-                    ? new NullStringLocalizer(cultureInfo, factoryInternal, false)
-                    : new ConstStringLocalizer("...", factoryInternal);
-
-                localizer = new JsonStringLocalizerAsync(task, cultureInfo, factoryInternal, loadingLocalizer);
-                this.cacheService.Cache(assembly, baseName, cultureInfo, localizer);
+                localizer = new JsonStringLocalizerAsync(resourceSource, task, cultureInfo, this);
+                localizer = this.cacheService.Cache(resourceSource.Assembly, resourceSource.BaseName, cultureInfo, localizer);
             }
 
             return localizer;
@@ -221,6 +166,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             var hadErrors = false;
             foreach (var extensionOptionsContainer in this.options.ExtensionOptions)
             {
+#pragma warning disable CA1031 // Do not catch general exception types
                 try
                 {
                     var options = extensionOptionsContainer.Options;
@@ -243,13 +189,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 {
                     this.logger.ErrorWhileLoadingLocalizationData(extensionOptionsContainer.ExtensionOptionsType.Name, e);
                 }
-#pragma warning disable CA1031 // Ne pas intercepter les types d'exception générale
                 catch (Exception e)
-#pragma warning restore CA1031 // Ne pas intercepter les types d'exception générale
                 {
                     this.logger.ErrorWhileLoadingLocalizationData(extensionOptionsContainer.ExtensionOptionsType.Name, e);
                     hadErrors = true;
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
             }
 
             this.logger.UnableToLoadLocalizationData(baseName, assembly, cultureInfo);
@@ -259,7 +204,145 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 this.cacheService.Reset(assembly, baseName, cultureInfo);
             }
 
-            return EmptyMap;
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public LocalizedString? FindThroughStringLocalizerHierarchy(IStringLocalizerInternal stringLocalizer, CultureInfo cultureInfo, Func<IStringLocalizerInternal, LocalizedString?> findHandler)
+        {
+            ArgumentNullException.ThrowIfNull(stringLocalizer, nameof(stringLocalizer));
+            ArgumentNullException.ThrowIfNull(findHandler, nameof(findHandler));
+            ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
+
+            // 1. Find with the current localizer.
+            var ls = findHandler(stringLocalizer);
+
+            if (ls != null && !ls.ResourceNotFound)
+            {
+                return ls;
+            }
+
+            // 2. Find with the parent culture info.
+            var ci = cultureInfo.Parent == cultureInfo ? null : cultureInfo.Parent;
+
+            while (ci != null)
+            {
+                var parentLocalizer = CreateStringLocalizer(stringLocalizer.ResourceSource, ci);
+
+                ls = findHandler(parentLocalizer);
+
+                if (ls != null && !ls.ResourceNotFound)
+                {
+                    return ls;
+                }
+
+                ci = ci.Parent == ci ? null : ci.Parent;
+            }
+
+            // 3. Find on the class hierarchy.
+            var parents = LoadLocalizerHierarchy(stringLocalizer.ResourceSource);
+
+            foreach (var parent in parents)
+            {
+                ci = cultureInfo;
+
+                do
+                {
+                    var parentLocalizer = CreateStringLocalizer(parent, ci);
+
+                    ls = findHandler(parentLocalizer);
+
+                    if (ls != null && !ls.ResourceNotFound)
+                    {
+                        return ls;
+                    }
+
+                    ci = ci.Parent == ci ? null : ci.Parent;
+                }
+                while (ci != null);
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async ValueTask LoadDataThroughStringLocalizerHierarchyAsync(
+            IStringLocalizerInternal stringLocalizer,
+            CultureInfo cultureInfo,
+            bool loadParentCulture)
+        {
+            ArgumentNullException.ThrowIfNull(stringLocalizer, nameof(stringLocalizer));
+            ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
+
+            // 1. Process with the current localizer.
+            var loaded = await stringLocalizer.LoadDataAsync().ConfigureAwait(false);
+
+            // 2. Process with the parent culture info.
+            var ci = cultureInfo.Parent;
+
+            while (ci != null && (loadParentCulture || !loaded))
+            {
+                var parentLocalizer = CreateStringLocalizer(stringLocalizer.ResourceSource, ci);
+
+                loaded = await parentLocalizer.LoadDataAsync().ConfigureAwait(false);
+
+                ci = ci.Parent == ci ? null : ci.Parent;
+            }
+
+            // 3. Process on the class hierarchy.
+            var parents = LoadLocalizerHierarchy(stringLocalizer.ResourceSource);
+
+            foreach (var parent in parents)
+            {
+                ci = cultureInfo;
+
+                do
+                {
+                    var parentLocalizer = CreateStringLocalizer(parent, ci);
+
+                    loaded = await parentLocalizer.LoadDataAsync().ConfigureAwait(false);
+
+                    ci = ci.Parent == ci ? null : ci.Parent;
+                }
+                while (ci != null && (loadParentCulture || !loaded));
+            }
+        }
+
+        private List<StringLocalizerResourceSource> LoadLocalizerHierarchy(StringLocalizerResourceSource resourceSource)
+        {
+            var parents = new List<StringLocalizerResourceSource>();
+
+            if (resourceSource.ResourceSourceType != null)
+            {
+                var baseType = resourceSource.ResourceSourceType.BaseType;
+
+                if (baseType != null && baseType != typeof(object))
+                {
+                    var baseName = baseType.GetBaseName();
+
+                    if (!this.options.SkipBaseNamePrefix.Any(p => baseName.StartsWith(p, StringComparison.Ordinal)))
+                    {
+                        parents.Add(new StringLocalizerResourceSource(baseType.GetBaseName(), baseType.Assembly, baseType));
+                    }
+                }
+
+                parents.AddRange(
+                    resourceSource.ResourceSourceType.GetInterfaces()
+                        .Where(x => !this.options.SkipBaseNamePrefix.Any(p => x.GetBaseName().StartsWith(p, StringComparison.Ordinal)))
+                        .Select(x => new StringLocalizerResourceSource(x.GetBaseName(), x.Assembly, x)));
+            }
+
+            parents.AddRange(this.options.Fallbacks.Select(x => new StringLocalizerResourceSource(x.baseName, x.assembly, null)));
+
+            return parents;
+        }
+
+        /// <inheritdoc/>
+        public IStringLocalizerInternal CreateDefaultStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo, string? stringLocalizerGuid)
+        {
+            return this.options.IsDisplayKeysWhenResourceNotFoundEnabled
+                ? new NullStringLocalizer(resourceSource, cultureInfo, this, true, stringLocalizerGuid)
+                : new ConstStringLocalizer(resourceSource, cultureInfo, this, "...", true, stringLocalizerGuid);
         }
     }
 }

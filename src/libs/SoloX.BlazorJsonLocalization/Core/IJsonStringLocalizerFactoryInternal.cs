@@ -8,7 +8,9 @@
 
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Core.Impl;
 
 namespace SoloX.BlazorJsonLocalization.Core
 {
@@ -20,17 +22,37 @@ namespace SoloX.BlazorJsonLocalization.Core
         /// <summary>
         /// Create a string localizer setup with the given culture info.
         /// </summary>
+        /// <param name="resourceSource"></param>
         /// <param name="cultureInfo"></param>
         /// <returns></returns>
-        IStringLocalizerInternal CreateStringLocalizer(CultureInfo cultureInfo);
+        IStringLocalizerInternal CreateStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo);
 
         /// <summary>
-        /// Process forwarder on all localizer hierarchy until we actually get a localized string.
+        /// Create the default string localizer setup with the given culture info.
         /// </summary>
+        /// <param name="resourceSource"></param>
         /// <param name="cultureInfo"></param>
-        /// <param name="forward"></param>
+        /// <param name="stringLocalizerGuid"></param>
         /// <returns></returns>
-        LocalizedString? ProcessThroughStringLocalizerHierarchy(CultureInfo cultureInfo, Func<IStringLocalizerInternal, LocalizedString?> forward);
+        IStringLocalizerInternal CreateDefaultStringLocalizer(StringLocalizerResourceSource resourceSource, CultureInfo cultureInfo, string? stringLocalizerGuid);
+
+        /// <summary>
+        /// Find LocalizedString through both type and culture hierarchy.
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <param name="cultureInfo"></param>
+        /// <param name="findHandler"></param>
+        /// <returns></returns>
+        LocalizedString? FindThroughStringLocalizerHierarchy(IStringLocalizerInternal stringLocalizer, CultureInfo cultureInfo, Func<IStringLocalizerInternal, LocalizedString?> findHandler);
+
+        /// <summary>
+        /// Process through both type and culture hierarchy.
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <param name="cultureInfo"></param>
+        /// <param name="loadParentCulture"></param>
+        /// <returns></returns>
+        ValueTask LoadDataThroughStringLocalizerHierarchyAsync(IStringLocalizerInternal stringLocalizer, CultureInfo cultureInfo, bool loadParentCulture);
     }
 
     /// <summary>
@@ -42,6 +64,27 @@ namespace SoloX.BlazorJsonLocalization.Core
         /// Gets the actual IStringLocalizer interface.
         /// </summary>
         IStringLocalizer AsStringLocalizer { get; }
+
+        /// <summary>
+        /// Culture info of the localizer.
+        /// </summary>
+        CultureInfo CultureInfo { get; }
+
+        /// <summary>
+        /// Load data
+        /// </summary>
+        /// <returns>True if the data exists.</returns>
+        Task<bool> LoadDataAsync();
+
+        /// <summary>
+        /// Localizer Factory internal
+        /// </summary>
+        IJsonStringLocalizerFactoryInternal LocalizerFactoryInternal { get; }
+
+        /// <summary>
+        /// Resource source.
+        /// </summary>
+        StringLocalizerResourceSource ResourceSource { get; }
 
         /// <summary>
         /// Try get the LocalizedString.

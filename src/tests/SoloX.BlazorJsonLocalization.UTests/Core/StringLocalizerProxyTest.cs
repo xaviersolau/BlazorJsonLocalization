@@ -49,10 +49,12 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
             localizerFactoryMock
-                .Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>()))
-                .Returns<CultureInfo>(ci => map[ci.Name]);
+                .Setup(x => x.CreateStringLocalizer(It.IsAny<StringLocalizerResourceSource>(), It.IsAny<CultureInfo>()))
+                .Returns<StringLocalizerResourceSource, CultureInfo>((rs, ci) => map[ci.Name]);
 
+            var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
             var proxy = new StringLocalizerProxy(
+                resourceSource,
                 Logger,
                 cultureInfoServiceMock.Object,
                 localizerFactoryMock.Object

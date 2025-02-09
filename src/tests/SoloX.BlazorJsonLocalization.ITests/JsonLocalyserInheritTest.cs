@@ -132,7 +132,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                 "en-US",
                 new Dictionary<string, string>
                 {
-                    ["IGlobal.json"] = "{\"Global\": \"This is global message...\"}",
+                    ["IGlobal.json"] = """{"Global": "This is global message..."}""",
                 },
                 async (localizer, unlocker) =>
                 {

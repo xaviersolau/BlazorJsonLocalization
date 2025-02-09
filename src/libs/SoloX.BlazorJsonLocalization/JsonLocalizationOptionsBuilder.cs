@@ -9,6 +9,7 @@
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -23,19 +24,30 @@ namespace SoloX.BlazorJsonLocalization
         private readonly List<(string baseName, Assembly assembly)> fallbackList = new List<(string baseName, Assembly assembly)>();
         private readonly List<string> skipBaseNamePrefixList = new List<string> { "Microsoft.AspNetCore.Components" };
 
-        private bool enableDisplayKeysWhileLoadingAsynchronously;
+        private bool enableDisplayKeysWhenResourceNotFound;
         private bool enableLogger;
 
+
+        /// <summary>
+        /// Enable (or not) the option to return keys on localization result while resources are not found.
+        /// </summary>
+        /// <param name="enable">Enable or not the option.</param>
+        /// <returns>The current builder.</returns>
+        public JsonLocalizationOptionsBuilder EnableDisplayKeysWhenResourceNotFound(bool enable = true)
+        {
+            this.enableDisplayKeysWhenResourceNotFound = enable;
+            return this;
+        }
 
         /// <summary>
         /// Enable (or not) the option to return keys on localization result while resources are loading asynchronously.
         /// </summary>
         /// <param name="enable">Enable or not the option.</param>
         /// <returns>The current builder.</returns>
+        [Obsolete("EnableDisplayKeysWhileLoadingAsynchronously is now obsolete. Use EnableDisplayKeysWhenResourceNotFound instead.")]
         public JsonLocalizationOptionsBuilder EnableDisplayKeysWhileLoadingAsynchronously(bool enable = true)
         {
-            this.enableDisplayKeysWhileLoadingAsynchronously = enable;
-            return this;
+            return EnableDisplayKeysWhenResourceNotFound(enable);
         }
 
         /// <summary>
@@ -114,7 +126,7 @@ namespace SoloX.BlazorJsonLocalization
         {
             if (opt != null)
             {
-                opt.IsDisplayKeysWhileLoadingAsynchronouslyEnabled = this.enableDisplayKeysWhileLoadingAsynchronously;
+                opt.IsDisplayKeysWhenResourceNotFoundEnabled = this.enableDisplayKeysWhenResourceNotFound;
                 opt.ExtensionOptions = this.extensionOptions;
                 opt.Fallbacks = this.fallbackList;
                 opt.SkipBaseNamePrefix = this.skipBaseNamePrefixList;

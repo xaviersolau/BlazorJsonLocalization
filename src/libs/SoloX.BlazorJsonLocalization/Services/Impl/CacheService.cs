@@ -27,15 +27,23 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         private readonly Dictionary<string, IStringLocalizerInternal> cacheMap = new Dictionary<string, IStringLocalizerInternal>();
 
         ///<inheritdoc/>
-        public void Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizerInternal localizer)
+        public IStringLocalizerInternal Cache(Assembly assembly, string baseName, CultureInfo? cultureInfo, IStringLocalizerInternal localizer)
         {
             ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
             ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
             ArgumentNullException.ThrowIfNull(localizer, nameof(localizer));
 
+            var key = ComputeKey(assembly, baseName, cultureInfo);
+
             lock (this.cacheMap)
             {
-                this.cacheMap.Add(ComputeKey(assembly, baseName, cultureInfo), localizer);
+                if (this.cacheMap.TryGetValue(key, out var entry))
+                {
+                    return entry;
+                }
+
+                this.cacheMap.Add(key, localizer);
+                return localizer;
             }
         }
 
