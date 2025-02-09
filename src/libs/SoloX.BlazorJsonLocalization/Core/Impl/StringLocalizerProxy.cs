@@ -12,9 +12,11 @@ using SoloX.BlazorJsonLocalization.Services;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace SoloX.BlazorJsonLocalization.Core.Impl
 {
+
     /// <summary>
     /// String localizer proxy user to detect current culture info change.
     /// </summary>
@@ -22,6 +24,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     {
         private readonly ILogger<StringLocalizerProxy> logger;
         private readonly ICultureInfoService cultureInfoService;
+
         private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         private CultureInfo cultureInfo;
@@ -30,32 +33,56 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         /// <summary>
         /// Setup the proxy with the factory create handler and the cultureInfoService.
         /// </summary>
+        /// <param name="resourceSource"></param>
         /// <param name="logger">The logger to use in this class.</param>
         /// <param name="cultureInfoService">Culture info service to get current culture.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
-        public StringLocalizerProxy(ILogger<StringLocalizerProxy> logger, ICultureInfoService cultureInfoService, IJsonStringLocalizerFactoryInternal localizerFactory)
+        public StringLocalizerProxy(StringLocalizerResourceSource resourceSource, ILogger<StringLocalizerProxy> logger, ICultureInfoService cultureInfoService, IJsonStringLocalizerFactoryInternal localizerFactory)
         {
+            ResourceSource = resourceSource;
+
             this.logger = logger;
 
             this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
 
             this.cultureInfoService = cultureInfoService;
-
             this.cultureInfo = this.cultureInfoService.CurrentUICulture;
 
-            this.stringLocalizer = localizerFactory.CreateStringLocalizer(this.cultureInfo);
+            this.stringLocalizer = localizerFactory.CreateStringLocalizer(ResourceSource, this.cultureInfo);
         }
 
-        ///<inheritdoc/>
-        public LocalizedString this[string name] => CurrentStringLocalizer.AsStringLocalizer[name];
+        /// <inheritdoc/>
+        public StringLocalizerResourceSource ResourceSource { get; }
 
         ///<inheritdoc/>
-        public LocalizedString this[string name, params object[] arguments] => CurrentStringLocalizer.AsStringLocalizer[name, arguments];
+        public LocalizedString this[string name]
+            => BuildLocalizedString(l => l.TryGet(name)) ?? CurrentStringLocalizer.AsStringLocalizer[name];
+
+        ///<inheritdoc/>
+        public LocalizedString this[string name, params object[] arguments]
+            => BuildLocalizedString(l => l.TryGet(name, arguments, CultureInfo)) ?? CurrentStringLocalizer.AsStringLocalizer[name, arguments];
+
+        private LocalizedString? BuildLocalizedString(Func<IStringLocalizerInternal, LocalizedString?> forward)
+        {
+            return LocalizerFactoryInternal.FindThroughStringLocalizerHierarchy(CurrentStringLocalizer, CultureInfo, forward);
+        }
 
         ///<inheritdoc/>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             return CurrentStringLocalizer.AsStringLocalizer.GetAllStrings(includeParentCultures);
+        }
+
+        ///<inheritdoc/>
+        public IJsonStringLocalizerFactoryInternal LocalizerFactoryInternal => this.localizerFactory;
+
+        ///<inheritdoc/>
+        public CultureInfo CultureInfo => this.cultureInfo;
+
+        ///<inheritdoc/>
+        public Task<bool> LoadDataAsync()
+        {
+            return CurrentStringLocalizer.LoadDataAsync();
         }
 
         /// <summary>
@@ -65,15 +92,17 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             get
             {
-                if (this.cultureInfo != this.cultureInfoService.CurrentUICulture)
+                var targetCultureInfo = this.cultureInfoService.CurrentUICulture;
+
+                if (this.cultureInfo != targetCultureInfo)
                 {
                     this.logger.SwitchCurrentCulture(
                         this.cultureInfo,
-                        this.cultureInfoService.CurrentUICulture);
+                        targetCultureInfo);
 
                     // Looks like the current culture has changed so we need to switch the stringLocalizer.
-                    this.cultureInfo = this.cultureInfoService.CurrentUICulture;
-                    this.stringLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo);
+                    this.cultureInfo = targetCultureInfo;
+                    this.stringLocalizer = this.localizerFactory.CreateStringLocalizer(ResourceSource, this.cultureInfo);
                 }
 
                 return this.stringLocalizer;
@@ -84,7 +113,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
+            return this.localizerFactory.CreateStringLocalizer(ResourceSource, culture).AsStringLocalizer;
         }
 #endif
 

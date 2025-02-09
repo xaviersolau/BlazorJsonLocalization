@@ -17,24 +17,27 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
     /// <summary>
     /// IStringLocalizer implementation.
     /// </summary>
-    public class JsonStringLocalizer : IStringLocalizer, IStringLocalizerInternal
+    public class JsonStringLocalizer : AStringLocalizerInternal, IStringLocalizer
     {
         private readonly IReadOnlyDictionary<string, string> stringMap;
-        private readonly CultureInfo cultureInfo;
-        private readonly IJsonStringLocalizerFactoryInternal localizerFactory;
 
         /// <summary>
         /// Setup with the given string map.
         /// </summary>
+        /// <param name="resourceSource"></param>
         /// <param name="stringMap">The string map to use to resolve localization.</param>
         /// <param name="cultureInfo">The associated culture info.</param>
         /// <param name="localizerFactory">Localizer Internal Factory.</param>
-        public JsonStringLocalizer(IReadOnlyDictionary<string, string> stringMap, CultureInfo cultureInfo, IJsonStringLocalizerFactoryInternal localizerFactory)
+        /// <param name="stringLocalizerGuid">String localizer guid if instantiated from JsonStringLocalizerAsync.</param>
+        public JsonStringLocalizer(
+            StringLocalizerResourceSource resourceSource,
+            IReadOnlyDictionary<string, string> stringMap,
+            CultureInfo cultureInfo,
+            IJsonStringLocalizerFactoryInternal localizerFactory,
+            string? stringLocalizerGuid = null)
+            : base(resourceSource, cultureInfo, localizerFactory, stringLocalizerGuid)
         {
             this.stringMap = stringMap;
-            this.cultureInfo = cultureInfo;
-
-            this.localizerFactory = localizerFactory ?? throw new ArgumentNullException(nameof(localizerFactory));
         }
 
         ///<inheritdoc/>
@@ -42,9 +45,9 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             var result = this.stringMap.Select(s => new LocalizedString(s.Key, s.Value));
 
-            if (includeParentCultures && this.cultureInfo.Parent != null && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent))
+            if (includeParentCultures && this.CultureInfo.Parent != null && !object.ReferenceEquals(CultureInfo, CultureInfo.Parent))
             {
-                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
+                var parentLocalizer = LocalizerFactoryInternal.CreateStringLocalizer(ResourceSource, CultureInfo.Parent);
                 if (parentLocalizer != null)
                 {
                     result = result.Concat(parentLocalizer.AsStringLocalizer.GetAllStrings(true));
@@ -56,66 +59,45 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         ///<inheritdoc/>
         public LocalizedString this[string name]
-            => BuildLocalizedString(l => l.TryGet(name)) ?? new LocalizedString(name, name, true);
+            => BuildLocalizedString(l => l.TryGet(name)) ?? DefaultLocalizer.AsStringLocalizer[name];
 
         ///<inheritdoc/>
         public LocalizedString this[string name, params object[] arguments]
-            => BuildLocalizedString(l => l.TryGet(name, arguments, this.cultureInfo)) ?? new LocalizedString(name, string.Format(this.cultureInfo, name, arguments), true);
+            => BuildLocalizedString(l => l.TryGet(name, arguments, CultureInfo)) ?? DefaultLocalizer.AsStringLocalizer[name, arguments];
 
         private LocalizedString? BuildLocalizedString(Func<IStringLocalizerInternal, LocalizedString?> forward)
         {
-            var localizedString = forward(this);
-
-            if (localizedString != null)
-            {
-                return localizedString;
-            }
-
-            return this.localizerFactory.ProcessThroughStringLocalizerHierarchy(this.cultureInfo, forward);
+            return LocalizerFactoryInternal.FindThroughStringLocalizerHierarchy(this, CultureInfo, forward);
         }
 
 #if !NET
         ///<inheritdoc/>
         public IStringLocalizer WithCulture(CultureInfo culture)
         {
-            return this.localizerFactory.CreateStringLocalizer(culture).AsStringLocalizer;
+            return LocalizerFactoryInternal.CreateStringLocalizer(ResourceSource, culture).AsStringLocalizer;
         }
 #endif
 
         ///<inheritdoc/>
-        public IStringLocalizer AsStringLocalizer => this;
+        public override IStringLocalizer AsStringLocalizer => this;
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name)
+        protected override LocalizedString? TryGetInternal(string name)
         {
             if (this.stringMap.TryGetValue(name, out var value))
             {
                 return new LocalizedString(name, value);
-            }
-            else if (this.cultureInfo.Parent != null
-                && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent)
-                && JsonStringLocalizerAsync.AsynchronousStringLocalizerGuidKey != name)
-            {
-                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
-                return parentLocalizer.TryGet(name);
             }
 
             return null;
         }
 
         ///<inheritdoc/>
-        public LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
+        public override LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
         {
             if (this.stringMap.TryGetValue(name, out var value))
             {
                 return new LocalizedString(name, string.Format(requestedCultureInfo, value, arguments));
-            }
-            else if (this.cultureInfo.Parent != null
-                && !object.ReferenceEquals(this.cultureInfo, this.cultureInfo.Parent)
-                && JsonStringLocalizerAsync.AsynchronousStringLocalizerGuidKey != name)
-            {
-                var parentLocalizer = this.localizerFactory.CreateStringLocalizer(this.cultureInfo.Parent);
-                return parentLocalizer.TryGet(name, arguments, requestedCultureInfo);
             }
 
             return null;

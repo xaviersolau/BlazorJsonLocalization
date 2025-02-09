@@ -6,8 +6,10 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Microsoft.Extensions.Localization;
 using Moq;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
@@ -41,10 +43,27 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
         private static JsonStringLocalizer CreateLocalizer(string resourceKey, string resourceText, string cultureName = "en-us")
         {
+            var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
+
             var localizerParentCultureLocalizerMock = new Mock<IStringLocalizerInternal>();
 
-            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
-            localizerFactoryMock.Setup(x => x.CreateStringLocalizer(It.IsAny<CultureInfo>())).Returns(localizerParentCultureLocalizerMock.Object);
+            var localizerFactoryInternalMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+
+            localizerFactoryInternalMock.Setup(x => x.CreateStringLocalizer(It.IsAny<StringLocalizerResourceSource>(), It.IsAny<CultureInfo>())).Returns(localizerParentCultureLocalizerMock.Object);
+
+            localizerFactoryInternalMock
+                .Setup(x => x.FindThroughStringLocalizerHierarchy(It.IsAny<IStringLocalizerInternal>(), It.IsAny<CultureInfo>(), It.IsAny<Func<IStringLocalizerInternal, LocalizedString?>>()))
+                .Returns<IStringLocalizerInternal, CultureInfo, Func<IStringLocalizerInternal, LocalizedString?>>((localizer, ci, forward) =>
+                {
+                    return forward(localizer);
+                });
+
+            localizerFactoryInternalMock
+                .Setup(x => x.CreateDefaultStringLocalizer(resourceSource, It.IsAny<CultureInfo>(), It.IsAny<string>()))
+                .Returns<StringLocalizerResourceSource, CultureInfo, string>((source, ci, id) =>
+                {
+                    return new NullStringLocalizer(source, ci, localizerFactoryInternalMock.Object, true, id);
+                });
 
             var map = new Dictionary<string, string>
             {
@@ -53,7 +72,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var localizer = new JsonStringLocalizer(map, cultureInfo, localizerFactoryMock.Object);
+            var localizer = new JsonStringLocalizer(resourceSource, map, cultureInfo, localizerFactoryInternalMock.Object);
             return localizer;
         }
     }

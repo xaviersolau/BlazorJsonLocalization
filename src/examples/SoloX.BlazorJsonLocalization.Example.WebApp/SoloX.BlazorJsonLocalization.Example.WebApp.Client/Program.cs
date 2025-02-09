@@ -17,6 +17,7 @@ builder.Services.AddWebAssemblyJsonLocalization(b =>
 #if DEBUG
         .EnableLogger()
 #endif
+        .AddFallback("Fallback", typeof(_Imports).Assembly)
         .UseHttpHostedJson(options =>
         {
             options.ResourcesPath = "Resources";

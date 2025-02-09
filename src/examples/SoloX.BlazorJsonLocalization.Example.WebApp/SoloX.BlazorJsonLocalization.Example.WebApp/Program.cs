@@ -14,6 +14,7 @@ builder.Services.AddServerSideJsonLocalization(builder =>
 #if DEBUG
         .EnableLogger()
 #endif
+        .AddFallback("Fallback", typeof(SoloX.BlazorJsonLocalization.Example.WebApp.Client._Imports).Assembly)
         .UseHttpHostedJson(options =>
         {
             options.ResourcesPath = "Resources";

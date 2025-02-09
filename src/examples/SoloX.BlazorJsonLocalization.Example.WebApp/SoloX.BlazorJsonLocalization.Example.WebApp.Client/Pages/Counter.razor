@@ -6,6 +6,8 @@
 
 @inject IStringLocalizer<Counter> Localizer
 
+<p role="status">@Localizer["KeyInFallback"]</p>
+
 <PageTitle>@Localizer["Counter"]</PageTitle>
 
 <h1>@Localizer["Counter"]</h1>
@@ -25,6 +27,7 @@
     protected override async Task OnInitializedAsync()
     {
         await Localizer.LoadAsync();
+
         await base.OnInitializedAsync();
     }
 }
