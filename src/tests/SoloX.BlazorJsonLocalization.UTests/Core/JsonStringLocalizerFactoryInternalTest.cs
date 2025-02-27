@@ -66,7 +66,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 Logger,
                 LoggerForStringLocalizerProxy);
 
-            var resourceSource = new StringLocalizerResourceSource(BaseName, Assembly, typeof(Component));
+            var resourceSource = this.factory.CreateStringLocalizerResourceSource(BaseName, Assembly, typeof(Component));
 
             this.localizer = new Mock<IStringLocalizerInternal>();
             this.localizer.SetupGet(x => x.ResourceSource).Returns(resourceSource);

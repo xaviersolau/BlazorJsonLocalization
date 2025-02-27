@@ -27,6 +27,8 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private JsonStringLocalizer? stringLocalizer;
 
+        private Action? completeLoadHandler;
+
         /// <summary>
         /// Setup the asynchronous StringLocalizer.
         /// </summary>
@@ -43,6 +45,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             this.loadingTask = loadingTask;
             this.loaded = false;
+            this.completeLoadHandler = TryCompleteLoad;
 
             if (this.loadingTask.Status == TaskStatus.RanToCompletion)
             {
@@ -54,6 +57,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 }
 
                 this.loaded = true;
+                this.completeLoadHandler = null;
             }
         }
 
@@ -72,7 +76,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
         private LocalizedString? BuildLocalizedString(Func<IStringLocalizerInternal, LocalizedString?> forward)
         {
-            TryCompleteLoad();
+            this.completeLoadHandler?.Invoke();
 
             if (this.stringLocalizer == null)
             {
@@ -100,7 +104,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         protected override LocalizedString? TryGetInternal(string name)
         {
-            TryCompleteLoad();
+            this.completeLoadHandler?.Invoke();
 
             return this.stringLocalizer?.TryGet(name);
         }
@@ -108,7 +112,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         ///<inheritdoc/>
         public override LocalizedString? TryGet(string name, object[] arguments, CultureInfo requestedCultureInfo)
         {
-            TryCompleteLoad();
+            this.completeLoadHandler?.Invoke();
 
             return this.stringLocalizer?.TryGet(name, arguments, requestedCultureInfo);
         }
@@ -118,7 +122,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
         {
             var map = await this.loadingTask.ConfigureAwait(false);
 
-            TryCompleteLoad();
+            this.completeLoadHandler?.Invoke();
 
             return map != null;
         }
@@ -141,6 +145,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                         }
 
                         this.loaded = true;
+                        this.completeLoadHandler = null;
                     }
                 }
             }

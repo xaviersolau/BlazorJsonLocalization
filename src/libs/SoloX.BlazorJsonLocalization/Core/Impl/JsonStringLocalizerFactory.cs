@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             this.logger.CreateStringLocalizer(baseName);
 
-            return CreateStringLocalizerProxy(new StringLocalizerResourceSource(baseName, assembly, resourceSource));
+            return CreateStringLocalizerProxy(CreateStringLocalizerResourceSource(baseName, assembly, resourceSource));
         }
 
         ///<inheritdoc/>
@@ -87,7 +87,12 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
             var assembly = Assembly.Load(location);
 
-            return CreateStringLocalizerProxy(new StringLocalizerResourceSource(baseName, assembly, null));
+            return CreateStringLocalizerProxy(CreateStringLocalizerResourceSource(baseName, assembly, null));
+        }
+
+        internal StringLocalizerResourceSource CreateStringLocalizerResourceSource(string baseName, Assembly assembly, Type? resourceSourceType)
+        {
+            return new StringLocalizerResourceSource(baseName, assembly, resourceSourceType, (rs) => LoadLocalizerHierarchy(rs, this.options));
         }
 
         private IStringLocalizer CreateStringLocalizerProxy(StringLocalizerResourceSource resourceSource)
@@ -240,7 +245,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
 
             // 3. Find on the class hierarchy.
-            var parents = LoadLocalizerHierarchy(stringLocalizer.ResourceSource);
+            var parents = stringLocalizer.ResourceSource.Parent;
 
             foreach (var parent in parents)
             {
@@ -290,7 +295,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
 
             // 3. Process on the class hierarchy.
-            var parents = LoadLocalizerHierarchy(stringLocalizer.ResourceSource);
+            var parents = stringLocalizer.ResourceSource.Parent;
 
             foreach (var parent in parents)
             {
@@ -308,7 +313,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
             }
         }
 
-        private List<StringLocalizerResourceSource> LoadLocalizerHierarchy(StringLocalizerResourceSource resourceSource)
+        private static List<StringLocalizerResourceSource> LoadLocalizerHierarchy(StringLocalizerResourceSource resourceSource, JsonLocalizationOptions options)
         {
             var parents = new List<StringLocalizerResourceSource>();
 
@@ -320,7 +325,7 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
                 {
                     var baseName = baseType.GetBaseName();
 
-                    if (!this.options.SkipBaseNamePrefix.Any(p => baseName.StartsWith(p, StringComparison.Ordinal)))
+                    if (!options.SkipBaseNamePrefix.Any(p => baseName.StartsWith(p, StringComparison.Ordinal)))
                     {
                         parents.Add(new StringLocalizerResourceSource(baseType.GetBaseName(), baseType.Assembly, baseType));
                     }
@@ -328,11 +333,11 @@ namespace SoloX.BlazorJsonLocalization.Core.Impl
 
                 parents.AddRange(
                     resourceSource.ResourceSourceType.GetInterfaces()
-                        .Where(x => !this.options.SkipBaseNamePrefix.Any(p => x.GetBaseName().StartsWith(p, StringComparison.Ordinal)))
+                        .Where(x => !options.SkipBaseNamePrefix.Any(p => x.GetBaseName().StartsWith(p, StringComparison.Ordinal)))
                         .Select(x => new StringLocalizerResourceSource(x.GetBaseName(), x.Assembly, x)));
             }
 
-            parents.AddRange(this.options.Fallbacks.Select(x => new StringLocalizerResourceSource(x.baseName, x.assembly, null)));
+            parents.AddRange(options.Fallbacks.Select(x => new StringLocalizerResourceSource(x.baseName, x.assembly, null)));
 
             return parents;
         }
