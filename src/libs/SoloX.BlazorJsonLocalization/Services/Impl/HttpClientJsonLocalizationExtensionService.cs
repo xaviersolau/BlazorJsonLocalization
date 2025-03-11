@@ -92,9 +92,15 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                 return await httpClient.GetAsync(uri).ConfigureAwait(false);
             }
-            else
+            else if (options.IsDisposeHttpClientFromBuilderEnabled)
             {
                 using var httpClient = options.HttpClientBuilder(this.serviceProvider);
+
+                return await httpClient.GetAsync(uri).ConfigureAwait(false);
+            }
+            else
+            {
+                var httpClient = options.HttpClientBuilder(this.serviceProvider);
 
                 return await httpClient.GetAsync(uri).ConfigureAwait(false);
             }

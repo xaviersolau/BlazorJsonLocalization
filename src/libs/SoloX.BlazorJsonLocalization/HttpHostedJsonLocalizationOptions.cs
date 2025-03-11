@@ -10,7 +10,6 @@ using SoloX.BlazorJsonLocalization.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 
 namespace SoloX.BlazorJsonLocalization
@@ -59,23 +58,5 @@ namespace SoloX.BlazorJsonLocalization
         /// Gets/Sets the application assemblies.
         /// </summary>
         public IEnumerable<Assembly> ApplicationAssemblies { get; set; } = Array.Empty<Assembly>();
-    }
-
-    /// <summary>
-    /// JsonLocalizer Http Client extension options
-    /// </summary>
-    public class HttpClientJsonLocalizationOptions : HttpHostedJsonLocalizationOptions
-    {
-        /// <summary>
-        /// HttpClient builder handler.
-        /// </summary>
-        /// <param name="serviceProvider">Service provider to get the HttpClient from.</param>
-        /// <returns>HttpClient to use to get Json localizer resources.</returns>
-        public delegate HttpClient HttpClientBuilderHandler(IServiceProvider serviceProvider);
-
-        /// <summary>
-        /// Optional HttpClient builder.
-        /// </summary>
-        public HttpClientBuilderHandler? HttpClientBuilder { get; set; }
     }
 }
