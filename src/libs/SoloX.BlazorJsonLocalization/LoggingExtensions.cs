@@ -104,6 +104,16 @@ namespace SoloX.BlazorJsonLocalization
             string name,
             Assembly assembly,
             CultureInfo cultureInfo);
+
+        [LoggerMessage(EventId = 15, Level = LogLevel.Debug, Message = "Loading localization data from {uri} using HTTP client")]
+        internal static partial void LoadingLocalizationDataFromHttpClient(
+            this ILogger logger,
+            Uri uri);
+
+        [LoggerMessage(EventId = 16, Level = LogLevel.Warning, Message = "Http target not found from {uri}")]
+        internal static partial void HttpTargetNotFound(
+            this ILogger logger,
+            Uri uri);
     }
 
 #if !NET6_0_OR_GREATER
@@ -296,6 +306,30 @@ namespace SoloX.BlazorJsonLocalization
             if (logger.IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Error))
             {
                 __UnableToLoadLocalizationDataCallback(logger, name, assembly, cultureInfo, null);
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Extensions.Logging.Generators", "6.0.5.2210")]
+        private static readonly global::System.Action<global::Microsoft.Extensions.Logging.ILogger, global::System.Uri, global::System.Exception?> __LoadingLocalizationDataFromHttpClientCallback =
+            global::Microsoft.Extensions.Logging.LoggerMessage.Define<global::System.Uri>(global::Microsoft.Extensions.Logging.LogLevel.Debug, new global::Microsoft.Extensions.Logging.EventId(15, nameof(LoadingLocalizationDataFromHttpClient)), "Loading localization data from {uri} using HTTP client");
+
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Extensions.Logging.Generators", "6.0.5.2210")]
+        internal static partial void LoadingLocalizationDataFromHttpClient(this global::Microsoft.Extensions.Logging.ILogger logger, global::System.Uri uri)
+        {
+            if (logger.IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Debug))
+            {
+                __LoadingLocalizationDataFromHttpClientCallback(logger, uri, null);
+            }
+        }
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Extensions.Logging.Generators", "6.0.5.2210")]
+        private static readonly global::System.Action<global::Microsoft.Extensions.Logging.ILogger, global::System.Uri, global::System.Exception?> __HttpFileNotFoundCallback =
+            global::Microsoft.Extensions.Logging.LoggerMessage.Define<global::System.Uri>(global::Microsoft.Extensions.Logging.LogLevel.Warning, new global::Microsoft.Extensions.Logging.EventId(16, nameof(HttpTargetNotFound)), "Http target not found from {uri}");
+
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Extensions.Logging.Generators", "6.0.5.2210")]
+        internal static partial void HttpTargetNotFound(this global::Microsoft.Extensions.Logging.ILogger logger, global::System.Uri uri)
+        {
+            if (logger.IsEnabled(global::Microsoft.Extensions.Logging.LogLevel.Warning))
+            {
+                __HttpFileNotFoundCallback(logger, uri, null);
             }
         }
     }

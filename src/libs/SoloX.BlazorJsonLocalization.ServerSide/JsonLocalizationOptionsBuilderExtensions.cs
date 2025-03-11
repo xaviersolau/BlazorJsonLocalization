@@ -22,7 +22,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide
         /// <returns>The given builder updated with the Json Http hosted options.</returns>
         public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
             this JsonLocalizationOptionsBuilder builder)
-            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson(builder);
+            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson<HttpHostedJsonLocalizationOptions>(builder);
 
         /// <summary>
         /// Setup Http hosted Json support with the given setup action.
@@ -33,6 +33,6 @@ namespace SoloX.BlazorJsonLocalization.ServerSide
         public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
             this JsonLocalizationOptionsBuilder builder,
             Action<HttpHostedJsonLocalizationOptions>? setup)
-            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson(builder, setup);
+            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson<HttpHostedJsonLocalizationOptions>(builder, setup);
     }
 }

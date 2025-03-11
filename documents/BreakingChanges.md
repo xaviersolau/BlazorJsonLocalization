@@ -1,5 +1,52 @@
 # Breaking Changes
 
+## From version 2.0.* to 3.0.*
+
+### WebAssembly package is now obsolete.
+
+You don't need to use the `SoloX.BlazorJsonLocalization.WebAssembly` any more.
+
+Before:
+
+```
+using SoloX.BlazorJsonLocalization.WebAssembly;
+
+...
+
+builder.Services.AddWebAssemblyJsonLocalization(b =>
+{
+    b
+        .UseHttpHostedJson(options =>
+        {
+            options.ResourcesPath = "Resources";
+            options.ApplicationAssembly = typeof(_Imports).Assembly;
+        });
+});
+```
+
+After:
+
+```
+using SoloX.BlazorJsonLocalization;
+
+...
+
+builder.Services.AddJsonLocalization(b =>
+{
+    b
+        .UseHttpClientJson(options =>
+        {
+            options.ResourcesPath = "Resources";
+            options.ApplicationAssembly = typeof(_Imports).Assembly;
+        });
+});
+```
+
+### Replace EnableDisplayKeysWhileLoadingAsynchronously to EnableDisplayKeysWhenResourceNotFound.
+
+EnableDisplayKeysWhileLoadingAsynchronously is now Obsolete in the
+JsonLocalizationOptionsBuilder. it is replaced by EnableDisplayKeysWhenResourceNotFound.
+
 ## From version 1.0.* to 2.0.*
 
 ### Rename SoloX.BlazorJsonLocalization.Core.AExtensionOptions.Assemblies property.

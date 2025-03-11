@@ -24,9 +24,10 @@ namespace SoloX.BlazorJsonLocalization.Http
         /// </summary>
         /// <param name="builder">The builder to setup.</param>
         /// <returns>The given builder updated with the Json Http hosted options.</returns>
-        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson<TOptions>(
             this JsonLocalizationOptionsBuilder builder)
-            => builder.UseHttpHostedJson(null);
+            where TOptions : HttpHostedJsonLocalizationOptions, new()
+            => builder.UseHttpHostedJson<TOptions>(null);
 
         /// <summary>
         /// Setup Http hosted Json support with the given setup action.
@@ -34,13 +35,14 @@ namespace SoloX.BlazorJsonLocalization.Http
         /// <param name="builder">The builder to setup.</param>
         /// <param name="setup">The setup action.</param>
         /// <returns>The given builder updated with the Json http hosted options.</returns>
-        public static JsonLocalizationOptionsBuilder UseHttpHostedJson(
+        public static JsonLocalizationOptionsBuilder UseHttpHostedJson<TOptions>(
             this JsonLocalizationOptionsBuilder builder,
-            Action<HttpHostedJsonLocalizationOptions>? setup)
+            Action<TOptions>? setup)
+            where TOptions : HttpHostedJsonLocalizationOptions, new()
         {
             ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
-            var optExt = new HttpHostedJsonLocalizationOptions();
+            var optExt = new TOptions();
 
             setup?.Invoke(optExt);
 

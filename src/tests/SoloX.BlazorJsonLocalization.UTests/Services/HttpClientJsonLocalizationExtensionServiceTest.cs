@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="HttpHostedJsonLocalizationExtensionServiceTest.cs" company="Xavier Solau">
+// <copyright file="HttpClientJsonLocalizationExtensionServiceTest.cs" company="Xavier Solau">
 // Copyright © 2021 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using SoloX.BlazorJsonLocalization.Services;
-using SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl;
+using SoloX.BlazorJsonLocalization.Services.Impl;
 using SoloX.CodeQuality.Test.Helpers.Http;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
 using System;
@@ -24,19 +24,19 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
+namespace SoloX.BlazorJsonLocalization.UTests.Services
 {
-    public class HttpHostedJsonLocalizationExtensionServiceTest
+    public class HttpClientJsonLocalizationExtensionServiceTest
     {
-        private const string BaseName = nameof(HttpHostedJsonLocalizationExtensionServiceTest);
+        private const string BaseName = nameof(HttpClientJsonLocalizationExtensionServiceTest);
 
-        private static readonly Assembly Assembly = typeof(HttpHostedJsonLocalizationExtensionServiceTest).Assembly;
+        private static readonly Assembly Assembly = typeof(HttpClientJsonLocalizationExtensionServiceTest).Assembly;
 
-        private ILogger<HttpHostedJsonLocalizationExtensionService> Logger { get; }
+        private ILogger<HttpClientJsonLocalizationExtensionService> Logger { get; }
 
-        public HttpHostedJsonLocalizationExtensionServiceTest(ITestOutputHelper testOutputHelper)
+        public HttpClientJsonLocalizationExtensionServiceTest(ITestOutputHelper testOutputHelper)
         {
-            Logger = new TestLogger<HttpHostedJsonLocalizationExtensionService>(testOutputHelper);
+            Logger = new TestLogger<HttpClientJsonLocalizationExtensionService>(testOutputHelper);
         }
 
         [Theory]
@@ -57,14 +57,14 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
 
             using var httpClient = new HttpClientMockBuilder()
                 .WithBaseAddress(new Uri("http://test.com"))
-                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json")
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.UTests/Resources/HttpClientJsonLocalizationExtensionServiceTest.json")
                 .Responding(request =>
                 {
                     var response = new HttpResponseMessage();
                     response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"English test.\"}")));
                     return response;
                 })
-                .WithRequest("/_content/SoloX.BlazorJsonLocalization.WebAssembly.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.fr.json")
+                .WithRequest("/_content/SoloX.BlazorJsonLocalization.UTests/Resources/HttpClientJsonLocalizationExtensionServiceTest.fr.json")
                 .Responding(request =>
                 {
                     var response = new HttpResponseMessage();
@@ -80,14 +80,20 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly.UTests.Services
             var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
             optionsMock.SetupGet(o => o.Value).Returns(new JsonLocalizationOptions());
 
-            var service = new HttpHostedJsonLocalizationExtensionService(optionsMock.Object, httpClient, Logger, httpCacheServiceMock.Object);
+            var serviceProviderMock = new Mock<IServiceProvider>();
 
-            var options = new HttpHostedJsonLocalizationOptions()
+            serviceProviderMock
+                .Setup(sp => sp.GetService(typeof(HttpClient)))
+                .Returns(httpClient);
+
+            var service = new HttpClientJsonLocalizationExtensionService(optionsMock.Object, serviceProviderMock.Object, Logger, httpCacheServiceMock.Object);
+
+            var options = new HttpClientJsonLocalizationOptions()
             {
                 ResourcesPath = resourcePath,
             };
 
-            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);
 
             if (expectedSuccess)
             {

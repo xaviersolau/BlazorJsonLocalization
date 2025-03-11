@@ -16,7 +16,7 @@ Don't hesitate to post issues, pull requests on the project or to fork and impro
 | Package                                    | Nuget.org | Pre-release |
 |--------------------------------------------|-----------|-----------|
 |**SoloX.BlazorJsonLocalization**            |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
-|**SoloX.BlazorJsonLocalization.WebAssembly**|[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.WebAssembly.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.WebAssembly)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
+|~~*SoloX.BlazorJsonLocalization.WebAssembly*~~|[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.WebAssembly.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.WebAssembly)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
 |**SoloX.BlazorJsonLocalization.ServerSide** |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.BlazorJsonLocalization.ServerSide.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization.ServerSide)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.BlazorJsonLocalization.svg)](https://www.nuget.org/packages/SoloX.BlazorJsonLocalization)|
 
 ## License and credits
@@ -63,6 +63,8 @@ dotnet add package SoloX.BlazorJsonLocalization.ServerSide --version 2.0.9
 ```
 
 > Find out the [Breaking changes](documents/BreakingChanges.md) from one version to another.
+
+> Note that from version 3.0.* the `SoloX.BlazorJsonLocalization.WebAssembly` package is obsolete.
 
 ## How to use it
 
@@ -350,19 +352,37 @@ of your project with the same naming rules.
 
 #### Dependency injection in Blazor WebAssembly
 
-In addition of the **SoloX.BlazorJsonLocalization** package you will need the
-**SoloX.BlazorJsonLocalization.WebAssembly** extension package.
+Only the **SoloX.BlazorJsonLocalization** package is needed.
+
+> The **SoloX.BlazorJsonLocalization.WebAssembly** extension package is now Obsolete.
 
 The registration of your services will look like this in the `Program.cs` file:
 
 ```csharp
 // Here we are going to store the Json files in the project 'wwwroot/Resources' folder.
-builder.Services.AddWebAssemblyJsonLocalization(
-    builder => builder.UseHttpHostedJson(
+builder.Services.AddJsonLocalization(
+    builder => builder.UseHttpClientJson(
         options =>
         {
             options.ApplicationAssembly = typeof(Program).Assembly;
             options.ResourcesPath = "Resources";
+        }));
+```
+
+Make sure the HttpClient is registered as a service or you can also use a `IHttpClientFactory` in that case you
+can use the `HttpClientBuilder` property in the options:
+
+```csharp
+// Here we are going to build the HttpClient from the factory.
+builder.Services.AddJsonLocalization(
+    builder => builder.UseHttpClientJson(
+        options =>
+        {
+            options.HttpClientBuilder = serviceProvider =>
+            {
+                var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+                return httpClientFactory.CreateClient("Host");
+            };
         }));
 ```
 
@@ -371,8 +391,8 @@ builder.Services.AddWebAssemblyJsonLocalization(
 > like this `MyComponent.fr.json?v=1.0.0.1` just by setting the `NamingPolicy` delegate to something like:
 > ```csharp
 > // Here we are going to add a version querystring to help with cache busting
-> builder.Services.AddWebAssemblyJsonLocalization(
->     builder => builder.UseHttpHostedJson(
+> builder.Services.AddJsonLocalization(
+>     builder => builder.UseHttpClientJson(
 >         options =>
 >         {
 >             options.ApplicationAssembly = typeof(Program).Assembly;
@@ -400,6 +420,20 @@ services.AddServerSideJsonLocalization(
         {
             options.ApplicationAssembly = typeof(Program).Assembly;
             options.ResourcesPath = "Resources";
+        }));
+```
+
+Note that the localizer engine will load Json resources directly from the files.
+But it is also possible to use a HttpClient instead in the case where you would like to serve the
+Json from a HTTP API Controller like this:
+
+```csharp
+// Here we are going to store the Json files in the project 'wwwroot/Resources' folder.
+services.AddServerSideJsonLocalization(
+    builder => builder.UseHttpClientJson(
+        options =>
+        {
+           ...
         }));
 ```
 

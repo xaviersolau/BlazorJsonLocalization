@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using SoloX.BlazorJsonLocalization;
-using SoloX.BlazorJsonLocalization.WebAssembly;
 using Blazored.LocalStorage;
 using System.Globalization;
 using SoloX.BlazorJsonLocalization.Http;
@@ -31,12 +30,12 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-            builder.Services.AddWebAssemblyJsonLocalization(
+            builder.Services.AddJsonLocalization(
                 builder =>
                 {
                     builder
                         .EnableLogger(false)
-                        .EnableDisplayKeysWhileLoadingAsynchronously()
+                        .EnableDisplayKeysWhenResourceNotFound()
                         // Add a localization fallback.
                         .AddFallback("Fallback", typeof(SharedLocalizationExtensions).Assembly)
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded
@@ -46,7 +45,7 @@ namespace SoloX.BlazorJsonLocalization.Example.Wasm
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded2 (with json files named with .razor extension)
                         .UseComponentsEmbedded3()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
-                        .UseComponentsStaticAssets()
+                        .UseComponentsStaticAssets<HttpClientJsonLocalizationOptions>()
                         // Use the SharedLocalization
                         .UseSharedLocalization();
 

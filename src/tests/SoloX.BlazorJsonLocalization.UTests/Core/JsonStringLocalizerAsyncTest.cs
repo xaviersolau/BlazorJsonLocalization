@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 {
                     [key] = txt
                 };
-            };
+            }
 
             var localizerFactoryInternalMock = new Mock<IJsonStringLocalizerFactoryInternal>();
 

@@ -7,8 +7,6 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.DependencyInjection;
-using SoloX.BlazorJsonLocalization.Services;
-using SoloX.BlazorJsonLocalization.WebAssembly.Services.Impl;
 using System;
 
 namespace SoloX.BlazorJsonLocalization.WebAssembly
@@ -25,14 +23,11 @@ namespace SoloX.BlazorJsonLocalization.WebAssembly
         /// <param name="setupAction">The action delegate to fine tune the Json localizer behavior
         /// (Use embedded Json resource files if null).</param>
         /// <returns>The given service collection updated with the Json localization services.</returns>
+        [Obsolete("AddWebAssemblyJsonLocalization is now obsolete. You can use directly AddJsonLocalization (using SoloX.BlazorJsonLocalization).")]
         public static IServiceCollection AddWebAssemblyJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptionsBuilder> setupAction)
         {
             services
                 .AddJsonLocalization(setupAction, ServiceLifetime.Scoped);
-
-            services.AddScoped<
-                IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>,
-                HttpHostedJsonLocalizationExtensionService>();
 
             return services;
         }

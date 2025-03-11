@@ -1,28 +1,41 @@
 
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SoloX.BlazorJsonLocalization.Example.WebApp.Client;
-using SoloX.BlazorJsonLocalization.WebAssembly;
+using SoloX.BlazorJsonLocalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddScoped(sp =>
-    new HttpClient
+builder.Services.AddHttpClient(
+    "Host",
+    (sp, c) =>
     {
-       BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+        var hostEnv = sp.GetRequiredService<IWebAssemblyHostEnvironment>();
+        c.BaseAddress = new Uri(hostEnv.BaseAddress);
     });
 
-builder.Services.AddWebAssemblyJsonLocalization(b =>
+//builder.Services.AddSingleton(sp =>
+//    new HttpClient
+//    {
+//        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+//    });
+
+builder.Services.AddJsonLocalization(b =>
 {
     b
 #if DEBUG
         .EnableLogger()
 #endif
         .AddFallback("Fallback", typeof(_Imports).Assembly)
-        .UseHttpHostedJson(options =>
+        .UseHttpClientJson(options =>
         {
             options.ResourcesPath = "Resources";
             options.NamingPolicy = HttpHostedJsonNamingPolicy;
             options.ApplicationAssembly = typeof(_Imports).Assembly;
+            options.HttpClientBuilder = sp =>
+            {
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                return httpClientFactory.CreateClient("Host");
+            };
         });
 });
 
