@@ -40,18 +40,25 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         }
 
         [Theory]
-        [InlineData("en-US", "Test", "English test.", true, "Resources")]
-        [InlineData("fr-FR", "Test", "French test.", true, "Resources")]
-        [InlineData("en-US", "Test", null, false, "Bad")]
-        [InlineData("fr-FR", "Test", null, false, "Bad")]
-        [InlineData("en-US", "Test", null, false, null)]
-        [InlineData("fr-FR", "Test", null, false, null)]
+        [InlineData("en-US", "Test", "English test.", true, "Resources", false)]
+        [InlineData("fr-FR", "Test", "French test.", true, "Resources", false)]
+        [InlineData("en-US", "Test", null, false, "Bad", false)]
+        [InlineData("fr-FR", "Test", null, false, "Bad", false)]
+        [InlineData("en-US", "Test", null, false, null, false)]
+        [InlineData("fr-FR", "Test", null, false, null, false)]
+        [InlineData("en-US", "Test", "English test.", true, "Resources", true)]
+        [InlineData("fr-FR", "Test", "French test.", true, "Resources", true)]
+        [InlineData("en-US", "Test", null, false, "Bad", true)]
+        [InlineData("fr-FR", "Test", null, false, "Bad", true)]
+        [InlineData("en-US", "Test", null, false, null, true)]
+        [InlineData("fr-FR", "Test", null, false, null, true)]
         public async Task ItShouldLoadJsonFileFromHttpClientAsync(
             string cultureName,
             string key,
             string expectedText,
             bool expectedSuccess,
-            string resourcePath)
+            string resourcePath,
+            bool usingHttpClientBuilder)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
@@ -82,15 +89,20 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
 
             var serviceProviderMock = new Mock<IServiceProvider>();
 
-            serviceProviderMock
-                .Setup(sp => sp.GetService(typeof(HttpClient)))
-                .Returns(httpClient);
+            if (!usingHttpClientBuilder)
+            {
+                serviceProviderMock
+                    .Setup(sp => sp.GetService(typeof(HttpClient)))
+                    .Returns(httpClient);
+            }
 
             var service = new HttpClientJsonLocalizationExtensionService(optionsMock.Object, serviceProviderMock.Object, Logger, httpCacheServiceMock.Object);
 
             var options = new HttpClientJsonLocalizationOptions()
             {
                 ResourcesPath = resourcePath,
+                HttpClientBuilder = usingHttpClientBuilder ? sp => httpClient : null,
+                IsDisposeHttpClientFromBuilderEnabled = false,
             };
 
             var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);

@@ -515,7 +515,7 @@ localizer any time where a message key is not found in a specific Localizer.
 Here is an example that set up a fall back to the Fallback Json files defined in a given assembly.
 
 ```csharp
-builder.Services.AddWebAssemblyJsonLocalization(
+builder.Services.AddJsonLocalization(
     optionBuilder =>
     {
         optionBuilder
@@ -534,7 +534,7 @@ In this case, you can set up the localization options for each assembly using th
 property in the localizer options object.
 
 ```csharp
-builder.Services.AddWebAssemblyJsonLocalization(
+builder.Services.AddJsonLocalization(
     builder =>
     {
         builder
@@ -543,9 +543,9 @@ builder.Services.AddWebAssemblyJsonLocalization(
                 options.AssemblyNames = new[] { AssemblyWithEmbeddedJson.GetName().Name };
                 //...
             })
-            .UseHttpHostedJson(options =>
+            .UseHttpClientJson(options =>
             {
-                options.AssemblyNames = new[] { AssemblyWithHttpHostedJson.GetName().Name };
+                options.AssemblyNames = new[] { AssemblyWithHttpClientJson.GetName().Name };
                 //...
             });
     });
@@ -558,7 +558,7 @@ In order to get logs while loading messages, you can setup a logger options to e
 Here is an example that set up use of the logger.
 
 ```csharp
-builder.Services.AddWebAssemblyJsonLocalization(
+builder.Services.AddJsonLocalization(
     optionBuilder =>
     {
         optionBuilder
