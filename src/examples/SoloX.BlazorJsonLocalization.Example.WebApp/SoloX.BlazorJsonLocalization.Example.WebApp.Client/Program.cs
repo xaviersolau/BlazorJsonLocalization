@@ -13,7 +13,7 @@ builder.Services.AddHttpClient(
         c.BaseAddress = new Uri(hostEnv.BaseAddress);
     });
 
-//builder.Services.AddSingleton(sp =>
+//builder.Services.AddScoped(sp =>
 //    new HttpClient
 //    {
 //        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
