@@ -43,28 +43,43 @@ namespace SoloX.BlazorJsonLocalization
                 .AddLocalization()
                 .AddSingleton<ICultureInfoService, CultureInfoService>()
                 .AddSingleton<ICacheService, CacheService>()
-                .AddSingleton<IHttpCacheService, HttpCacheService>()
-                .AddSingleton<
-                    IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
-                    EmbeddedJsonLocalizationExtensionService>();
+                .AddSingleton<IHttpCacheService, HttpCacheService>();
 
             switch (serviceLifetime)
             {
                 case ServiceLifetime.Singleton:
                     services
                         .AddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>()
-                        .AddSingleton<IExtensionResolverService, ExtensionResolverService>();
+                        .AddSingleton<IExtensionResolverService, ExtensionResolverService>()
+                        .AddSingleton<
+                            IJsonLocalizationExtensionService<HttpClientJsonLocalizationOptions>,
+                            HttpClientJsonLocalizationExtensionService>()
+                        .AddSingleton<
+                            IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
+                            EmbeddedJsonLocalizationExtensionService>();
                     break;
                 case ServiceLifetime.Scoped:
                     services
                         .AddScoped<IStringLocalizerFactory, JsonStringLocalizerFactory>()
-                        .AddScoped<IExtensionResolverService, ExtensionResolverService>();
+                        .AddScoped<IExtensionResolverService, ExtensionResolverService>()
+                        .AddScoped<
+                            IJsonLocalizationExtensionService<HttpClientJsonLocalizationOptions>,
+                            HttpClientJsonLocalizationExtensionService>()
+                        .AddScoped<
+                            IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
+                            EmbeddedJsonLocalizationExtensionService>();
                     break;
                 case ServiceLifetime.Transient:
                 default:
                     services
                         .AddTransient<IStringLocalizerFactory, JsonStringLocalizerFactory>()
-                        .AddTransient<IExtensionResolverService, ExtensionResolverService>();
+                        .AddTransient<IExtensionResolverService, ExtensionResolverService>()
+                        .AddTransient<
+                            IJsonLocalizationExtensionService<HttpClientJsonLocalizationOptions>,
+                            HttpClientJsonLocalizationExtensionService>()
+                        .AddTransient<
+                            IJsonLocalizationExtensionService<EmbeddedJsonLocalizationOptions>,
+                            EmbeddedJsonLocalizationExtensionService>();
                     break;
             }
 

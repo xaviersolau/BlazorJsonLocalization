@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 #if !NET6_0_OR_GREATER
@@ -27,10 +26,11 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
     /// <summary>
     /// Abstract HttpHostedJsonLocalizationExtensionService implementation.
     /// </summary>
-    public abstract class AHttpHostedJsonLocalizationExtensionService
-        : IJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>
+    public abstract class AHttpHostedJsonLocalizationExtensionService<TOptions>
+        : IJsonLocalizationExtensionService<TOptions>
+        where TOptions : HttpHostedJsonLocalizationOptions
     {
-        private readonly ILogger<AHttpHostedJsonLocalizationExtensionService> logger;
+        private readonly ILogger<AHttpHostedJsonLocalizationExtensionService<TOptions>> logger;
         private readonly IHttpCacheService httpCacheService;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// <param name="options">Localizer options.</param>
         /// <param name="logger">Logger where to log processing messages.</param>
         /// <param name="httpCacheService">Http loading task cache service.</param>
-        protected AHttpHostedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<AHttpHostedJsonLocalizationExtensionService> logger, IHttpCacheService httpCacheService)
+        protected AHttpHostedJsonLocalizationExtensionService(IOptions<JsonLocalizationOptions> options, ILogger<AHttpHostedJsonLocalizationExtensionService<TOptions>> logger, IHttpCacheService httpCacheService)
         {
             ArgumentNullException.ThrowIfNull(options, nameof(options));
 
@@ -49,7 +49,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
         ///<inheritdoc/>
         public async ValueTask<IReadOnlyDictionary<string, string>?> TryLoadAsync(
-            HttpHostedJsonLocalizationOptions options,
+            TOptions options,
             Assembly assembly,
             string baseName,
             CultureInfo cultureInfo)
@@ -78,7 +78,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
 
                     this.logger.LoadingStaticAssets(uri);
 
-                    return this.httpCacheService.ProcessLoadingTask(uri, () => TryLoadFromUriAsync(uri, options.JsonSerializerOptions));
+                    return this.httpCacheService.ProcessLoadingTask(uri, () => TryLoadFromUriAsync(uri, options));
                 })
                 .ConfigureAwait(false);
         }
@@ -87,8 +87,8 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
         /// Load Http resources.
         /// </summary>
         /// <param name="uri">Resources Uri location.</param>
-        /// <param name="jsonSerializerOptions">Custom JSON serializer options.</param>
+        /// <param name="options">Http hosted options.</param>
         /// <returns>The loaded Json map.</returns>
-        protected abstract Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions);
+        protected abstract Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, TOptions options);
     }
 }

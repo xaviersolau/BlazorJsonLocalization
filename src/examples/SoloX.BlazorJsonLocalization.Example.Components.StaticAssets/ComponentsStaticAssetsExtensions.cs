@@ -11,9 +11,18 @@ namespace SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
 {
     public static class ComponentsStaticAssetsExtensions
     {
-        public static JsonLocalizationOptionsBuilder UseComponentsStaticAssets(this JsonLocalizationOptionsBuilder builder)
+        /// <summary>
+        /// Setup for Http hosted static asserts.
+        /// </summary>
+        /// <typeparam name="TOptions">HttpClientJsonLocalizationOptions must be use for web assembly projects and
+        /// HttpHostedJsonLocalizationOptions for server side (if loading directly resource files)
+        /// </typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static JsonLocalizationOptionsBuilder UseComponentsStaticAssets<TOptions>(this JsonLocalizationOptionsBuilder builder)
+            where TOptions : HttpHostedJsonLocalizationOptions, new()
         {
-            return builder.UseHttpHostedJson(options =>
+            return builder.UseHttpHostedJson<TOptions>(options =>
             {
                 options.Assemblies = new[] { typeof(ComponentsStaticAssetsExtensions).Assembly };
 

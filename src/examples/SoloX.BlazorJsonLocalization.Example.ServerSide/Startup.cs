@@ -48,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.Example.ServerSide
                 {
                     builder
                         .EnableLogger(false)
-                        .EnableDisplayKeysWhileLoadingAsynchronously()
+                        .EnableDisplayKeysWhenResourceNotFound()
                         // Add a localization fallback.
                         .AddFallback("Fallback", typeof(SharedLocalizationExtensions).Assembly)
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded
@@ -58,7 +58,7 @@ namespace SoloX.BlazorJsonLocalization.Example.ServerSide
                         // Since we want to use the embedded resources from SoloX.BlazorJsonLocalization.Example.Components.Embedded2 (with json files named with .razor extension)
                         .UseComponentsEmbedded3()
                         // Since we want to use the wwwroot resources from SoloX.BlazorJsonLocalization.Example.Components.StaticAssets
-                        .UseComponentsStaticAssets()
+                        .UseComponentsStaticAssets<HttpHostedJsonLocalizationOptions>()
                         // Use the SharedLocalization
                         .UseSharedLocalization();
 

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization.WebAssembly\SoloX.BlazorJsonLocalization.WebAssembly.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.BlazorJsonLocalization\SoloX.BlazorJsonLocalization.csproj" />
     <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.Embedded2\SoloX.BlazorJsonLocalization.Example.Components.Embedded2.csproj" />
     <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.Embedded3\SoloX.BlazorJsonLocalization.Example.Components.Embedded3.csproj" />
     <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization\SoloX.BlazorJsonLocalization.Example.Components.SharedLocalization.csproj" />

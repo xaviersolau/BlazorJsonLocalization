@@ -25,7 +25,9 @@ namespace SoloX.BlazorJsonLocalization.ServerSide
         /// <param name="setupAction">The action delegate to fine tune the Json localizer behavior
         /// (Use embedded Json resource files if null).</param>
         /// <returns>The given service collection updated with the Json localization services.</returns>
-        public static IServiceCollection AddServerSideJsonLocalization(this IServiceCollection services, Action<JsonLocalizationOptionsBuilder> setupAction)
+        public static IServiceCollection AddServerSideJsonLocalization(
+            this IServiceCollection services,
+            Action<JsonLocalizationOptionsBuilder> setupAction)
         {
             services
                 .AddJsonLocalization(setupAction, ServiceLifetime.Singleton);

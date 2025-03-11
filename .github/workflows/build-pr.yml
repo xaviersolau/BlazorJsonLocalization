@@ -29,7 +29,6 @@ jobs:
       matrix:
         test_path:
           - src/tests/SoloX.BlazorJsonLocalization.UTests
-          - src/tests/SoloX.BlazorJsonLocalization.WebAssembly.UTests
           - src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests
           - src/tests/SoloX.BlazorJsonLocalization.ITests
           - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.UTests

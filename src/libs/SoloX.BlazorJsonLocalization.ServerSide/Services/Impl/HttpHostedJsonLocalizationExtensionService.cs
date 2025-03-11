@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
@@ -28,7 +27,7 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
     /// <summary>
     /// Http hosted Json Localization extension service.
     /// </summary>
-    public class HttpHostedJsonLocalizationExtensionService : AHttpHostedJsonLocalizationExtensionService
+    public class HttpHostedJsonLocalizationExtensionService : AHttpHostedJsonLocalizationExtensionService<HttpHostedJsonLocalizationOptions>
     {
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly ILogger<HttpHostedJsonLocalizationExtensionService> logger;
@@ -57,13 +56,16 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.Services.Impl
         }
 
         ///<inheritdoc/>
-        protected override async Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, JsonSerializerOptions? jsonSerializerOptions)
+        protected override async Task<IReadOnlyDictionary<string, string>?> TryLoadFromUriAsync(Uri uri, HttpHostedJsonLocalizationOptions options)
         {
             ArgumentNullException.ThrowIfNull(uri, nameof(uri));
+            ArgumentNullException.ThrowIfNull(options, nameof(options));
 
             this.logger.LoadingLocalizationDataFromHost(uri);
 
 #pragma warning disable CA1062 // Validate arguments of public methods
+            var jsonSerializerOptions = options.JsonSerializerOptions;
+
             var filePath = uri.OriginalString;
 #pragma warning restore CA1062 // Validate arguments of public methods
 

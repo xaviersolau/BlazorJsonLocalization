@@ -46,5 +46,25 @@ namespace SoloX.BlazorJsonLocalization
 
             return builder.AddExtensionOptions(optExt);
         }
+
+        /// <summary>
+        /// Setup default Http Client Json support.
+        /// </summary>
+        /// <param name="builder">The builder to setup.</param>
+        /// <returns>The given builder updated with the Json Http Client options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpClientJson(
+            this JsonLocalizationOptionsBuilder builder)
+            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson<HttpClientJsonLocalizationOptions>(builder);
+
+        /// <summary>
+        /// Setup Http Client Json support with the given setup action.
+        /// </summary>
+        /// <param name="builder">The builder to setup.</param>
+        /// <param name="setup">The setup action.</param>
+        /// <returns>The given builder updated with the Json http Client options.</returns>
+        public static JsonLocalizationOptionsBuilder UseHttpClientJson(
+            this JsonLocalizationOptionsBuilder builder,
+            Action<HttpClientJsonLocalizationOptions>? setup)
+            => Http.JsonLocalizationOptionsBuilderExtensions.UseHttpHostedJson<HttpClientJsonLocalizationOptions>(builder, setup);
     }
 }
