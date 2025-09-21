@@ -1,0 +1,219 @@
+---------------------
+SimpleLocalizer
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleLocalizer.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+#pragma warning disable IDE0005 // Using directive is unnecessary.
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleMethodArg;
+using System.Collections.Generic;
+#pragma warning restore IDE0005 // Using directive is unnecessary.
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleMethodArg
+{
+    /// <summary>
+    /// ISimpleLocalizer generated implementation.
+    /// </summary>
+    public partial class SimpleLocalizer : ISimpleLocalizer
+    {
+        private readonly IStringLocalizer<Component> stringLocalizer;
+
+        /// <summary>
+        /// Setup instance.
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
+        public SimpleLocalizer(IStringLocalizer<Component> stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
+
+        /// <inheritdoc/>
+        public LocalizedString this[string name]
+            => this.stringLocalizer[name];
+
+        /// <inheritdoc/>
+        public LocalizedString this[string name, params object[] arguments]
+            => this.stringLocalizer[name, arguments];
+
+        /// <inheritdoc/>
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => this.stringLocalizer.GetAllStrings(includeParentCultures);
+
+        /// <summary>
+        /// Get MethodWithArgString localized string.
+        /// </summary>
+        public string MethodWithArgString(string arg)
+            => this.stringLocalizer[nameof(MethodWithArgString), arg];
+
+        /// <summary>
+        /// Get MethodWithArgInt localized string.
+        /// </summary>
+        public string MethodWithArgInt(int arg)
+            => this.stringLocalizer[nameof(MethodWithArgInt), arg];
+
+        /// <summary>
+        /// Get MethodWithArgDouble localized string.
+        /// </summary>
+        public string MethodWithArgDouble(double arg)
+            => this.stringLocalizer[nameof(MethodWithArgDouble), arg];
+
+        /// <summary>
+        /// Get MethodWithArgDateTime localized string.
+        /// </summary>
+        public string MethodWithArgDateTime(DateTime arg)
+            => this.stringLocalizer[nameof(MethodWithArgDateTime), arg];
+
+        /// <summary>
+        /// Get MethodWithArgDateOnly localized string.
+        /// </summary>
+        public string MethodWithArgDateOnly(DateOnly arg)
+            => this.stringLocalizer[nameof(MethodWithArgDateOnly), arg];
+    }
+
+
+}
+
+---------------------
+SimpleLocalizerExtensions
+---------------------
+// ----------------------------------------------------------------------
+// <copyright file="SimpleLocalizerExtensions.cs" company="Xavier Solau">
+// Copyright © 2021 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using Microsoft.Extensions.Localization;
+using SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleMethodArg;
+using System;
+
+namespace SoloX.BlazorJsonLocalization.Tools.Core.Samples.SampleMethodArg
+{
+    /// <summary>
+    /// SimpleLocalizerExtensions generated extension methods.
+    /// </summary>
+    public static class SimpleLocalizerExtensions
+    {
+        /// <summary>
+        /// Convert StringLocalizer to ISimpleLocalizer
+        /// </summary>
+        /// <param name="stringLocalizer">Base string localizer.</param>
+        /// <returns>The localizer instance.</returns>
+        public static ISimpleLocalizer ToSimpleLocalizer(this IStringLocalizer<Component> stringLocalizer)
+            => new SimpleLocalizer(stringLocalizer);
+
+        /// <summary>
+        /// Get MethodWithArgString localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string MethodWithArgString(this IStringLocalizer<Component> stringLocalizer, string arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(MethodWithArgString), arg];
+        }
+
+        /// <summary>
+        /// Get MethodWithArgInt localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string MethodWithArgInt(this IStringLocalizer<Component> stringLocalizer, int arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(MethodWithArgInt), arg];
+        }
+
+        /// <summary>
+        /// Get MethodWithArgDouble localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string MethodWithArgDouble(this IStringLocalizer<Component> stringLocalizer, double arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(MethodWithArgDouble), arg];
+        }
+
+        /// <summary>
+        /// Get MethodWithArgDateTime localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string MethodWithArgDateTime(this IStringLocalizer<Component> stringLocalizer, DateTime arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(MethodWithArgDateTime), arg];
+        }
+
+        /// <summary>
+        /// Get MethodWithArgDateOnly localized value from the String Localizer.
+        /// </summary>
+        /// <param name="stringLocalizer">String localizer to get the value from.</param>
+        /// <returns>The localized value.</returns>
+        public static string MethodWithArgDateOnly(this IStringLocalizer<Component> stringLocalizer, DateOnly arg)
+        {
+            if (stringLocalizer == null)
+            {
+                throw new ArgumentNullException(nameof(stringLocalizer));
+            }
+
+            return stringLocalizer[nameof(MethodWithArgDateOnly), arg];
+        }
+    }
+}
+
+---------------------
+Component
+---------------------
+{
+  "MethodWithArgString": "MethodWithArgString - {0} = arg",
+  "MethodWithArgInt": "MethodWithArgInt - {0} = arg",
+  "MethodWithArgDouble": "MethodWithArgDouble - {0} = arg",
+  "MethodWithArgDateTime": "MethodWithArgDateTime - {0} = arg",
+  "MethodWithArgDateOnly": "MethodWithArgDateOnly - {0} = arg"
+}
+---------------------
+Component.fr
+---------------------
+{
+  "MethodWithArgString": "MethodWithArgString - {0} = arg",
+  "MethodWithArgInt": "MethodWithArgInt - {0} = arg",
+  "MethodWithArgDouble": "MethodWithArgDouble - {0} = arg",
+  "MethodWithArgDateTime": "MethodWithArgDateTime - {0} = arg",
+  "MethodWithArgDateOnly": "MethodWithArgDateOnly - {0} = arg"
+}
+---------------------
+Component.en
+---------------------
+{
+  "MethodWithArgString": "MethodWithArgString - {0} = arg",
+  "MethodWithArgInt": "MethodWithArgInt - {0} = arg",
+  "MethodWithArgDouble": "MethodWithArgDouble - {0} = arg",
+  "MethodWithArgDateTime": "MethodWithArgDateTime - {0} = arg",
+  "MethodWithArgDateOnly": "MethodWithArgDateOnly - {0} = arg"
+}

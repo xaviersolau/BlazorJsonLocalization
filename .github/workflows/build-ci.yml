@@ -14,13 +14,15 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 9.0.103
+        dotnet-version: 9.0.305
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --configuration Release --no-restore --no-build
+      run: dotnet test --configuration Release --no-restore --no-build --filter FullyQualifiedName\!~E2ETests
+    - name: E2E Test
+      run: dotnet test --configuration Release --no-restore --filter FullyQualifiedName~E2ETests
 
   coverage-ci:
     needs: build-ci
@@ -34,6 +36,7 @@ jobs:
           - src/tests/SoloX.BlazorJsonLocalization.ITests
           - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.UTests
           - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.ITests
+          - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Command.ITests
           - src/tools.tests/SoloX.BlazorJsonLocalization.Generator.ITests
 
     steps:
@@ -41,7 +44,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 9.0.103
+        dotnet-version: 9.0.305
     - name: Install dependencies ${{ matrix.test_path }}
       run: dotnet restore ${{ matrix.test_path }}
     - name: Build ${{ matrix.test_path }}
@@ -78,7 +81,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 9.0.103
+        dotnet-version: 9.0.305
     - name: Install dependencies
       run: dotnet restore
     - name: Build

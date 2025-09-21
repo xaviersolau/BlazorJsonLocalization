@@ -29,11 +29,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core
         /// <summary>
         /// Apply the generator tools on the given compilation instance.
         /// </summary>
+        /// <param name="projectParameters">Project parameters.</param>
         /// <param name="compilation">Compilation instance.</param>
         /// <param name="classes">Input classes.</param>
         /// <param name="context">Source production context.</param>
         /// <param name="generatorOptions">Generator options.</param>
         ILocalizationGeneratorResults Generate(
+            ProjectParameters projectParameters,
             Compilation compilation,
             ImmutableArray<InterfaceDeclarationSyntax> classes,
             SourceProductionContext context,
@@ -56,6 +58,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core
         public bool UseMultiLine { get; }
 
         /// <summary>
+        /// Tells to register Json files as EmbeddedResource in the project.
+        /// </summary>
+        public bool RegisterEmbeddedResource { get; }
+
+        /// <summary>
+        /// Tells to register C# files as Compile in the project.
+        /// </summary>
+        public bool RegisterCompile { get; }
+
+        /// <summary>
         /// New line separator. Use default if null
         /// </summary>
         public string? NewLineSeparator { get; set; }
@@ -65,10 +77,14 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core
         /// </summary>
         /// <param name="useRelaxedJsonEscaping">Use special chars in the Json string values.</param>
         /// <param name="useMultiLine">Use Multi-Line in the Json string values.</param>
-        public GeneratorOptions(bool useRelaxedJsonEscaping, bool useMultiLine)
+        /// <param name="registerEmbeddedResource">Register generated Json files as EmbeddedResource in project.</param>
+        /// <param name="registerCompile">Register generated C# files as Compile in project.</param>
+        public GeneratorOptions(bool useRelaxedJsonEscaping, bool useMultiLine, bool registerEmbeddedResource, bool registerCompile)
         {
             UseRelaxedJsonEscaping = useRelaxedJsonEscaping;
             UseMultiLine = useMultiLine;
+            RegisterEmbeddedResource = registerEmbeddedResource;
+            RegisterCompile = registerCompile;
         }
     }
 }

@@ -17,11 +17,11 @@ namespace SoloX.BlazorJsonLocalization.Tools
         /// Run the tools command.
         /// </summary>
         /// <returns>Error code.</returns>
-        public static async Task Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
             var generatorCommand = new GeneratorCommand();
 
-            await generatorCommand.RunGeneratorCommandAsync(args).ConfigureAwait(false);
+            return await generatorCommand.RunGeneratorCommandAsync(args).ConfigureAwait(false);
         }
     }
 }

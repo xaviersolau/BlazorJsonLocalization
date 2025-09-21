@@ -117,7 +117,7 @@ For detailed usage information and available options, you can use the --help opt
 dotnet localizationgen --help
 ```
 
-## resources
+## Resources
 
 Please find a full working example of a Blazor Web App using the tool:
 

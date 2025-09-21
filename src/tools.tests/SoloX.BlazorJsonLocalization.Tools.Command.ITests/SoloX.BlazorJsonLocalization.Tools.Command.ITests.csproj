@@ -6,23 +6,29 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <Content Include="..\..\tools.examples\SoloX.BlazorJsonLocalization.Generator.Sample\ITestStringLocalizer.cs" Link="Resources\ITestStringLocalizer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\tools.examples\SoloX.BlazorJsonLocalization.Generator.Sample\Test.cs" Link="Resources\Test.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="FluentAssertions" Version="8.6.0" />
-    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.3.6" />
     <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.3.6" />
@@ -31,16 +37,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SoloX.GeneratorTools.Core.Test.Helpers" Version="1.0.0-alpha.46" />
- </ItemGroup>
+  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Core\SoloX.BlazorJsonLocalization.Tools.Core.csproj" />
-    <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Extensions\SoloX.BlazorJsonLocalization.Tools.Extensions.csproj" />
-    <ProjectReference Include="..\SoloX.BlazorJsonLocalization.Tools.Core.Samples\SoloX.BlazorJsonLocalization.Tools.Core.Samples.csproj" />
+    <ProjectReference Include="..\..\tools\SoloX.BlazorJsonLocalization.Tools.Command\SoloX.BlazorJsonLocalization.Tools.Command.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>
