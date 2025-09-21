@@ -6,14 +6,20 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using SoloX.BlazorJsonLocalization.Tools.Core;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
-using SoloX.GeneratorTools.Core.Utils;
 using SoloX.GeneratorTools.Core.CSharp.Workspace.Impl;
+using SoloX.GeneratorTools.Core.Utils;
+
+#if DEBUG_WITH_DIAG
+using System.Diagnostics;
+#endif
 
 namespace SoloX.GeneratorTools.Test
 {
@@ -30,39 +36,91 @@ namespace SoloX.GeneratorTools.Test
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
             var classDeclarations = context.SyntaxProvider
-                .CreateSyntaxProvider(static (s, _) => IsSyntaxTargetForGeneration(s), static (ctx, _) => GetSemanticTargetForGeneration(ctx))
+                .CreateSyntaxProvider(
+                    static (s, _) => IsSyntaxTargetForGeneration(s),
+                    static (ctx, _) => GetSemanticTargetForGeneration(ctx))
                 .Where(static m => m is not null);
 
-            IncrementalValueProvider<(Compilation, ImmutableArray<InterfaceDeclarationSyntax>)> compilationAndClasses =
-                context.CompilationProvider.Combine(classDeclarations.Collect());
+            var buildOptions = context.AnalyzerConfigOptionsProvider.Select((c, _) => c.GlobalOptions);
 
-            context.RegisterSourceOutput(compilationAndClasses, static (spc, source) => Execute(source.Item1, source.Item2, spc));
+            IncrementalValueProvider<(
+                    (Compilation Compilation, ImmutableArray<InterfaceDeclarationSyntax> InterfaceDeclarations) Declarations,
+                    AnalyzerConfigOptions Options)> compilationAndClasses =
+                context.CompilationProvider.Combine(classDeclarations.Collect()).Combine(buildOptions);
+
+            context.RegisterSourceOutput(
+                compilationAndClasses,
+                static (spc, source) => Execute(source.Declarations.Compilation, source.Declarations.InterfaceDeclarations, source.Options, spc));
+
         }
+
+        internal const string RootNamespaceParameterKey = "build_property.rootnamespace";
+        internal const string TargetFrameworkParameterKey = "build_property.targetframework";
+        internal const string ProjectDirParameterKey = "build_property.projectdir";
 
         /// <summary>
         /// Execute the ToolsGenerator.
         /// </summary>
         /// <param name="compilation"></param>
         /// <param name="classes"></param>
+        /// <param name="options"></param>
         /// <param name="context"></param>
-        public static void Execute(Compilation compilation, ImmutableArray<InterfaceDeclarationSyntax> classes, SourceProductionContext context)
+        public static void Execute(
+            Compilation compilation,
+            ImmutableArray<InterfaceDeclarationSyntax> classes,
+            AnalyzerConfigOptions options,
+            SourceProductionContext context)
         {
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
-            //else
-            //{
-            //    //Debugger.Break();
-            //}
-
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+#if DEBUG_WITH_DIAG
+            if (!Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+            else
+            {
+                Debugger.Break();
+            }
+#endif
             var logFactory = new LogFactory(context, classes.First());
+
+            if (!options.TryGetValue(RootNamespaceParameterKey, out var rootNamespace))
+            {
+                var message = "Unable to get root namespace";
+                context.ReportDiagnostic(
+                        Diagnostic.Create(new DiagnosticDescriptor("XS9999", "BlazorJsonLocalization", message, "Generator", DiagnosticSeverity.Error, true),
+                        null));
+                return;
+            }
+
+            if (!options.TryGetValue(TargetFrameworkParameterKey, out var targetFramework))
+            {
+                var message = "Unable to get target framework";
+                context.ReportDiagnostic(
+                        Diagnostic.Create(new DiagnosticDescriptor("XS9999", "BlazorJsonLocalization", message, "Generator", DiagnosticSeverity.Error, true),
+                        null));
+                return;
+            }
+
+            if (!options.TryGetValue(ProjectDirParameterKey, out var projectDir))
+            {
+                var message = "Unable to get project directory";
+                context.ReportDiagnostic(
+                        Diagnostic.Create(new DiagnosticDescriptor("XS9999", "BlazorJsonLocalization", message, "Generator", DiagnosticSeverity.Error, true),
+                        null));
+                return;
+            }
+
+            var projectParameters = new ProjectParameters(projectDir, rootNamespace);
 
             var csharpWorkspaceFactory = new CSharpWorkspaceFactory(logFactory);
 
             var generator = new LocalizationGenerator(logFactory.CreateLogger<LocalizationGenerator>(), csharpWorkspaceFactory);
 
-            generator.Generate(compilation, classes, context);
+            generator.Generate(projectParameters, compilation, classes, context);
         }
 
         internal sealed class LogFactory : IGeneratorLoggerFactory

@@ -6,23 +6,22 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
-using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
-using SoloX.GeneratorTools.Core.Utils;
-using SoloX.GeneratorTools.Core.CSharp.Workspace;
-using SoloX.GeneratorTools.Core.Generator;
-using SoloX.GeneratorTools.Core.Generator.Impl;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Text;
-using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SoloX.BlazorJsonLocalization.Attributes;
+using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Tools.Core.Selectors;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Impl;
+using SoloX.GeneratorTools.Core.CSharp.Generator.Selectors;
+using SoloX.GeneratorTools.Core.CSharp.Workspace;
+using SoloX.GeneratorTools.Core.Generator;
+using SoloX.GeneratorTools.Core.Generator.Impl;
+using SoloX.GeneratorTools.Core.Utils;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 {
@@ -36,7 +35,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
 
         private const string ResourcesFolderName = "JsonResourcesFolder";
 
-        private static readonly GeneratorOptions DefaultOptions = new GeneratorOptions(false, false);
+        private static readonly GeneratorOptions DefaultOptions = new GeneratorOptions(false, false, false, true);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationGenerator"/> class.
@@ -65,28 +64,71 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var generatedCodeFiles = new List<string>();
             var generatedResourceFiles = new List<string>();
 
-            var projectFolder = Path.GetDirectoryName(projectFile);
-
             this.logger.LogInformation($"Loading {Path.GetFileName(projectFile)}.");
 
             var workspace = this.workspaceFactory.CreateWorkspace();
 
             var project = workspace.RegisterProject(projectFile);
 
-            var locator = new RelativeLocator(Path.Combine(projectFolder), project.RootNameSpace);
-            var fileWriter = new FileWriter(".g.cs", f =>
-            {
-                this.logger.LogInformation($"Writing CS file: {f}.");
+            var projectParameters = new ProjectParameters(project.ProjectPath, project.RootNameSpace);
 
-                generatedCodeFiles.Add(f);
+            var locator = new RelativeLocator(
+                Path.Combine(projectParameters.ProjectPath, "obj"),
+                "none",
+                suffix: "Impl");
+
+            var fileWriter = new MemoryWriter(".g.cs", (fileName, textCode) =>
+            {
+                generatedCodeFiles.Add(fileName);
+
+                var generatedCode = textCode.ReadToEnd();
+
+                var previousCode = File.Exists(fileName) ? File.ReadAllText(fileName) : null;
+
+                if (previousCode == null || previousCode != generatedCode)
+                {
+                    var location = Path.GetDirectoryName(fileName);
+                    if (!Directory.Exists(location))
+                    {
+                        Directory.CreateDirectory(location);
+                    }
+
+                    this.logger.LogInformation($"Writing CS file: {fileName}.");
+                    File.WriteAllText(fileName, generatedCode);
+                }
+                else
+                {
+                    this.logger.LogInformation($"No change in CS file: {fileName}.");
+                }
             });
 
-            var jsonLocator = new RelativeLocator(Path.Combine(projectFolder, ResourcesFolderName), project.RootNameSpace);
-            var jsonWriter = new FileWriter(".json", f =>
-            {
-                this.logger.LogInformation($"Writing JSON file: {f}.");
+            var jsonLocator = new RelativeLocator(
+                Path.Combine(project.ProjectPath, ResourcesFolderName),
+                project.RootNameSpace);
 
-                generatedResourceFiles.Add(f);
+            var jsonWriter = new MemoryWriter(".json", (l, s) =>
+            {
+                generatedResourceFiles.Add(l);
+
+                var generatedJson = s.ReadToEnd();
+
+                var previousJson = File.Exists(l) ? File.ReadAllText(l) : null;
+
+                if (previousJson == null || previousJson != generatedJson)
+                {
+                    var location = Path.GetDirectoryName(l);
+                    if (!Directory.Exists(location))
+                    {
+                        Directory.CreateDirectory(location);
+                    }
+
+                    this.logger.LogInformation($"Writing JSON file: {l}.");
+                    File.WriteAllText(l, generatedJson);
+                }
+                else
+                {
+                    this.logger.LogInformation($"No change in JSON file: {l}.");
+                }
             });
 
             var jsonReader = new FileReader(".json");
@@ -102,25 +144,73 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 project.Files,
                 generatorOptions);
 
+            if (generatorOptions.RegisterCompile)
+            {
+                GeneratePropsCodeFile(
+                    projectParameters.ProjectPath,
+                    project.ProjectFile,
+                    Path.Combine(projectParameters.ProjectPath, "obj"),
+                    generatedCodeFiles);
+            }
+
+            if (generatorOptions.RegisterEmbeddedResource)
+            {
+                GeneratePropsResourceFile(
+                    projectParameters.ProjectPath,
+                    project.ProjectFile,
+                    Path.Combine(projectParameters.ProjectPath, "obj"),
+                    generatedResourceFiles);
+            }
+
+            // Clean files
+            RemovePreviousFilesIfAny(Path.Combine(projectParameters.ProjectPath, "obj", "LocalizationGenerator.Code.Output"), generatedCodeFiles);
+
             return new LocalizationGeneratorResults(
                 inputFiles,
                 generatedCodeFiles,
                 generatedResourceFiles);
         }
 
+        private static void RemovePreviousFilesIfAny(string fileListOutput, List<string> generatedFiles)
+        {
+            if (File.Exists(fileListOutput))
+            {
+                var fileSet = new HashSet<string>(generatedFiles);
+
+                var oldList = File.ReadAllLines(fileListOutput);
+
+                foreach (var oldFile in oldList)
+                {
+                    if (!fileSet.Contains(oldFile) && File.Exists(oldFile))
+                    {
+                        File.Delete(oldFile);
+                    }
+                }
+            }
+
+            File.WriteAllLines(fileListOutput, generatedFiles);
+        }
+
         /// <summary>
         /// Process generation for the given compilation unit. It can be used by a code analyzer tool.
         /// </summary>
         /// <param name="compilation">Compilation unit to process.</param>
+        /// <param name="projectParameters">Project parameters.</param>
         /// <param name="classes">Targeted interfaces.</param>
         /// <param name="context">Source production context to generate the C# code.</param>
         /// <param name="generatorOptions">Generator options.</param>
         public ILocalizationGeneratorResults Generate(
+            ProjectParameters projectParameters,
             Compilation compilation,
             ImmutableArray<InterfaceDeclarationSyntax> classes,
             SourceProductionContext context,
             GeneratorOptions? generatorOptions = null)
         {
+            if (projectParameters == null)
+            {
+                throw new ArgumentNullException(nameof(projectParameters));
+            }
+
             if (compilation == null)
             {
                 throw new ArgumentNullException(nameof(compilation));
@@ -135,7 +225,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var generatedCodeFiles = new List<string>();
             var generatedResourceFiles = new List<string>();
 
-            var (ns, projectFolder) = ProbRootNamespaceAndProjectFolder(compilation);
+            var ns = projectParameters.RootNamespace;
+            var projectFolder = projectParameters.ProjectPath;
 
             var workspace = this.workspaceFactory.CreateWorkspace(compilation);
 
@@ -172,6 +263,17 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
                 jsonWriter,
                 workspace.SyntaxTrees.Where(s => compilation.ContainsSyntaxTree(s.SyntaxTree)),
                 generatorOptions);
+
+            if (generatorOptions.RegisterEmbeddedResource)
+            {
+                // For now this is not properly working since it is too late for MSBuild props. We need
+                // to rebuild the project to take into account the embedded resources.
+                GeneratePropsResourceFile(
+                    projectParameters.ProjectPath,
+                    $"{compilation.AssemblyName}.csproj",
+                    Path.Combine(projectParameters.ProjectPath, "obj"),
+                    generatedResourceFiles);
+            }
 
             return new LocalizationGeneratorResults(
                 inputFiles,
@@ -265,15 +367,111 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             var jsonItems = jsonGenerator.Generate(files);
         }
 
+        private static void GeneratePropsResourceFile(
+            string projectPath,
+            string projectFile,
+            string objFile,
+            List<string> generatedResourceFiles)
+        {
+            var absProjectPath = Path.GetFullPath(projectPath);
+
+            if (!absProjectPath.EndsWith(Path.PathSeparator.ToString(), StringComparison.Ordinal))
+            {
+                absProjectPath = absProjectPath + Path.DirectorySeparatorChar;
+            }
+
+            var resourceFiles = generatedResourceFiles.Select(f => Path.Combine(".", f.Replace(absProjectPath, string.Empty)));
+
+            var propsFile = Path.Combine(objFile, $"{projectFile}.LocalizationGenerator.Resource.g.props");
+            var list = new List<string>();
+
+            list.Add("<Project>");
+
+            list.Add("  <ItemGroup>");
+
+            foreach (var rfItem in resourceFiles!)
+            {
+                list.Add($"    <None Remove=\"{rfItem}\" />");
+            }
+
+            list.Add("  </ItemGroup>");
+            list.Add("  <ItemGroup>");
+
+            foreach (var rfItem in resourceFiles!)
+            {
+                list.Add($"    <EmbeddedResource Remove=\"{rfItem}\" />");
+            }
+
+            list.Add("  </ItemGroup>");
+            list.Add("  <ItemGroup>");
+
+            foreach (var rfItem in resourceFiles!)
+            {
+                list.Add($"    <EmbeddedResource Include=\"{rfItem}\" />");
+            }
+
+            list.Add("  </ItemGroup>");
+
+            list.Add("</Project>");
+
+            File.WriteAllLines(propsFile, list);
+        }
+
+        private static void GeneratePropsCodeFile(
+            string projectPath,
+            string projectFile,
+            string objPath,
+            List<string> generatedCodeFiles)
+        {
+            var absObjPath = Path.GetFullPath(objPath);
+
+            if (!absObjPath.EndsWith(Path.PathSeparator.ToString(), StringComparison.Ordinal))
+            {
+                absObjPath = absObjPath + Path.DirectorySeparatorChar;
+            }
+
+            var codeFiles = generatedCodeFiles.Select(f => Path.Combine("$(MSBuildThisFileDirectory)", f.Replace(absObjPath, string.Empty)));
+
+            var propsFile = Path.Combine(objPath, $"{projectFile}.LocalizationGenerator.Code.g.props");
+            var list = new List<string>();
+
+            list.Add("<Project>");
+
+            list.Add("  <ItemGroup>");
+
+            foreach (var rfItem in codeFiles!)
+            {
+                list.Add($"    <None Remove=\"{rfItem}\" />");
+            }
+
+            list.Add("  </ItemGroup>");
+
+            list.Add("  <ItemGroup>");
+
+            foreach (var rfItem in codeFiles!)
+            {
+                list.Add($"    <Compile Include=\"{rfItem}\" Link=\"{Path.GetFileName(rfItem)}\" Visible=\"false\" />");
+            }
+
+            list.Add("  </ItemGroup>");
+
+            list.Add("</Project>");
+
+            File.WriteAllLines(propsFile, list);
+        }
+
         private static string GetContentFile(string contentFile)
         {
             var assembly = typeof(LocalizationGenerator).Assembly;
 
-            var file = Path.Combine(Path.GetDirectoryName(assembly.Location), contentFile);
-
-            if (File.Exists(file))
+            if (!string.IsNullOrEmpty(assembly.Location))
             {
-                return file;
+                var file = Path.Combine(Path.GetDirectoryName(assembly.Location), contentFile);
+
+                if (File.Exists(file))
+                {
+                    return file;
+                }
             }
 
             var res = assembly.GetManifestResourceNames();
@@ -289,107 +487,6 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl
             stream.CopyTo(tempStream);
 
             return tempFile;
-        }
-
-        private static (string Namespace, string ProjectFolder) ProbRootNamespaceAndProjectFolder(Compilation compilation)
-        {
-            var commonFolder = FindCommonRootFolder(compilation.SyntaxTrees.Select(x => x.FilePath).ToArray());
-
-            var pathWords = commonFolder.TrimEnd('\\', '/').Split('\\', '/');
-
-            var nsList = new HashSet<string>();
-            var nsBuilder = new StringBuilder();
-
-            foreach (var item in compilation.Assembly.NamespaceNames.Concat(new string[] { string.Empty }))
-            {
-                if (string.IsNullOrEmpty(item))
-                {
-                    if (nsBuilder.Length > 0)
-                    {
-                        nsList.Add(nsBuilder.ToString());
-                        nsBuilder.Clear();
-                    }
-                }
-                else
-                {
-                    if (nsBuilder.Length > 0)
-                    {
-                        nsBuilder.Append('.');
-                    }
-                    nsBuilder.Append(item);
-                }
-            }
-
-            var firstNs = nsList.First();
-
-            var i = 0;
-            var intersect = pathWords.Reverse().First();
-
-            var rootNs = compilation.Assembly.Name;
-
-            var idx = firstNs.IndexOf(intersect, StringComparison.Ordinal);
-            if (idx > 0)
-            {
-                i++;
-                rootNs = firstNs.Substring(0, idx - 1);
-
-                foreach (var word in pathWords.Reverse().Skip(1))
-                {
-                    intersect = word + '.' + intersect;
-
-                    idx = firstNs.IndexOf(intersect, StringComparison.Ordinal);
-
-                    if (idx > 0)
-                    {
-                        rootNs = firstNs.Substring(0, idx - 1);
-
-                        i++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            var projectFolder = string.Join("/", pathWords.Reverse().Skip(i).Reverse());
-
-            if (string.IsNullOrEmpty(projectFolder))
-            {
-                projectFolder = ".";
-            }
-
-            return (rootNs, projectFolder);
-        }
-
-        private static string FindCommonRootFolder(IReadOnlyCollection<string> paths)
-        {
-            if (paths == null)
-            {
-                throw new ArgumentNullException(nameof(paths));
-            }
-
-            var root = paths.First();
-
-            var len = root.Length;
-
-            foreach (var path in paths.Skip(1))
-            {
-                len = Math.Min(len, path.Length);
-                while (!root.Substring(0, len).Equals(path.Substring(0, len), StringComparison.Ordinal))
-                {
-                    len--;
-
-                    if (len == 0)
-                    {
-                        throw new InvalidOperationException("Unable to find common part");
-                    }
-                }
-
-                root = root.Substring(0, len);
-            }
-
-            return root;
         }
     }
 }

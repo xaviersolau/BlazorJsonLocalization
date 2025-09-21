@@ -6,9 +6,11 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
 using SoloX.CodeQuality.Test.Helpers.XUnit;
@@ -58,7 +60,18 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
 
             var compilation = CSharpCompilation.Create("Test", syntaxTrees, references);
 
-            var generatorDriver = CSharpGeneratorDriver.Create(generator);
+            var projectFolder = "Folder";
+
+            var props = new Dictionary<string, string>()
+            {
+                ["build_property.rootnamespace"] = @"MyNameSpace",
+                ["build_property.targetframework"] = @"net9.0",
+                ["build_property.projectdir"] = projectFolder,
+            };
+
+            var generatorDriver = CSharpGeneratorDriver.Create(
+                [generator.AsSourceGenerator()],
+                optionsProvider: new TestAnalyzerConfigOptionsProvider(props));
 
             var driver = generatorDriver.RunGenerators(compilation);
 
@@ -77,13 +90,50 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
 
             foreach (var expectedJsonFile in expectedJsonFiles)
             {
-                var jsonFile = expectedResourcePath + '/' + expectedJsonFile;
-                File.Exists(jsonFile).Should().BeTrue();
+                var jsonFile = Path.Combine(projectFolder, expectedResourcePath, expectedJsonFile);
+                File.Exists(jsonFile).Should().BeTrue("File does not exist {file}", jsonFile);
                 snapshotGenerator.Generate(expectedJsonFile, expectedJsonFile, w => w.Write(File.ReadAllText(jsonFile)));
             }
 
             var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
             SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+        }
+
+        private sealed class TestAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider
+        {
+            private sealed class TestAnalyzerConfigOptions : AnalyzerConfigOptions
+            {
+                private readonly IReadOnlyDictionary<string, string> keyValuePairs;
+
+                public TestAnalyzerConfigOptions(IReadOnlyDictionary<string, string> keyValuePairs)
+                {
+                    this.keyValuePairs = keyValuePairs;
+                }
+
+                public override bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
+                {
+                    return this.keyValuePairs.TryGetValue(key, out value);
+                }
+            }
+
+            private readonly TestAnalyzerConfigOptions testAnalyzerConfigOptions;
+
+            public TestAnalyzerConfigOptionsProvider(IReadOnlyDictionary<string, string> keyValuePairs)
+            {
+                this.testAnalyzerConfigOptions = new TestAnalyzerConfigOptions(keyValuePairs);
+            }
+
+            public override AnalyzerConfigOptions GlobalOptions => this.testAnalyzerConfigOptions;
+
+            public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
+            {
+                return this.testAnalyzerConfigOptions;
+            }
+
+            public override AnalyzerConfigOptions GetOptions(AdditionalText textFile)
+            {
+                return this.testAnalyzerConfigOptions;
+            }
         }
     }
 }

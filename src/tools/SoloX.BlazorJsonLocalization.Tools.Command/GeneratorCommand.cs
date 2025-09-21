@@ -6,16 +6,16 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.Console;
+using Serilog;
 using SoloX.BlazorJsonLocalization.Tools.Core;
 using SoloX.BlazorJsonLocalization.Tools.Extensions;
-using Serilog;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.Globalization;
 
 namespace SoloX.BlazorJsonLocalization.Tools
 {
@@ -33,6 +33,8 @@ namespace SoloX.BlazorJsonLocalization.Tools
         private readonly Option<bool> logDebugOption = new Option<bool>("--logDebug", "Enable debug logging.");
         private readonly Option<bool> useRelaxedJsonEscaping = new Option<bool>("--useRelaxedJsonEscaping", "Use Relaxed Json Escaping.");
         private readonly Option<bool> useMultiLine = new Option<bool>("--useMultiLine", "Use Multi-Line Json resources.");
+        private readonly Option<bool> registerEmbeddedResource = new Option<bool>("--registerEmbeddedResource", "Register generated Json files as EmbeddedResource in the project.");
+        private readonly Option<bool> disableCompile = new Option<bool>("--disableCompile", "Disable Compile integration of the generated C# files.");
 
         /// <summary>
         /// Setup GeneratorCommand instance.
@@ -47,6 +49,8 @@ namespace SoloX.BlazorJsonLocalization.Tools
             this.rootCommand.AddOption(this.outputResourceOption);
             this.rootCommand.AddOption(this.useRelaxedJsonEscaping);
             this.rootCommand.AddOption(this.useMultiLine);
+            this.rootCommand.AddOption(this.registerEmbeddedResource);
+            this.rootCommand.AddOption(this.disableCompile);
 
             this.rootCommand.SetHandler(RunGeneratorCommandHandlerAsync);
         }
@@ -56,9 +60,9 @@ namespace SoloX.BlazorJsonLocalization.Tools
         /// </summary>
         /// <param name="args">Command arguments.</param>
         /// <returns></returns>
-        public async Task RunGeneratorCommandAsync(string[] args)
+        public async Task<int> RunGeneratorCommandAsync(string[] args)
         {
-            await this.rootCommand.InvokeAsync(args).ConfigureAwait(false);
+            return await this.rootCommand.InvokeAsync(args).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -153,8 +157,18 @@ namespace SoloX.BlazorJsonLocalization.Tools
 
             var useMultiLineOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.useMultiLine);
 
+            var registerEmbeddedResourceOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.registerEmbeddedResource);
+
+            var disableCompileOptionValue = invocationContext.BindingContext.ParseResult.GetValueForOption(this.disableCompile);
+
             var generator = serviceProvider.GetRequiredService<ILocalizationGenerator>();
-            var results = generator.Generate(projectFile.FullName, new GeneratorOptions(useRelaxedJsonEscapingOptionValue, useMultiLineOptionValue));
+            var results = generator.Generate(
+                projectFile.FullName,
+                new GeneratorOptions(
+                    useRelaxedJsonEscapingOptionValue,
+                    useMultiLineOptionValue,
+                    registerEmbeddedResourceOptionValue,
+                    !disableCompileOptionValue));
 
             var full = projectFile.Directory?.FullName ?? Environment.CurrentDirectory;
 

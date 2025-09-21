@@ -38,6 +38,16 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             this.GenerateSnapshot(snapshotName, jsonLocalization, false, false, interfaceFile, componentFile);
         }
 
+        [Theory]
+        [InlineData(@"SampleMethodArg/ISimpleLocalizer.cs", 0, @"Component.cs", null)]
+        public void GenerateLocalizerMethodWithArg(string interfaceFile, int idx, string componentFile, string jsonLocalization)
+        {
+            var snapshotName = nameof(this.GenerateLocalizerMethodWithArg)
+                + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
+
+            this.GenerateSnapshot(snapshotName, jsonLocalization, false, false, interfaceFile, componentFile);
+        }
+
         private const string SimpleSubJson1 = @"
         {
           ""SubLocalizer1"": {
@@ -151,6 +161,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
                 var workspace = workspaceFactory.CreateWorkspace();
 
+                var registerEmbeddedResource = false;
+                var registerCompile = true;
+
                 foreach (var file in files)
                 {
                     workspace.RegisterFile(file);
@@ -166,7 +179,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                 var snapshotWriter = new SnapshotWriter();
                 var jsonReader = new TestReader(jsonLocalization);
 
-                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files, new GeneratorOptions(useRelaxedJsonEscaping, useMultiLine) { NewLineSeparator = "\n" });
+                var options = new GeneratorOptions(useRelaxedJsonEscaping, useMultiLine, registerEmbeddedResource, registerCompile) { NewLineSeparator = "\n" };
+
+                generator.Generate(workspace, locator, snapshotWriter, locator, jsonReader, snapshotWriter, workspace.Files, options);
 
                 var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
                 SnapshotHelper.AssertSnapshot(snapshotWriter.GetAllGenerated(), snapshotName, location);

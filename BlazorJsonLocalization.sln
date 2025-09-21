@@ -64,6 +64,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Tools.Core.ITests", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Core.ITests\SoloX.BlazorJsonLocalization.Tools.Core.ITests.csproj", "{692129FB-C59D-4903-98D4-53E6F09B8F38}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.BlazorJsonLocalization.Generator.Sample", "src\tools.examples\SoloX.BlazorJsonLocalization.Generator.Sample\SoloX.BlazorJsonLocalization.Generator.Sample.csproj", "{1341FFF0-7D7E-41B2-99FD-16E19E01B4EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{795FF9B9-2CB5-409E-B372-1D8F9082A289} = {795FF9B9-2CB5-409E-B372-1D8F9082A289}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools.Examples", "Tools.Examples", "{DB31B12E-0E5B-406D-BA0E-5833707752DC}"
 EndProject
@@ -80,6 +83,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.WebApp", "src\examples\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp.csproj", "{A4F286D8-4003-48EB-87F5-715384D82092}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Example.WebApp.Client", "src\examples\SoloX.BlazorJsonLocalization.Example.WebApp\SoloX.BlazorJsonLocalization.Example.WebApp.Client\SoloX.BlazorJsonLocalization.Example.WebApp.Client.csproj", "{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Generator.E2ETests", "src\tools.tests\SoloX.BlazorJsonLocalization.Generator.E2ETests\SoloX.BlazorJsonLocalization.Generator.E2ETests.csproj", "{424F98BA-C835-41AE-96A8-41607828C69A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Tools.Command.E2ETests", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Command.E2ETests\SoloX.BlazorJsonLocalization.Tools.Command.E2ETests.csproj", "{87B000BA-204D-4322-B408-53F3C601FD9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.BlazorJsonLocalization.Tools.Command.ITests", "src\tools.tests\SoloX.BlazorJsonLocalization.Tools.Command.ITests\SoloX.BlazorJsonLocalization.Tools.Command.ITests.csproj", "{55D1F6BE-8DB4-428C-8277-6A56B83815B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,6 +196,18 @@ Global
 		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{424F98BA-C835-41AE-96A8-41607828C69A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{424F98BA-C835-41AE-96A8-41607828C69A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{424F98BA-C835-41AE-96A8-41607828C69A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{424F98BA-C835-41AE-96A8-41607828C69A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B000BA-204D-4322-B408-53F3C601FD9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B000BA-204D-4322-B408-53F3C601FD9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B000BA-204D-4322-B408-53F3C601FD9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B000BA-204D-4322-B408-53F3C601FD9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55D1F6BE-8DB4-428C-8277-6A56B83815B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55D1F6BE-8DB4-428C-8277-6A56B83815B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55D1F6BE-8DB4-428C-8277-6A56B83815B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55D1F6BE-8DB4-428C-8277-6A56B83815B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +238,9 @@ Global
 		{6C0089AE-1AAE-4FAC-A296-02CFF1F55EEB} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 		{A4F286D8-4003-48EB-87F5-715384D82092} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
 		{2ED9CFA1-34B8-4A9B-A2F7-B7D53B96AA06} = {28F3461B-2FF7-4F3D-8C80-5A5B19FC0A5C}
+		{424F98BA-C835-41AE-96A8-41607828C69A} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
+		{87B000BA-204D-4322-B408-53F3C601FD9F} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
+		{55D1F6BE-8DB4-428C-8277-6A56B83815B5} = {E76D1BB1-54C5-4A66-8340-7770D938434E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71CD89EF-3478-4973-8A62-06CDA80ACB54}
