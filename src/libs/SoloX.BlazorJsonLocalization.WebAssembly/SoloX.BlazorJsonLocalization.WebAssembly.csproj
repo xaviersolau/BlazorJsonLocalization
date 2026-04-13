@@ -3,13 +3,9 @@
   <Import Project="..\..\SharedProperties.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0;net7.0;net6.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="[5.0.0,6.0.0)" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <PackageReference Include="Microsoft.Extensions.Logging" Version="[6.0.0,7.0.0)" />
@@ -24,7 +20,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="[9.0.0,10.0.0)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
     <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.3.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
