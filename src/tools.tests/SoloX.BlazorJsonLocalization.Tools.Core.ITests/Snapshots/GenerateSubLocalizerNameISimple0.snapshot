@@ -3,7 +3,7 @@ Simple
 ---------------------
 // ----------------------------------------------------------------------
 // <copyright file="Simple.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
+// Copyright © 2021-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -79,7 +79,7 @@ SimpleExtensions
 ---------------------
 // ----------------------------------------------------------------------
 // <copyright file="SimpleExtensions.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
+// Copyright © 2021-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -126,7 +126,7 @@ SimpleSub
 ---------------------
 // ----------------------------------------------------------------------
 // <copyright file="SimpleSub.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
+// Copyright © 2021-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>

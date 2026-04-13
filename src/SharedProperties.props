@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>3.0.0-alpha.2</Version>
     <Authors>Xavier Solau</Authors>
-    <Copyright>Copyright © 2021 Xavier Solau</Copyright>
+    <Copyright>Copyright © 2021-2026 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/BlazorJsonLocalization</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/BlazorJsonLocalization.git</RepositoryUrl>

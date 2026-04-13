@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="ToolsGeneratorTest.cs" company="Xavier Solau">
-// Copyright © 2021 Xavier Solau.
+// Copyright © 2021-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -91,7 +91,7 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
             foreach (var expectedJsonFile in expectedJsonFiles)
             {
                 var jsonFile = Path.Combine(projectFolder, expectedResourcePath, expectedJsonFile);
-                File.Exists(jsonFile).Should().BeTrue("File does not exist {file}", jsonFile);
+                File.Exists(jsonFile).Should().BeTrue("File does not exist {0}", jsonFile);
                 snapshotGenerator.Generate(expectedJsonFile, expectedJsonFile, w => w.Write(File.ReadAllText(jsonFile)));
             }
 
