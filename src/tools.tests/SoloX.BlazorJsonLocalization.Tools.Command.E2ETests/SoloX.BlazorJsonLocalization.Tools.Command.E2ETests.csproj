@@ -30,9 +30,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="2.3.6" />
-    <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="2.3.6" />
-    <PackageReference Include="SoloX.CodeQuality.Test" Version="2.3.6">
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers" Version="3.0.0" />
+    <PackageReference Include="SoloX.CodeQuality.Test.Helpers.XUnit" Version="3.0.0" />
+    <PackageReference Include="SoloX.CodeQuality.Test" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
