@@ -53,7 +53,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
     <PackageReference Include="System.Text.Json" Version="10.0.5" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="2.3.6">
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

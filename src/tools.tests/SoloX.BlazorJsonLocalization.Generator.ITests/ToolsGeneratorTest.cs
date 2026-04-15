@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.Extensions.Localization;
 using SoloX.BlazorJsonLocalization.Attributes;
-using SoloX.CodeQuality.Test.Helpers.XUnit;
+using SoloX.CodeQuality.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Core.Test.Helpers.Snapshot;
 using SoloX.GeneratorTools.Test;
 using Xunit.Abstractions;
@@ -35,18 +35,16 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
             @"./SampleBasic/ISimpleLocalizer.cs", @"./Component.cs",
             "Resources", new string[] { "Component.json", "Component.en.json", "Component.fr.json" })]
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
-        public void GenerateBasicLocalizer(string interfaceFile, string componentFile, string expectedResourcePath, string[] expectedJsonFiles)
+        public Task GenerateBasicLocalizerAsync(string interfaceFile, string componentFile, string expectedResourcePath, string[] expectedJsonFiles)
         {
-            var snapshotName = nameof(this.GenerateBasicLocalizer)
+            var snapshotName = nameof(this.GenerateBasicLocalizerAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile);
 
-            GenerateSnapshot(snapshotName, expectedResourcePath, expectedJsonFiles, interfaceFile, componentFile);
+            return GenerateSnapshotAsync(snapshotName, expectedResourcePath, expectedJsonFiles, interfaceFile, componentFile);
         }
 
-        private static void GenerateSnapshot(string snapshotName, string expectedResourcePath, string[] expectedJsonFiles, params string[] files)
+        private static Task GenerateSnapshotAsync(string snapshotName, string expectedResourcePath, string[] expectedJsonFiles, params string[] files)
         {
-            SnapshotHelper.IsOverwriteEnable = true;
-
             var generator = new GeneratorHandler();
 
             var syntaxTrees = files.Select(f => CSharpSyntaxTree.ParseText(File.ReadAllText(f), path: f));
@@ -95,8 +93,13 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
                 snapshotGenerator.Generate(expectedJsonFile, expectedJsonFile, w => w.Write(File.ReadAllText(jsonFile)));
             }
 
-            var location = SnapshotHelper.GetLocationFromCallingCodeProjectRoot(null);
-            SnapshotHelper.AssertSnapshot(snapshotGenerator.GetAllGenerated(), snapshotName, location);
+            var snapshotTest = SnapshotTestBuilder
+                .Create()
+                .WithThisFilePathLocation()
+                .WithTextStrategy()
+                .Build();
+
+            return snapshotTest.CompareSnapshotAsync(snapshotName, snapshotGenerator.GetAllGenerated(), forceReplaceSnapshot: false);
         }
 
         private sealed class TestAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider

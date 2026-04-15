@@ -1,2 +1,7 @@
 SoloX.BlazorJsonLocalization.Generator.ITests.xml
 /.editorconfig
+
+**/*.snapshot.run.txt
+**/*.snapshot.diffs.txt
+**/*.snapshot.run.png
+**/*.snapshot.diffs.png
