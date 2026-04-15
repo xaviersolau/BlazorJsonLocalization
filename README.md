@@ -10,7 +10,7 @@ Don't hesitate to post issues, pull requests on the project or to fork and impro
 ## Project dashboard
 
 [![Build - CI](https://github.com/xaviersolau/BlazorJsonLocalization/actions/workflows/build-ci.yml/badge.svg)](https://github.com/xaviersolau/BlazorJsonLocalization/actions/workflows/build-ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/BlazorJsonLocalization/badge.svg?branch=main)](https://coveralls.io/github/xaviersolau/BlazorJsonLocalization?branch=main)
+[![codecov](https://codecov.io/github/xaviersolau/BlazorJsonLocalization/graph/badge.svg?token=LC5OJTIDAN)](https://codecov.io/github/xaviersolau/BlazorJsonLocalization)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 | Package                                    | Nuget.org | Pre-release |

@@ -4,94 +4,18 @@ on:
   push:
     branches: [ main ]
 
-
 jobs:
-  build-ci:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 10.0.x
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --configuration Release --no-restore --no-build --filter FullyQualifiedName\!~E2ETests
-    - name: E2E Test
-      run: dotnet test --configuration Release --no-restore --filter FullyQualifiedName~E2ETests
-
-  coverage-ci:
-    needs: build-ci
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        test_path:
-          - src/tests/SoloX.BlazorJsonLocalization.UTests
-          - src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests
-          - src/tests/SoloX.BlazorJsonLocalization.ITests
-          - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.UTests
-          - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.ITests
-          - src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Command.ITests
-          - src/tools.tests/SoloX.BlazorJsonLocalization.Generator.ITests
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 10.0.x
-    - name: Install dependencies ${{ matrix.test_path }}
-      run: dotnet restore ${{ matrix.test_path }}
-    - name: Build ${{ matrix.test_path }}
-      run: dotnet build ${{ matrix.test_path }} --configuration Release --no-restore
-    - name: Test Coverage ${{ matrix.test_path }}
-      run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
-    - name: Moving test results
-      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-    - name: Send to coverals
-      uses: coverallsapp/github-action@v2.2.3
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-        format: cobertura
-        flag-name: test-${{ matrix.test_path }}
-        parallel: true
-
-  end-coverage-ci:
-    needs: coverage-ci
-    runs-on: ubuntu-latest
-    steps:
-    - name: Finish coverals
-      uses: coverallsapp/github-action@v2.2.3
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
-
-  pack-ci:
-    needs: build-ci
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 10.0.x
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Pack
-      run: dotnet pack --configuration Release --no-restore --no-build
-    - name: Upload Packages
-      uses: actions/upload-artifact@v4
-      with:
-        name: 'NugetPackages'
-        path: |
-          src/libs/**/*.nupkg
-          src/tools/**/*.nupkg
+  build:
+    uses: xaviersolau/devops-workflows/.github/workflows/build-dotnet.yml@v1.1.0
+    with:
+      run-pack: true
+      test-projects: >
+        [
+          "src/tests/SoloX.BlazorJsonLocalization.UTests",
+          "src/tests/SoloX.BlazorJsonLocalization.ServerSide.UTests",
+          "src/tests/SoloX.BlazorJsonLocalization.ITests",
+          "src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.UTests",
+          "src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Core.ITests",
+          "src/tools.tests/SoloX.BlazorJsonLocalization.Tools.Command.ITests",
+          "src/tools.tests/SoloX.BlazorJsonLocalization.Generator.ITests"
+        ]
