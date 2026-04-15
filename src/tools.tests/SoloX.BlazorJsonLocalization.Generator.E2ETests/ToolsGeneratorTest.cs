@@ -10,11 +10,19 @@ using FluentAssertions;
 using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Solution;
 using SoloX.GeneratorTools.Core.Test.Helpers;
+using Xunit.Abstractions;
 
 namespace SoloX.BlazorJsonLocalization.Generator.E2ETests
 {
     public class ToolsGeneratorTest
     {
+        private readonly ITestOutputHelper testOutputHelper;
+
+        public ToolsGeneratorTest(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
         [Fact]
         public void ItShouldGenerateLocalizerFiles()
         {
@@ -64,6 +72,8 @@ namespace SoloX.BlazorJsonLocalization.Generator.E2ETests
                 var actResult = solution.Build(configuration: configurationName);
 
                 actResult.ExitCode.Should().Be(0);
+
+                this.testOutputHelper.WriteLine(actResult.GetLogs());
 
                 var assemblyFile = Path.Combine(root, solutionName, projectName, "bin", configurationName, framework, $"{projectName}.dll");
 

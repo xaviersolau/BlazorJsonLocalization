@@ -7,7 +7,6 @@
     <LangVersion>latest</LangVersion>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
@@ -40,5 +39,9 @@
     <None Include="$(PkgSystem_Text_Json)\lib\netstandard2.0\*.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
     <None Include="$(PkgMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.*" Pack="true" PackagePath="analyzers/dotnet/cs" />
   </ItemGroup>
-	
+
+  <Target Name="PackAfterBuild" AfterTargets="Build">
+    <Exec Command="dotnet pack $(MSBuildProjectFullPath) --configuration $(Configuration) --no-restore --no-build" />
+  </Target>
+
 </Project>
