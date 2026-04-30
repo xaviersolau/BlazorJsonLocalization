@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldMatchARegisteredLocalizer()
         {
-            var localizer = Mock.Of<IStringLocalizerInternal>();
+            var localizer = Substitute.For<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -46,8 +46,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldNotRegisterLocalizerIfOneAlreadyRegistered()
         {
-            var localizer1 = Mock.Of<IStringLocalizerInternal>();
-            var localizer2 = Mock.Of<IStringLocalizerInternal>();
+            var localizer1 = Substitute.For<IStringLocalizerInternal>();
+            var localizer2 = Substitute.For<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -65,7 +65,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldMatchARegisteredLocalizerNullCulture()
         {
-            var localizer = Mock.Of<IStringLocalizerInternal>();
+            var localizer = Substitute.For<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -80,7 +80,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldResetARegisteredLocalizer()
         {
-            var localizer = Mock.Of<IStringLocalizerInternal>();
+            var localizer = Substitute.For<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -101,7 +101,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldResetARegisteredLocalizerNullCulture()
         {
-            var localizer = Mock.Of<IStringLocalizerInternal>();
+            var localizer = Substitute.For<IStringLocalizerInternal>();
 
             var service = new CacheService();
 
@@ -159,10 +159,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [InlineData(typeof(CacheServiceTest), null, false)]
         [InlineData(typeof(CacheServiceTest), null, true)]
         [InlineData(null, BaseName, true)]
-        public void ItShouldValidateTheArgumentsOnCache(Type type, string baseName, bool withLocalizer)
+        public void ItShouldValidateTheArgumentsOnCache(Type? type, string baseName, bool withLocalizer)
         {
             var service = new CacheService();
-            var localizer = withLocalizer ? Mock.Of<IStringLocalizerInternal>() : null;
+            var localizer = withLocalizer ? Substitute.For<IStringLocalizerInternal>() : null;
 
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -177,7 +177,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Theory]
         [InlineData(typeof(CacheServiceTest), null)]
         [InlineData(null, BaseName)]
-        public void ItShouldValidateTheArgumentsOnMatch(Type type, string baseName)
+        public void ItShouldValidateTheArgumentsOnMatch(Type? type, string baseName)
         {
             var service = new CacheService();
 
@@ -193,7 +193,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Theory]
         [InlineData(typeof(CacheServiceTest), null)]
         [InlineData(null, BaseName)]
-        public void ItShouldValidateTheArgumentsOnReset(Type type, string baseName)
+        public void ItShouldValidateTheArgumentsOnReset(Type? type, string baseName)
         {
             var service = new CacheService();
 

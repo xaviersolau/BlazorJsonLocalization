@@ -9,7 +9,8 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
+using NSubstitute.Core;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
@@ -47,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [Fact]
         public void IsShouldCreateAJsonStringLocalizerMatchingTheGivenBaseNameAndLocation()
         {
-            RunBasicFactoryTest(f => f.Create(BaseName, Assembly.FullName));
+            RunBasicFactoryTest(f => f.Create(BaseName, Assembly.FullName!));
         }
 
         [Fact]
@@ -75,7 +76,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer, extensionServiceMock.Object));
+                (extensionOptionsContainer, extensionServiceMock));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
 
@@ -83,9 +84,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cacheService = new CacheService();
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
                 cacheService,
                 Logger,
                 LoggerForStringLocalizerProxy);
@@ -126,8 +127,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer1, extensionServiceMock1.Object),
-                (extensionOptionsContainer2, extensionServiceMock2.Object));
+                (extensionOptionsContainer1, extensionServiceMock1),
+                (extensionOptionsContainer2, extensionServiceMock2));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer1, extensionOptionsContainer2);
 
@@ -135,9 +136,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cacheService = new CacheService();
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
                 cacheService,
                 Logger,
                 LoggerForStringLocalizerProxy);
@@ -166,14 +167,20 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
 
             // Setup extension service
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
+#pragma warning disable CA2012 // Use ValueTasks correctly
             extensionServiceMock
-                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+                .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
+                .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async ci =>
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
+                    return map;
+                }));
+#pragma warning restore CA2012 // Use ValueTasks correctly
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer, extensionServiceMock.Object));
+                (extensionOptionsContainer, extensionServiceMock));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
 
@@ -181,9 +188,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cacheService = new CacheService();
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
                 cacheService,
                 Logger,
                 LoggerForStringLocalizerProxy);
@@ -210,18 +217,19 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer, extensionServiceMock.Object));
+                (extensionOptionsContainer, extensionServiceMock));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
 
-            // We need the real cache service because otherwise the asynchronous parent localizer will be created every time.
-            var cacheServiceMock = new Mock<ICacheService>();
+            var cacheServiceMock = Substitute.For<ICacheService>();
+
+            cacheServiceMock.Match(Assembly, BaseName, Arg.Any<CultureInfo>()).Returns((IStringLocalizerInternal?)null);
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
-                cacheServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
+                cacheServiceMock,
                 Logger,
                 LoggerForStringLocalizerProxy);
 
@@ -229,10 +237,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.NotNull(localizer);
 
-            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, (IStringLocalizerInternal)localizer), Times.Once);
-            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Once);
+            cacheServiceMock.Received(1).Match(Assembly, BaseName, null);
+            cacheServiceMock.Received(1).Cache(Assembly, BaseName, null, (IStringLocalizerInternal)localizer);
+            cacheServiceMock.Received(1).Match(Assembly, BaseName, CultureInfo);
+            cacheServiceMock.Received(1).Cache(Assembly, BaseName, CultureInfo, Arg.Any<IStringLocalizerInternal>());
         }
 
         [Fact]
@@ -242,27 +250,25 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoServiceMock = SetupCultureInfoServiceMock();
 
             // Setup extension service
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
             // Setup extension resolver service.
-            var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
+            var extensionResolverServiceMock = Substitute.For<IExtensionResolverService>();
 
             var optionsMock = JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock();
 
-            // We need the real cache service because otherwise the asynchronous parent localizer will be created every time.
-            var cacheService = new CacheService();
+            var cachedLocalizer = Substitute.For<IStringLocalizerInternal>();
 
-            var cachedLocalizer = Mock.Of<IStringLocalizerInternal>();
+            var cacheServiceMock = Substitute.For<ICacheService>();
 
-            var cacheServiceMock = new Mock<ICacheService>();
-
-            cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, CultureInfo)).Returns(cachedLocalizer);
+            cacheServiceMock.Match(Assembly, BaseName, null).Returns((IStringLocalizerInternal?)null);
+            cacheServiceMock.Match(Assembly, BaseName, CultureInfo).Returns(cachedLocalizer);
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
-                cacheServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
+                cacheServiceMock,
                 Logger,
                 LoggerForStringLocalizerProxy);
 
@@ -270,8 +276,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             Assert.NotNull(localizer);
 
-            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Never);
+            cacheServiceMock.Received(1).Match(Assembly, BaseName, CultureInfo);
+            cacheServiceMock.Received(0).Cache(Assembly, BaseName, CultureInfo, Arg.Any<IStringLocalizerInternal>());
 
             var proxy = Assert.IsType<StringLocalizerProxy>(localizer);
 
@@ -285,41 +291,38 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoServiceMock = SetupCultureInfoServiceMock();
 
             // Setup extension service
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
             // Setup extension resolver service.
-            var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
+            var extensionResolverServiceMock = Substitute.For<IExtensionResolverService>();
 
             var optionsMock = JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock();
 
-            // We need the real cache service because otherwise the asynchronous parent localizer will be created every time.
-            var cacheService = new CacheService();
+            var cachedLocalizer = Substitute.For<IStringLocalizer>();
 
-            var cachedLocalizer = Mock.Of<IStringLocalizer>();
+            var cachedInternalLocalizer = Substitute.For<IStringLocalizerInternal>();
+            cachedInternalLocalizer.AsStringLocalizer.Returns(cachedLocalizer);
 
-            var cachedInternalLocalizer = new Mock<IStringLocalizerInternal>();
-            cachedInternalLocalizer.SetupGet(x => x.AsStringLocalizer).Returns(cachedLocalizer);
+            var cacheServiceMock = Substitute.For<ICacheService>();
 
-            var cacheServiceMock = new Mock<ICacheService>();
-
-            cacheServiceMock.Setup(x => x.Match(Assembly, BaseName, null)).Returns(cachedInternalLocalizer.Object);
+            cacheServiceMock.Match(Assembly, BaseName, null).Returns(cachedInternalLocalizer);
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
-                cacheServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
+                cacheServiceMock,
                 Logger,
                 LoggerForStringLocalizerProxy);
 
-            var localizer = factory.Create(BaseName, Assembly.FullName);
+            var localizer = factory.Create(BaseName, Assembly.FullName!);
 
             Assert.NotNull(localizer);
 
-            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, null), Times.Once);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, null, It.IsAny<IStringLocalizerInternal>()), Times.Never);
-            cacheServiceMock.Verify(x => x.Match(Assembly, BaseName, CultureInfo), Times.Never);
-            cacheServiceMock.Verify(x => x.Cache(Assembly, BaseName, CultureInfo, It.IsAny<IStringLocalizerInternal>()), Times.Never);
+            cacheServiceMock.Received(1).Match(Assembly, BaseName, null);
+            cacheServiceMock.Received(0).Cache(Assembly, BaseName, null, Arg.Any<IStringLocalizerInternal>());
+            cacheServiceMock.Received(0).Match(Assembly, BaseName, CultureInfo);
+            cacheServiceMock.Received(0).Cache(Assembly, BaseName, CultureInfo, Arg.Any<IStringLocalizerInternal>());
 
             Assert.Same(cachedLocalizer, localizer);
         }
@@ -351,30 +354,40 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
 
             // Setup extension service
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
             if (isAsynchronous)
             {
+#pragma warning disable CA2012 // Use ValueTasks correctly
                 extensionServiceMock
-                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                    .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+                    .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
+                    .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
+                    {
+                        await Task.Delay(100).ConfigureAwait(false);
+                        return map;
+                    }));
                 extensionServiceMock
-                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent))
-                    .ReturnsAsync(map2, TimeSpan.FromMilliseconds(100));
+                    .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent)
+                    .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
+                    {
+                        await Task.Delay(100).ConfigureAwait(false);
+                        return map2;
+                    }));
+#pragma warning restore CA2012 // Use ValueTasks correctly
             }
             else
             {
                 extensionServiceMock
-                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                    .ReturnsAsync(map);
+                    .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
+                    .Returns(map);
                 extensionServiceMock
-                    .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent))
-                    .ReturnsAsync(map2);
+                    .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent)
+                    .Returns(map2);
             }
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer, extensionServiceMock.Object));
+                (extensionOptionsContainer, extensionServiceMock));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
 
@@ -382,9 +395,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cacheService = new CacheService();
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
                 cacheService,
                 Logger,
                 LoggerForStringLocalizerProxy);
@@ -396,7 +409,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             if (isAsynchronous)
             {
                 // make sure the localizer data are loaded.
-                await localizer.LoadAsync(true).ConfigureAwait(false);
+                await localizer.LoadAsync(true);
             }
 
             Assert.Equal(value, localizer[key]);
@@ -425,18 +438,28 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
 
             // Setup extension service
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
+#pragma warning disable CA2012 // Use ValueTasks correctly
             extensionServiceMock
-                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+                .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
+                .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
+                {
+                    await Task.Delay(100).ConfigureAwait(false);
+                    return map;
+                }));
             extensionServiceMock
-                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent))
-                .ReturnsAsync(map, TimeSpan.FromMilliseconds(100));
+                .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent)
+                .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
+                {
+                    await Task.Delay(100).ConfigureAwait(false);
+                    return map;
+                }));
+#pragma warning restore CA2012 // Use ValueTasks correctly
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
-                (extensionOptionsContainer, extensionServiceMock.Object));
+                (extensionOptionsContainer, extensionServiceMock));
 
             var optionsMock = SetupJsonLocalizationOptionsMock(extensionOptionsContainer);
 
@@ -444,9 +467,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cacheService = new CacheService();
 
             var factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
                 cacheService,
                 Logger,
                 LoggerForStringLocalizerProxy);
@@ -459,53 +482,55 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             await localizer.LoadAsync(enableHierarchyLoading).ConfigureAwait(false);
 
             // verify the parent hierarchy loading behavior.
-            extensionServiceMock.Verify(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo), Times.Once);
+            await extensionServiceMock.Received(1).TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo);
 
-            extensionServiceMock.Verify(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent), enableHierarchyLoading ? Times.Once : Times.Never);
+            await extensionServiceMock
+                .Received(enableHierarchyLoading ? 1 : 0)
+                .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent);
         }
 
-        private static Mock<IJsonLocalizationExtensionService> SetupExtensionServiceMock(Dictionary<string, string> map, ExtensionOptionsContainer<MyOptions> extensionOptionsContainer)
+        private static IJsonLocalizationExtensionService SetupExtensionServiceMock(Dictionary<string, string> map, ExtensionOptionsContainer<MyOptions> extensionOptionsContainer)
         {
-            var extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
             extensionServiceMock
-                .Setup(s => s.TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo))
-                .ReturnsAsync(map);
+                .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
+                .Returns(map);
             return extensionServiceMock;
         }
 
-        private static Mock<ICultureInfoService> SetupCultureInfoServiceMock()
+        private static ICultureInfoService SetupCultureInfoServiceMock()
         {
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
             cultureInfoServiceMock
-                .SetupGet(s => s.CurrentUICulture)
+                .CurrentUICulture
                 .Returns(CultureInfo);
             return cultureInfoServiceMock;
         }
 
-        internal static Mock<IExtensionResolverService> SetupResolverServiceMock(
+        internal static IExtensionResolverService SetupResolverServiceMock(
             params (IExtensionOptionsContainer extensionOptionsContainer,
             IJsonLocalizationExtensionService extensionService)[] items)
         {
-            var extensionResolverServiceMock = new Mock<IExtensionResolverService>();
+            var extensionResolverServiceMock = Substitute.For<IExtensionResolverService>();
 
             foreach (var item in items)
             {
-                extensionResolverServiceMock.Setup(s => s.GetExtensionService(item.extensionOptionsContainer))
+                extensionResolverServiceMock.GetExtensionService(item.extensionOptionsContainer)
                     .Returns(item.extensionService);
             }
 
             return extensionResolverServiceMock;
         }
 
-        internal static Mock<IOptions<JsonLocalizationOptions>> SetupJsonLocalizationOptionsMock(params IExtensionOptionsContainer[] extensionOptionsContainers)
+        internal static IOptions<JsonLocalizationOptions> SetupJsonLocalizationOptionsMock(params IExtensionOptionsContainer[] extensionOptionsContainers)
         {
             var opt = new JsonLocalizationOptions();
             opt.ExtensionOptions = extensionOptionsContainers;
 
-            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
+            var optionsMock = Substitute.For<IOptions<JsonLocalizationOptions>>();
 
             optionsMock
-                .SetupGet(o => o.Value)
+                .Value
                 .Returns(opt);
             return optionsMock;
         }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
@@ -32,9 +32,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         private static readonly Assembly Assembly = typeof(Component).Assembly;
         private static readonly CultureInfo CultureInfo = CultureInfo.GetCultureInfo(CultureName);
 
-        private readonly Mock<IStringLocalizerInternal> localizer;
+        private readonly IStringLocalizerInternal localizer;
         private readonly JsonStringLocalizerFactory factory;
-        private readonly Mock<IJsonLocalizationExtensionService> extensionServiceMock;
+        private readonly IJsonLocalizationExtensionService extensionServiceMock;
         private readonly ExtensionOptionsContainer<MyOptions> extensionOptionsContainer;
 
         private ILogger<JsonStringLocalizerFactory> Logger { get; }
@@ -45,31 +45,33 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             Logger = new TestLogger<JsonStringLocalizerFactory>(testOutputHelper);
             LoggerForStringLocalizerProxy = new TestLogger<StringLocalizerProxy>(testOutputHelper);
 
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
-            var cacheServiceMock = new Mock<ICacheService>();
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
+            var cacheServiceMock = Substitute.For<ICacheService>();
+
+            cacheServiceMock.Match(Arg.Any<Assembly>(), Arg.Any<string>(), Arg.Any<CultureInfo>()).Returns((IStringLocalizerInternal?)null);
 
             this.extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
 
             var optionsMock = JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock(this.extensionOptionsContainer);
 
             // Setup extension service
-            this.extensionServiceMock = new Mock<IJsonLocalizationExtensionService>();
+            this.extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
             var extensionResolverServiceMock = JsonStringLocalizerFactoryTest.SetupResolverServiceMock(
-                (this.extensionOptionsContainer, this.extensionServiceMock.Object));
+                (this.extensionOptionsContainer, this.extensionServiceMock));
 
             this.factory = new JsonStringLocalizerFactory(
-                optionsMock.Object,
-                cultureInfoServiceMock.Object,
-                extensionResolverServiceMock.Object,
-                cacheServiceMock.Object,
+                optionsMock,
+                cultureInfoServiceMock,
+                extensionResolverServiceMock,
+                cacheServiceMock,
                 Logger,
                 LoggerForStringLocalizerProxy);
 
             var resourceSource = this.factory.CreateStringLocalizerResourceSource(BaseName, Assembly, typeof(Component));
 
-            this.localizer = new Mock<IStringLocalizerInternal>();
-            this.localizer.SetupGet(x => x.ResourceSource).Returns(resourceSource);
+            this.localizer = Substitute.For<IStringLocalizerInternal>();
+            this.localizer.ResourceSource.Returns(resourceSource);
         }
 
         [Theory]
@@ -78,7 +80,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         public void ItShouldFindThroughStringLocalizerHierarchy(Type matchingType)
         {
             var localizedStringRes = this.factory.FindThroughStringLocalizerHierarchy(
-                this.localizer.Object,
+                this.localizer,
                 CultureInfo,
                 sli =>
                 {
@@ -99,16 +101,19 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [Fact]
         public async Task ItShouldLoadDataThroughStringLocalizerHierarchy()
         {
-            await this.factory.LoadDataThroughStringLocalizerHierarchyAsync(this.localizer.Object, CultureInfo, false);
+            await this.factory.LoadDataThroughStringLocalizerHierarchyAsync(this.localizer, CultureInfo, false);
 
-            this.localizer
-                .Verify(l => l.LoadDataAsync(), Times.Once);
-            this.extensionServiceMock
-                .Verify(s => s.TryLoadAsync(this.extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent), Times.Once);
+            await this.localizer
+                .Received()
+                .LoadDataAsync();
+            await this.extensionServiceMock
+                .Received()
+                .TryLoadAsync(this.extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo.Parent);
 
             var baseClassName = typeof(BaseClass).FullName ?? nameof(BaseClass);
-            this.extensionServiceMock
-                .Verify(s => s.TryLoadAsync(this.extensionOptionsContainer.Options, Assembly, baseClassName, CultureInfo), Times.Once);
+            await this.extensionServiceMock
+                .Received()
+                .TryLoadAsync(this.extensionOptionsContainer.Options, Assembly, baseClassName, CultureInfo);
         }
     }
 

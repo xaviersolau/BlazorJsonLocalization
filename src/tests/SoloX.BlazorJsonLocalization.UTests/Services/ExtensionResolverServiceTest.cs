@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.Services.Impl;
@@ -21,21 +21,20 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         [Fact]
         public void ItShouldGetTheAppropriateExtensionService()
         {
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = Substitute.For<IServiceProvider>();
 
             serviceProviderMock
-                .Setup(p => p.GetService(typeof(IJsonLocalizationExtensionService<MyOptions>)))
+                .GetService(typeof(IJsonLocalizationExtensionService<MyOptions>))
                 .Returns(new MyExtensionService());
 
             var extensionOptionsContainer = new ExtensionOptionsContainer<MyOptions>(new MyOptions());
 
-            var extensionResolverService = new ExtensionResolverService(serviceProviderMock.Object);
+            var extensionResolverService = new ExtensionResolverService(serviceProviderMock);
             var extensionService = extensionResolverService.GetExtensionService(extensionOptionsContainer);
 
             Assert.NotNull(extensionService);
 
-            serviceProviderMock.Verify(p => p.GetService(typeof(IJsonLocalizationExtensionService<MyOptions>)));
-            serviceProviderMock.VerifyNoOtherCalls();
+            serviceProviderMock.Received().GetService(typeof(IJsonLocalizationExtensionService<MyOptions>));
         }
     }
 }

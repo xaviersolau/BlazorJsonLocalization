@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.ServerSide.Services.Impl;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.CodeQuality.Test.Helpers.XUnit.Logger;
@@ -49,55 +49,58 @@ namespace SoloX.BlazorJsonLocalization.ServerSide.UTests.Services
         public async Task ItShouldLoadJsonFileFromHttpClientAsync(
             string cultureName,
             string key,
-            string expectedText,
+            string? expectedText,
             bool expectedSuccess,
-            string resourcePath)
+            string? resourcePath)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"English test.\"}"));
             using var streamFr = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"French test.\"}"));
 
-            var fileInfoMock = new Mock<IFileInfo>();
-            fileInfoMock.SetupGet(f => f.Exists).Returns(true);
-            fileInfoMock.Setup(f => f.CreateReadStream()).Returns(stream);
+            var fileInfoMock = Substitute.For<IFileInfo>();
+            fileInfoMock.Exists.Returns(true);
+            fileInfoMock.CreateReadStream().Returns(stream);
 
-            var fileInfoFrMock = new Mock<IFileInfo>();
-            fileInfoFrMock.SetupGet(f => f.Exists).Returns(true);
-            fileInfoFrMock.Setup(f => f.CreateReadStream()).Returns(streamFr);
+            var fileInfoFrMock = Substitute.For<IFileInfo>();
+            fileInfoFrMock.Exists.Returns(true);
+            fileInfoFrMock.CreateReadStream().Returns(streamFr);
 
-            var fileInfoNoneMock = new Mock<IFileInfo>();
-            fileInfoNoneMock.SetupGet(f => f.Exists).Returns(false);
+            var fileInfoNoneMock = Substitute.For<IFileInfo>();
+            fileInfoNoneMock.Exists.Returns(false);
 
-            var fileProviderMock = new Mock<IFileProvider>();
+            var fileProviderMock = Substitute.For<IFileProvider>();
             fileProviderMock
-                .Setup(p => p.GetFileInfo(It.IsAny<string>()))
-                .Returns(fileInfoNoneMock.Object);
+                .GetFileInfo(Arg.Any<string>())
+                .Returns(fileInfoNoneMock);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json"))
-                .Returns(fileInfoMock.Object);
+                .GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.json")
+                .Returns(fileInfoMock);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.fr.json"))
-                .Returns(fileInfoFrMock.Object);
+                .GetFileInfo("_content/SoloX.BlazorJsonLocalization.ServerSide.UTests/Resources/HttpHostedJsonLocalizationExtensionServiceTest.fr.json")
+                .Returns(fileInfoFrMock);
 
-            var httpCacheServiceMock = new Mock<IHttpCacheService>();
-            httpCacheServiceMock.Setup(x => x.ProcessLoadingTask(It.IsAny<Uri>(), It.IsAny<Func<Task<IReadOnlyDictionary<string, string>?>>>()))
-                .Returns<Uri, Func<Task<IReadOnlyDictionary<string, string>?>>>((uri, loader) => loader());
+            var httpCacheServiceMock = Substitute.For<IHttpCacheService>();
+            httpCacheServiceMock.ProcessLoadingTask(Arg.Any<Uri>(), Arg.Any<Func<Task<IReadOnlyDictionary<string, string>?>>>())
+                .Returns(ci =>
+                {
+                    var loader = ci.Arg<Func<Task<IReadOnlyDictionary<string, string>?>>>();
+                    return loader();
+                });
 
-            var hostEnvMock = new Mock<IWebHostEnvironment>();
-            hostEnvMock.SetupGet(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
+            var hostEnvMock = Substitute.For<IWebHostEnvironment>();
+            hostEnvMock.WebRootFileProvider.Returns(fileProviderMock);
+            var optionsMock = Substitute.For<IOptions<JsonLocalizationOptions>>();
+            optionsMock.Value.Returns(new JsonLocalizationOptions());
 
-            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
-            optionsMock.SetupGet(o => o.Value).Returns(new JsonLocalizationOptions());
-
-            var service = new HttpHostedJsonLocalizationExtensionService(optionsMock.Object, hostEnvMock.Object, Logger, httpCacheServiceMock.Object);
+            var service = new HttpHostedJsonLocalizationExtensionService(optionsMock, hostEnvMock, Logger, httpCacheServiceMock);
 
             var options = new HttpHostedJsonLocalizationOptions()
             {
                 ResourcesPath = resourcePath,
             };
 
-            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);
 
             if (expectedSuccess)
             {

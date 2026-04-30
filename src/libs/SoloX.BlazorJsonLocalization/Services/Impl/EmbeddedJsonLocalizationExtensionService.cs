@@ -56,7 +56,7 @@ namespace SoloX.BlazorJsonLocalization.Services.Impl
             ArgumentNullException.ThrowIfNull(cultureInfo, nameof(cultureInfo));
             ArgumentNullException.ThrowIfNull(assembly, nameof(assembly));
 
-            var rootNameSpace = options.RootNameSpaceResolver?.Invoke(assembly) ?? assembly.GetName().Name;
+            var rootNameSpace = options.RootNameSpaceResolver?.Invoke(assembly) ?? assembly.GetName().Name!;
 
             var embeddedFileProviderFactory = GetSatelliteFileProviderFactory(assembly, rootNameSpace);
 

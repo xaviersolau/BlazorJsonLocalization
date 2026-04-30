@@ -8,7 +8,7 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.Localization;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
 
@@ -19,13 +19,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [Fact]
         public void IsShouldForwardToParentLocalizerWithPrefix()
         {
-            var localizerFactoryMock = new Mock<IStringLocalizer>();
+            var localizerFactoryMock = Substitute.For<IStringLocalizer>();
 
             var keyName = "KeyPrefix:SomeInput";
             var text = "Some constant text...";
-            localizerFactoryMock.SetupGet(l => l[keyName]).Returns(new LocalizedString(keyName, text));
+            localizerFactoryMock[keyName].Returns(new LocalizedString(keyName, text));
 
-            var localizer = new SubStringLocalizer(localizerFactoryMock.Object, "KeyPrefix:");
+            var localizer = new SubStringLocalizer(localizerFactoryMock, "KeyPrefix:");
 
             Assert.Equal(text, localizer["SomeInput"]);
         }
@@ -33,14 +33,14 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [Fact]
         public void IsShouldForwardToParentLocalizerWithPrefixAndArguments()
         {
-            var localizerFactoryMock = new Mock<IStringLocalizer>();
+            var localizerFactoryMock = Substitute.For<IStringLocalizer>();
 
             var keyName = "KeyPrefix:SomeInput";
             var text = "Some constant text...";
             var arg = "Argument";
-            localizerFactoryMock.SetupGet(l => l[keyName, arg]).Returns(new LocalizedString(keyName, text));
+            localizerFactoryMock[keyName, arg].Returns(new LocalizedString(keyName, text));
 
-            var localizer = new SubStringLocalizer(localizerFactoryMock.Object, "KeyPrefix:");
+            var localizer = new SubStringLocalizer(localizerFactoryMock, "KeyPrefix:");
 
             Assert.Equal(text, localizer["SomeInput", arg]);
         }
@@ -48,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [Fact]
         public void IsShouldForwardToParentLocalizerGetAllStrings()
         {
-            var localizerFactoryMock = new Mock<IStringLocalizer>();
+            var localizerFactoryMock = Substitute.For<IStringLocalizer>();
 
             var keyName = "KeyPrefix:SomeInput";
             var text = "Some constant text...";
@@ -56,9 +56,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var localizedString = new LocalizedString(keyName, text);
 
-            localizerFactoryMock.Setup(l => l.GetAllStrings(It.IsAny<bool>())).Returns(new LocalizedString[] { localizedString });
+            localizerFactoryMock.GetAllStrings(Arg.Any<bool>()).Returns(new LocalizedString[] { localizedString });
 
-            var localizer = new SubStringLocalizer(localizerFactoryMock.Object, "KeyPrefix:");
+            var localizer = new SubStringLocalizer(localizerFactoryMock, "KeyPrefix:");
 
             var allStrings = localizer.GetAllStrings(false);
 

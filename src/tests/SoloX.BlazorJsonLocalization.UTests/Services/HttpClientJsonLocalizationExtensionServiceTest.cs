@@ -8,7 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using SoloX.CodeQuality.Test.Helpers.Http;
@@ -55,9 +55,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         public async Task ItShouldLoadJsonFileFromHttpClientAsync(
             string cultureName,
             string key,
-            string expectedText,
+            string? expectedText,
             bool expectedSuccess,
-            string resourcePath,
+            string? resourcePath,
             bool usingHttpClientBuilder)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
@@ -80,23 +80,27 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                 })
                 .Build();
 
-            var httpCacheServiceMock = new Mock<IHttpCacheService>();
-            httpCacheServiceMock.Setup(x => x.ProcessLoadingTask(It.IsAny<Uri>(), It.IsAny<Func<Task<IReadOnlyDictionary<string, string>?>>>()))
-                .Returns<Uri, Func<Task<IReadOnlyDictionary<string, string>?>>>((uri, loader) => loader());
+            var httpCacheServiceMock = Substitute.For<IHttpCacheService>();
+            httpCacheServiceMock.ProcessLoadingTask(Arg.Any<Uri>(), Arg.Any<Func<Task<IReadOnlyDictionary<string, string>?>>>())
+                .Returns(ci =>
+                {
+                    var loader = ci.Arg<Func<Task<IReadOnlyDictionary<string, string>?>>>();
+                    return loader();
+                });
 
-            var optionsMock = new Mock<IOptions<JsonLocalizationOptions>>();
-            optionsMock.SetupGet(o => o.Value).Returns(new JsonLocalizationOptions());
+            var optionsMock = Substitute.For<IOptions<JsonLocalizationOptions>>();
+            optionsMock.Value.Returns(new JsonLocalizationOptions());
 
-            var serviceProviderMock = new Mock<IServiceProvider>();
+            var serviceProviderMock = Substitute.For<IServiceProvider>();
 
             if (!usingHttpClientBuilder)
             {
                 serviceProviderMock
-                    .Setup(sp => sp.GetService(typeof(HttpClient)))
+                    .GetService(typeof(HttpClient))
                     .Returns(httpClient);
             }
 
-            var service = new HttpClientJsonLocalizationExtensionService(optionsMock.Object, serviceProviderMock.Object, Logger, httpCacheServiceMock.Object);
+            var service = new HttpClientJsonLocalizationExtensionService(optionsMock, serviceProviderMock, Logger, httpCacheServiceMock);
 
             var options = new HttpClientJsonLocalizationOptions()
             {

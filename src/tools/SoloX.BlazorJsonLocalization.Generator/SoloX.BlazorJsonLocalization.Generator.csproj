@@ -19,7 +19,7 @@
     <PackageReference Include="System.Text.Json" Version="10.0.5" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.5" GeneratePathProperty="true" />
 
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.0">
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.1-preview.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

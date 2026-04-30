@@ -80,7 +80,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                     Assert.Equal("This is a fallback message...", fallbackLocalized);
                 },
                 this.testOutputHelper,
-                builder => builder.AddFallback("Fallback", typeof(JsonLocalyserFallbackTest).Assembly)).ConfigureAwait(false);
+                builder => builder.AddFallback("Fallback", typeof(JsonLocalyserFallbackTest).Assembly));
         }
     }
 }

@@ -124,8 +124,8 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         {
             expected = expected.Replace("        ", string.Empty, StringComparison.Ordinal).Trim();
 
-            var sourceMap = JsonSerializer.Deserialize<ALocalizationData>(source);
-            var targetMap = JsonSerializer.Deserialize<ALocalizationData>(target);
+            var sourceMap = JsonSerializer.Deserialize<ALocalizationData>(source)!;
+            var targetMap = JsonSerializer.Deserialize<ALocalizationData>(target)!;
 
             var mergedMap = targetMap.Merge(sourceMap, string.Empty, out var dirty);
 

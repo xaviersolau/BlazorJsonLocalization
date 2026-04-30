@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
             ";
             using var memoryStream = MakeJsonStream(json);
 
-            var map = await JsonHelper.DeserializeAsync(memoryStream, null).ConfigureAwait(false);
+            var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
             map.Should().NotBeNull();
             map.Should().HaveCount(1);
@@ -47,7 +47,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
             ";
             using var memoryStream = MakeJsonStream(json);
 
-            var map = await JsonHelper.DeserializeAsync(memoryStream, null).ConfigureAwait(false);
+            var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
             map.Should().NotBeNull();
             map.Should().HaveCount(1);
@@ -69,7 +69,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 
             using var memoryStream = MakeJsonStream(json);
 
-            var map = await JsonHelper.DeserializeAsync(memoryStream, null).ConfigureAwait(false);
+            var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
             map.Should().NotBeNull();
             map.Should().HaveCount(3);
@@ -89,7 +89,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
             ";
             using var memoryStream = MakeJsonStream(json);
 
-            var map = await JsonHelper.DeserializeAsync(memoryStream, null).ConfigureAwait(false);
+            var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
             map.Should().NotBeNull();
             map.Should().HaveCount(2);

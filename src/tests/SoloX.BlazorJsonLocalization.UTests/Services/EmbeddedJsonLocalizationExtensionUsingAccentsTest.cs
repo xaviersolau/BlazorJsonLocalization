@@ -38,12 +38,12 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
             var resourcePath = "Resources";
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock().Object, Logger);
+            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock(), Logger);
 
             var options = new EmbeddedJsonLocalizationOptions();
             options.ResourcesPath = resourcePath;
 
-            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);
 
             Assert.NotNull(map);
             Assert.Equal("Text for auswählen", map["auswählen"]);

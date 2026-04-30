@@ -12,7 +12,7 @@
     <PackageReference Include="SoloX.GeneratorTools.Core.CSharp" Version="1.0.0-alpha.46" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="10.0.5" />
     <PackageReference Include="System.Text.Json" Version="10.0.5" />
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.0">
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="3.0.1-preview.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

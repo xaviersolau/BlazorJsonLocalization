@@ -8,7 +8,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.ServerSide;
 using System.Globalization;
@@ -36,12 +36,12 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
-        public async Task ItShouldSetupServerSideHttpHostedLocalizerAsync(string cultureName, string key, string arg, string expected)
+        public async Task ItShouldSetupServerSideHttpHostedLocalizerAsync(string cultureName, string key, string? arg, string expected)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
 
-            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
+            cultureInfoServiceMock.CurrentUICulture.Returns(cultureInfo);
 
             var services = new ServiceCollection();
             services.AddTestLogging(this.testOutputHelper);
@@ -49,37 +49,37 @@ namespace SoloX.BlazorJsonLocalization.ITests
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"This is a test...\", \"TestWithArg\": \"This is a test with an argument: {0}...\"}"));
             using var streamFr = new MemoryStream(Encoding.UTF8.GetBytes("{\"Test\": \"C'est un test...\", \"TestWithArg\": \"C'est un test avec un argument: {0}...\"}"));
 
-            var fileInfoMock = new Mock<IFileInfo>();
-            fileInfoMock.SetupGet(f => f.Exists).Returns(true);
-            fileInfoMock.Setup(f => f.CreateReadStream()).Returns(stream);
+            var fileInfoMock = Substitute.For<IFileInfo>();
+            fileInfoMock.Exists.Returns(true);
+            fileInfoMock.CreateReadStream().Returns(stream);
 
-            var fileInfoFrMock = new Mock<IFileInfo>();
-            fileInfoFrMock.SetupGet(f => f.Exists).Returns(true);
-            fileInfoFrMock.Setup(f => f.CreateReadStream()).Returns(streamFr);
+            var fileInfoFrMock = Substitute.For<IFileInfo>();
+            fileInfoFrMock.Exists.Returns(true);
+            fileInfoFrMock.CreateReadStream().Returns(streamFr);
 
-            var fileInfoNoneMock = new Mock<IFileInfo>();
-            fileInfoNoneMock.SetupGet(f => f.Exists).Returns(false);
+            var fileInfoNoneMock = Substitute.For<IFileInfo>();
+            fileInfoNoneMock.Exists.Returns(false);
 
-            var fileProviderMock = new Mock<IFileProvider>();
+            var fileProviderMock = Substitute.For<IFileProvider>();
             fileProviderMock
-                .Setup(p => p.GetFileInfo(It.IsAny<string>()))
-                .Returns(fileInfoNoneMock.Object);
+                .GetFileInfo(Arg.Any<string>())
+                .Returns(fileInfoNoneMock);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.json"))
-                .Returns(fileInfoMock.Object);
+                .GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.json")
+                .Returns(fileInfoMock);
             fileProviderMock
-                .Setup(p => p.GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.fr.json"))
-                .Returns(fileInfoFrMock.Object);
+                .GetFileInfo("_content/SoloX.BlazorJsonLocalization.ITests/Resources/JsonLocalyserServerSideSetupTest.fr.json")
+                .Returns(fileInfoFrMock);
 
-            var hostEnvMock = new Mock<IWebHostEnvironment>();
-            hostEnvMock.SetupGet(x => x.WebRootFileProvider).Returns(fileProviderMock.Object);
+            var hostEnvMock = Substitute.For<IWebHostEnvironment>();
+            hostEnvMock.WebRootFileProvider.Returns(fileProviderMock);
 
-            services.AddSingleton(hostEnvMock.Object);
+            services.AddSingleton(hostEnvMock);
 
             services.AddServerSideJsonLocalization(
                 builder => builder.UseHttpHostedJson(options => options.ResourcesPath = "Resources"));
 
-            services.AddSingleton(cultureInfoServiceMock.Object);
+            services.AddSingleton(cultureInfoServiceMock);
 
             using var provider = services.BuildServiceProvider();
 
@@ -87,7 +87,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
 
             Assert.NotNull(localizer);
 
-            await localizer.LoadAsync().ConfigureAwait(false);
+            await localizer.LoadAsync();
 
             var localized = string.IsNullOrEmpty(arg)
                 ? localizer[key]
