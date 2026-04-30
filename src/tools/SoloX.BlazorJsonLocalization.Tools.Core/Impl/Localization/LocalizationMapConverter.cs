@@ -27,6 +27,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
             {
                 var strValue = reader.GetString();
 
+                if (strValue == null)
+                {
+                    throw new JsonException();
+                }
+
                 return new LocalizationValue(strValue);
             }
             else if (reader.TokenType == JsonTokenType.StartArray)
@@ -100,12 +105,12 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization
                 {
                     var key = reader.GetString();
 
-                    if (!reader.Read())
+                    if (!reader.Read() || key == null)
                     {
                         throw new JsonException();
                     }
 
-                    map.Add(key, JsonSerializer.Deserialize<ALocalizationData>(ref reader, options));
+                    map.Add(key, JsonSerializer.Deserialize<ALocalizationData>(ref reader, options)!);
 
                     if (!reader.Read())
                     {

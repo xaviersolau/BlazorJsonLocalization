@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
-        public Task ItShouldSetupEmbeddedLocalizer(string cultureName, string key, string arg, string expected)
+        public Task ItShouldSetupEmbeddedLocalizer(string cultureName, string key, string? arg, string expected)
         {
             return ProcessSetupLocalizerTest(cultureName, localizer =>
             {

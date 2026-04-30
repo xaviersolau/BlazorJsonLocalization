@@ -96,12 +96,12 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
                 {
                     var key = reader.GetString();
 
-                    if (!reader.Read())
+                    if (!reader.Read() || key == null)
                     {
                         throw new JsonException();
                     }
 
-                    map.Add(key, JsonSerializer.Deserialize<AJsonMapData>(ref reader, options));
+                    map.Add(key, JsonSerializer.Deserialize<AJsonMapData>(ref reader, options)!);
 
                     if (!reader.Read())
                     {

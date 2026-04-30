@@ -34,13 +34,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
 
             var loadedMap = await httpCacheService.ProcessLoadingTask(
                 uri1,
-                handler).ConfigureAwait(false);
+                handler);
 
             loadedMap.Should().NotBeNull().And.BeSameAs(map);
 
             var loadedMap2 = await httpCacheService.ProcessLoadingTask(
                 uri1,
-                handler).ConfigureAwait(false);
+                handler);
 
             loadedMap2.Should().NotBeNull().And.BeSameAs(map);
             nbCall.Should().Be(1);
@@ -68,13 +68,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                     uri1,
                     handler).ConfigureAwait(false);
 
-            await action1.Should().ThrowAsync<NotSupportedException>().ConfigureAwait(false);
+            await action1.Should().ThrowAsync<NotSupportedException>();
 
             var action2 = async () => await httpCacheService.ProcessLoadingTask(
                     uri1,
                     handler).ConfigureAwait(false);
 
-            await action2.Should().ThrowAsync<NotSupportedException>().ConfigureAwait(false);
+            await action2.Should().ThrowAsync<NotSupportedException>();
 
             nbCall.Should().Be(2);
         }

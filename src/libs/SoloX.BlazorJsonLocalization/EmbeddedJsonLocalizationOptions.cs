@@ -22,7 +22,7 @@ namespace SoloX.BlazorJsonLocalization
         /// <param name="basePath">The base resource path of the json file.</param>
         /// <param name="cultureName">The culture name (if any).</param>
         /// <returns>The actual embedded resource name to load.</returns>
-        public delegate string? NamingPolicyHandler(string basePath, string cultureName);
+        public delegate string NamingPolicyHandler(string basePath, string cultureName);
 
         /// <summary>
         /// Assembly Root NameSpace resolver handler.

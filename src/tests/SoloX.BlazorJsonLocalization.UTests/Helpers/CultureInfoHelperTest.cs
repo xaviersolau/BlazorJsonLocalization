@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
                 culture =>
                 {
                     return Task.FromResult<string?>(culture.Name);
-                }).ConfigureAwait(false);
+                });
 
             Assert.Equal(cultureName, data);
         }
@@ -48,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
                 {
                     list.Add(culture.Name);
                     return Task.FromResult<string?>(null);
-                }).ConfigureAwait(false);
+                });
 
             Assert.Null(data);
 

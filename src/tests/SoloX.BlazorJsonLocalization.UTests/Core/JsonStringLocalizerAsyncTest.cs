@@ -10,11 +10,12 @@ using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using Xunit;
 using SoloX.BlazorJsonLocalization.Core;
 using Microsoft.Extensions.Localization;
 using System;
+using NSubstitute.Core;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Core
 {
@@ -27,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [InlineData("TestKey", "TestText_{0}", "BadKey", "MyArg", "...", true)]
         public async Task ItShouldLoadLocalizerDataAsync(
             string resourceKey, string resourceText,
-            string queryKey, string queryArg,
+            string queryKey, string? queryArg,
             string expectedText, bool expectedNotFound)
         {
             var taskCompletionSource = new TaskCompletionSource();
@@ -79,37 +80,46 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 };
             }
 
-            var localizerFactoryInternalMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryInternalMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
 
+#pragma warning disable CA2012 // Use ValueTasks correctly
             localizerFactoryInternalMock
-                .Setup(x => x.LoadDataThroughStringLocalizerHierarchyAsync(
-                    It.IsAny<IStringLocalizerInternal>(),
-                    It.IsAny<CultureInfo>(),
-                    It.IsAny<bool>()))
-                .Returns<IStringLocalizerInternal, CultureInfo, bool>(async (localizer, ci, loadParent) =>
+                .LoadDataThroughStringLocalizerHierarchyAsync(
+                    Arg.Any<IStringLocalizerInternal>(),
+                    Arg.Any<CultureInfo>(),
+                    Arg.Any<bool>())
+                .Returns((Func<CallInfo, ValueTask>)(async ci =>
                 {
+                    var localizer = ci.Arg<IStringLocalizerInternal>();
                     await localizer.LoadDataAsync().ConfigureAwait(false);
-                });
+                }));
+#pragma warning restore CA2012 // Use ValueTasks correctly
 
 
             localizerFactoryInternalMock
-                .Setup(x => x.FindThroughStringLocalizerHierarchy(
-                    It.IsAny<IStringLocalizerInternal>(),
-                    It.IsAny<CultureInfo>(),
-                    It.IsAny<Func<IStringLocalizerInternal, LocalizedString?>>()))
-                .Returns<IStringLocalizerInternal, CultureInfo, Func<IStringLocalizerInternal, LocalizedString?>>((localizer, ci, forward) =>
+                .FindThroughStringLocalizerHierarchy(
+                    Arg.Any<IStringLocalizerInternal>(),
+                    Arg.Any<CultureInfo>(),
+                    Arg.Any<Func<IStringLocalizerInternal, LocalizedString?>>())
+                .Returns(ci =>
                 {
+                    var localizer = ci.Arg<IStringLocalizerInternal>();
+                    var cInfo = ci.Arg<CultureInfo>();
+                    var forward = ci.Arg<Func<IStringLocalizerInternal, LocalizedString?>>();
                     return forward(localizer);
                 });
 
             localizerFactoryInternalMock
-                .Setup(x => x.CreateDefaultStringLocalizer(
-                    It.IsAny<StringLocalizerResourceSource>(),
-                    It.IsAny<CultureInfo>(),
-                    It.IsAny<string>()))
-                .Returns<StringLocalizerResourceSource, CultureInfo, string>((source, ci, id) =>
+                .CreateDefaultStringLocalizer(
+                    Arg.Any<StringLocalizerResourceSource>(),
+                    Arg.Any<CultureInfo>(),
+                    Arg.Any<string>())
+                .Returns(ci =>
                 {
-                    return new ConstStringLocalizer(source, ci, localizerFactoryInternalMock.Object, "...", true, id);
+                    var source = ci.Arg<StringLocalizerResourceSource>();
+                    var cInfo = ci.Arg<CultureInfo>();
+                    var id = ci.Arg<string>();
+                    return new ConstStringLocalizer(source, cInfo, localizerFactoryInternalMock, "...", true, id);
                 });
 
 
@@ -118,7 +128,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                 resourceSource,
                 loadAsync(),
                 cultureInfo,
-                localizerFactoryInternalMock.Object);
+                localizerFactoryInternalMock);
+
             return localizer;
         }
     }

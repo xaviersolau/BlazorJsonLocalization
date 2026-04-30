@@ -31,7 +31,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
         [Theory]
         [InlineData(@"SampleBasic/ISimpleLocalizer.cs", 0, @"Component.cs", null)]
-        public Task GenerateBasicLocalizerAsync(string interfaceFile, int idx, string componentFile, string jsonLocalization)
+        public Task GenerateBasicLocalizerAsync(string interfaceFile, int idx, string componentFile, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizerAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -41,7 +41,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
         [Theory]
         [InlineData(@"SampleMethodArg/ISimpleLocalizer.cs", 0, @"Component.cs", null)]
-        public Task GenerateLocalizerMethodWithArgAsync(string interfaceFile, int idx, string componentFile, string jsonLocalization)
+        public Task GenerateLocalizerMethodWithArgAsync(string interfaceFile, int idx, string componentFile, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateLocalizerMethodWithArgAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -94,7 +94,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         [InlineData(@"SampleWithSubLocalizer/ISimpleLocalizer.cs", 1, @"SampleWithSubLocalizer/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson1)]
         [InlineData(@"SampleWithSubLocalizer/ISimpleLocalizer.cs", 2, @"SampleWithSubLocalizer/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson2)]
         [InlineData(@"SampleWithSubLocalizer/ISimpleLocalizer.cs", 3, @"SampleWithSubLocalizer/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson3)]
-        public Task GenerateSubLocalizerAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
+        public Task GenerateSubLocalizerAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizerAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -104,7 +104,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
         [Theory]
         [InlineData(@"SampleSubLocalizerName/ISimple.cs", 0, @"SampleSubLocalizerName/ISimpleSub.cs", @"Component.cs", null)]
-        public Task GenerateSubLocalizerNameAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
+        public Task GenerateSubLocalizerNameAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizerNameAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -115,7 +115,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         [Theory]
         [InlineData(@"SampleWithSubLocalizerTranslate/ISimpleLocalizer.cs", 0, @"SampleWithSubLocalizerTranslate/ISimpleSubLocalizer.cs", @"Component.cs", null)]
         [InlineData(@"SampleWithSubLocalizerTranslate/ISimpleLocalizer.cs", 1, @"SampleWithSubLocalizerTranslate/ISimpleSubLocalizer.cs", @"Component.cs", SimpleSubJson1)]
-        public Task GenerateSubLocalizerWithTranslateAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string jsonLocalization)
+        public Task GenerateSubLocalizerWithTranslateAsync(string interfaceFile, int idx, string subInterfaceFile, string componentFile, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateSubLocalizerWithTranslateAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -140,7 +140,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
         [InlineData(@"SampleWithMultiLine/IMultiLineLocalizer.cs", 3, @"Component.cs", true, MultiLineJson2)]
         [InlineData(@"SampleWithMultiLine/IMultiLineLocalizer.cs", 4, @"Component.cs", false, MultiLineJson2)]
         [InlineData(@"SampleWithMultiLine/IMultiLineLocalizer.cs", 5, @"Component.cs", true, MultiLineJson1)]
-        public Task GenerateBasicLocalizerWithTranslateAndMultiLineAsync(string interfaceFile, int idx, string componentFile, bool multiLine, string jsonLocalization)
+        public Task GenerateBasicLocalizerWithTranslateAndMultiLineAsync(string interfaceFile, int idx, string componentFile, bool multiLine, string? jsonLocalization)
         {
             var snapshotName = nameof(this.GenerateBasicLocalizerWithTranslateAndMultiLineAsync)
                 + Path.GetFileNameWithoutExtension(interfaceFile) + idx;
@@ -148,7 +148,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
             return this.GenerateSnapshotAsync(snapshotName, jsonLocalization, true, multiLine, interfaceFile, componentFile);
         }
 
-        private Task GenerateSnapshotAsync(string snapshotName, string jsonLocalization, bool useRelaxedJsonEscaping, bool useMultiLine, params string[] files)
+        private Task GenerateSnapshotAsync(string snapshotName, string? jsonLocalization, bool useRelaxedJsonEscaping, bool useMultiLine, params string[] files)
         {
             var sc = new ServiceCollection();
             sc.AddTestLogging(this.testOutputHelper);
@@ -156,7 +156,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
             using (var sp = sc.BuildServiceProvider())
             {
-                var workspaceFactory = sp.GetService<ICSharpWorkspaceFactory>();
+                var workspaceFactory = sp.GetService<ICSharpWorkspaceFactory>()!;
 
                 var workspace = workspaceFactory.CreateWorkspace();
 
@@ -169,7 +169,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
                 }
 
                 var generator = new LocalizationGenerator(
-                    sp.GetService<IGeneratorLogger<LocalizationGenerator>>(),
+                    sp.GetService<IGeneratorLogger<LocalizationGenerator>>()!,
                     workspaceFactory);
 
                 var inputs = new HashSet<string>();
@@ -195,9 +195,9 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.ITests
 
     public class TestReader : IReader
     {
-        private readonly string text;
+        private readonly string? text;
 
-        public TestReader(string text)
+        public TestReader(string? text)
         {
             this.text = text;
         }

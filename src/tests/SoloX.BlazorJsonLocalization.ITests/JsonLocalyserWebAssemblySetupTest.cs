@@ -27,7 +27,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
         [InlineData("en-US", "Test", null, "This is a test...")]
         [InlineData("fr-FR", "TestWithArg", "arg", "C'est un test avec un argument: arg...")]
         [InlineData("en-US", "TestWithArg", "arg", "This is a test with an argument: arg...")]
-        public async Task ItShouldSetupWebAssemblyHttpHostedLocalizerAsync(string cultureName, string key, string arg, string expected)
+        public async Task ItShouldSetupWebAssemblyHttpHostedLocalizerAsync(string cultureName, string key, string? arg, string expected)
         {
             await SetupHelper.ProcessHttpLocalizerTestAsync<JsonLocalyserWebAssemblySetupTest>(
                 cultureName,
@@ -48,7 +48,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
 
                     Assert.Equal(expected, localized.Value);
                 },
-                this.testOutputHelper).ConfigureAwait(false);
+                this.testOutputHelper);
         }
     }
 }

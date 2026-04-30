@@ -14,7 +14,7 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
     {
         public string Value { get; set; }
 
-        public override void FillIn(string? prefix, Dictionary<string, string> map)
+        public override void FillIn(string prefix, Dictionary<string, string> map)
         {
             map.Add(prefix, Value);
         }

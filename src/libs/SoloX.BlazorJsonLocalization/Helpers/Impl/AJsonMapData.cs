@@ -14,6 +14,6 @@ namespace SoloX.BlazorJsonLocalization.Helpers.Impl
     [JsonConverter(typeof(JsonMapDataConverter))]
     internal abstract class AJsonMapData
     {
-        public abstract void FillIn(string? prefix, Dictionary<string, string> map);
+        public abstract void FillIn(string prefix, Dictionary<string, string> map);
     }
 }

@@ -122,7 +122,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                     globalLocalized = localizer["Global"];
                     Assert.Equal("This is global message...", globalLocalized);
                 },
-                this.testOutputHelper).ConfigureAwait(false);
+                this.testOutputHelper);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace SoloX.BlazorJsonLocalization.ITests
                     // Loading task must be completed.
                     Assert.True(loadingTask.IsCompleted);
                 },
-                this.testOutputHelper).ConfigureAwait(false);
+                this.testOutputHelper);
         }
     }
 }

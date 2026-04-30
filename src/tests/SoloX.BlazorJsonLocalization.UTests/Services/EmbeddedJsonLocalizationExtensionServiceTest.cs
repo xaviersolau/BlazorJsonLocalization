@@ -41,18 +41,18 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         public async Task ItShouldLoadTheAppropriateMapAsync(
             string cultureName,
             string key,
-            string expectedText,
+            string? expectedText,
             bool expectedSuccess,
-            string resourcePath)
+            string? resourcePath)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock().Object, Logger);
+            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock(), Logger);
 
             var options = new EmbeddedJsonLocalizationOptions();
             options.ResourcesPath = resourcePath;
 
-            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);
 
             if (expectedSuccess)
             {
@@ -77,12 +77,12 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock().Object, Logger);
+            var service = new EmbeddedJsonLocalizationExtensionService(JsonStringLocalizerFactoryTest.SetupJsonLocalizationOptionsMock(), Logger);
 
             var options = new EmbeddedJsonLocalizationOptions();
             options.ResourcesPath = resourcePath;
 
-            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo).ConfigureAwait(false);
+            var map = await service.TryLoadAsync(options, Assembly, BaseName, cultureInfo);
 
             if (expectedSuccess)
             {

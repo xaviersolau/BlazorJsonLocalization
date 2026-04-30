@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using Xunit;
@@ -26,7 +26,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         [InlineData("TestKey", "TestText_{0}", "BadKey", "MyArg", "BadKey", true)]
         public void ItShouldBuildLocalizedStringFromGivenMap(
             string resourceKey, string resourceText,
-            string queryKey, string queryArg,
+            string queryKey, string? queryArg,
             string expectedText, bool expectedNotFound)
         {
             var localizer = CreateLocalizer(resourceKey, resourceText);
@@ -45,24 +45,30 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         {
             var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
 
-            var localizerParentCultureLocalizerMock = new Mock<IStringLocalizerInternal>();
+            var localizerParentCultureLocalizerMock = Substitute.For<IStringLocalizerInternal>();
 
-            var localizerFactoryInternalMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryInternalMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
 
-            localizerFactoryInternalMock.Setup(x => x.CreateStringLocalizer(It.IsAny<StringLocalizerResourceSource>(), It.IsAny<CultureInfo>())).Returns(localizerParentCultureLocalizerMock.Object);
+            localizerFactoryInternalMock.CreateStringLocalizer(Arg.Any<StringLocalizerResourceSource>(), Arg.Any<CultureInfo>()).Returns(localizerParentCultureLocalizerMock);
 
             localizerFactoryInternalMock
-                .Setup(x => x.FindThroughStringLocalizerHierarchy(It.IsAny<IStringLocalizerInternal>(), It.IsAny<CultureInfo>(), It.IsAny<Func<IStringLocalizerInternal, LocalizedString?>>()))
-                .Returns<IStringLocalizerInternal, CultureInfo, Func<IStringLocalizerInternal, LocalizedString?>>((localizer, ci, forward) =>
+                .FindThroughStringLocalizerHierarchy(Arg.Any<IStringLocalizerInternal>(), Arg.Any<CultureInfo>(), Arg.Any<Func<IStringLocalizerInternal, LocalizedString?>>())
+                .Returns(ci =>
                 {
+                    var localizer = ci.Arg<IStringLocalizerInternal>();
+                    var forward = ci.Arg<Func<IStringLocalizerInternal, LocalizedString?>>();
                     return forward(localizer);
                 });
 
             localizerFactoryInternalMock
-                .Setup(x => x.CreateDefaultStringLocalizer(resourceSource, It.IsAny<CultureInfo>(), It.IsAny<string>()))
-                .Returns<StringLocalizerResourceSource, CultureInfo, string>((source, ci, id) =>
+                .CreateDefaultStringLocalizer(resourceSource, Arg.Any<CultureInfo>(), Arg.Any<string>())
+                .Returns(ci =>
                 {
-                    return new NullStringLocalizer(source, ci, localizerFactoryInternalMock.Object, true, id);
+                    // <StringLocalizerResourceSource, CultureInfo, string>
+                    var source = ci.Arg<StringLocalizerResourceSource>();
+                    var culture = ci.Arg<CultureInfo>();
+                    var id = ci.Arg<string>();
+                    return new NullStringLocalizer(source, culture, localizerFactoryInternalMock, true, id);
                 });
 
             var map = new Dictionary<string, string>
@@ -72,7 +78,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
 
-            var localizer = new JsonStringLocalizer(resourceSource, map, cultureInfo, localizerFactoryInternalMock.Object);
+            var localizer = new JsonStringLocalizer(resourceSource, map, cultureInfo, localizerFactoryInternalMock);
             return localizer;
         }
     }

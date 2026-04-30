@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using SoloX.BlazorJsonLocalization.Services;
@@ -33,8 +33,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             var cultureInfoFr = CultureInfo.GetCultureInfo("fr-FR");
             var cultureInfoEn = CultureInfo.GetCultureInfo("en-US");
 
-            var stringLocalizerFr = Mock.Of<IStringLocalizerInternal>();
-            var stringLocalizerEn = Mock.Of<IStringLocalizerInternal>();
+            var stringLocalizerFr = Substitute.For<IStringLocalizerInternal>();
+            var stringLocalizerEn = Substitute.For<IStringLocalizerInternal>();
 
             var map = new Dictionary<string, IStringLocalizerInternal>()
             {
@@ -44,20 +44,25 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var currentCulture = cultureInfoEn;
 
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
-            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(() => currentCulture);
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
+            cultureInfoServiceMock.CurrentUICulture.Returns((ci) => currentCulture);
 
-            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
             localizerFactoryMock
-                .Setup(x => x.CreateStringLocalizer(It.IsAny<StringLocalizerResourceSource>(), It.IsAny<CultureInfo>()))
-                .Returns<StringLocalizerResourceSource, CultureInfo>((rs, ci) => map[ci.Name]);
+                .CreateStringLocalizer(Arg.Any<StringLocalizerResourceSource>(), Arg.Any<CultureInfo>())
+                .Returns(ci =>
+                {
+                    var resourceSource = ci.Arg<StringLocalizerResourceSource>();
+                    var culture = ci.Arg<CultureInfo>();
+                    return map[culture.Name];
+                });
 
             var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
             var proxy = new StringLocalizerProxy(
                 resourceSource,
                 Logger,
-                cultureInfoServiceMock.Object,
-                localizerFactoryMock.Object
+                cultureInfoServiceMock,
+                localizerFactoryMock
                 );
 
             Assert.Same(stringLocalizerEn, proxy.CurrentStringLocalizer);

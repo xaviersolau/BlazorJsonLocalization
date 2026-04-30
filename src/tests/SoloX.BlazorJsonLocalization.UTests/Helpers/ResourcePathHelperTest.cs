@@ -15,14 +15,14 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 {
     public class ResourcePathHelperTest
     {
-        private static readonly string BaseName = typeof(ResourcePathHelperTest).FullName;
+        private static readonly string BaseName = typeof(ResourcePathHelperTest).FullName!;
 
         private static readonly Assembly Assembly = typeof(ResourcePathHelperTest).Assembly;
 
         [Fact]
         public void ItShouldComputeTheResourcePath()
         {
-            var path = ResourcePathHelper.ComputeBasePath(Assembly, BaseName, Assembly.GetName().Name);
+            var path = ResourcePathHelper.ComputeBasePath(Assembly, BaseName, Assembly.GetName().Name!);
 
             var expectedPath = BaseName
                 .Replace(Assembly.GetName().Name + ".", string.Empty, StringComparison.Ordinal)

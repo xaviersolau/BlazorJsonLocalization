@@ -8,7 +8,7 @@
 
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Globalization;
-using Moq;
+using NSubstitute;
 using Xunit;
 using SoloX.BlazorJsonLocalization.Core;
 
@@ -21,10 +21,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         {
             var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
 
-            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
 
             var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
-            var localizer = new NullStringLocalizer(resourceSource, cultureInfo, localizerFactoryMock.Object, true, null);
+            var localizer = new NullStringLocalizer(resourceSource, cultureInfo, localizerFactoryMock, true, null);
 
             Assert.Equal("SomeInput", localizer["SomeInput"]);
             Assert.Equal("SomeInput", localizer["SomeInput", "With some argument"]);
@@ -39,10 +39,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
         {
             var cultureInfo = CultureInfo.GetCultureInfo("fr-FR");
 
-            var localizerFactoryMock = new Mock<IJsonStringLocalizerFactoryInternal>();
+            var localizerFactoryMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
 
             var resourceSource = new StringLocalizerResourceSource("test", typeof(ConstStringLocalizerTest).Assembly, null);
-            var localizer = new NullStringLocalizer(resourceSource, cultureInfo, localizerFactoryMock.Object, resourceNotFound, null);
+            var localizer = new NullStringLocalizer(resourceSource, cultureInfo, localizerFactoryMock, resourceNotFound, null);
 
             Assert.Equal(resourceNotFound, localizer["SomeInput"].ResourceNotFound);
         }

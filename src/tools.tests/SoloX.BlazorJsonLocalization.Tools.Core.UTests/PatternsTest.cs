@@ -8,7 +8,7 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.Localization;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Itf;
 
@@ -16,13 +16,13 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 {
     public class PatternsTest
     {
-        private readonly Mock<IStringLocalizer<MyObject>> mock;
+        private readonly IStringLocalizer<MyObject> mock;
         private readonly IMyObjectStringLocalizerPattern pattern;
 
         public PatternsTest()
         {
-            this.mock = new Mock<IStringLocalizer<MyObject>>();
-            this.pattern = this.mock.Object.ToMyObjectStringLocalizerPattern();
+            this.mock = Substitute.For<IStringLocalizer<MyObject>>();
+            this.pattern = this.mock.ToMyObjectStringLocalizerPattern();
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         [Fact]
         public void IsShouldForwardMethodCallToStringLocalizerUsingExtension()
         {
-            AssertForwardMethodCallToStringLocalizer((argument) => this.mock.Object.SomeStringArgs(argument));
+            AssertForwardMethodCallToStringLocalizer((argument) => this.mock.SomeStringArgs(argument));
         }
 
         public void AssertForwardMethodCallToStringLocalizer(Func<string, string> processWithArg)
@@ -50,8 +50,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var argument = "My Argument";
 
-            this.mock
-                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument])
+            this.mock[nameof(IMyObjectStringLocalizerPattern.SomeStringArgs), argument]
                 .Returns(new LocalizedString(valueName, expectedValue));
 
             var value = processWithArg(argument);
@@ -68,7 +67,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         [Fact]
         public void IsShouldForwardPropertyGetToStringLocalizerUsingExtension()
         {
-            AssertForwardPropertyGetToStringLocalizer(() => this.mock.Object.SomeProperty());
+            AssertForwardPropertyGetToStringLocalizer(() => this.mock.SomeProperty());
         }
 
         private void AssertForwardPropertyGetToStringLocalizer(Func<string> process)
@@ -76,8 +75,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value";
             var propertyName = nameof(IMyObjectStringLocalizerPattern.SomeProperty);
 
-            this.mock
-                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.SomeProperty)])
+            this.mock[nameof(IMyObjectStringLocalizerPattern.SomeProperty)]
                 .Returns(new LocalizedString(propertyName, expectedValue));
 
             var value = process();
@@ -91,8 +89,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value";
             var propertyName = nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty);
 
-            this.mock
-                .Setup(x => x[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+            this.mock[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()]
                 .Returns(new LocalizedString(propertyName, expectedValue));
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
@@ -106,8 +103,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
             var expectedValue = "My Test Value";
             var argName = nameof(IMyObjectSubStringLocalizerPattern.SomeArgument);
 
-            this.mock
-                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)])
+            this.mock[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)]
                 .Returns(new LocalizedString(argName, expectedValue));
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeArgument;
@@ -126,12 +122,10 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var expectedValue = "My Test Value Using The My Arg Value";
 
-            this.mock
-                .Setup(x => x[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()])
+            this.mock[typeof(IMyObjectSubStringLocalizerPattern).FullName + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeSubProperty), Array.Empty<object>()]
                 .Returns(new LocalizedString(propertyName, propertyValue));
 
-            this.mock
-                .Setup(x => x[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)])
+            this.mock[nameof(IMyObjectStringLocalizerPattern.MyObjectSubStringLocalizerProperty) + ":" + nameof(IMyObjectSubStringLocalizerPattern.SomeArgument)]
                 .Returns(new LocalizedString(argName, argValue));
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;

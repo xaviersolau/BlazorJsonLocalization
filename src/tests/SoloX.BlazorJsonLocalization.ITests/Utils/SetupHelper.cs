@@ -8,7 +8,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Moq;
+using NSubstitute;
 using SoloX.BlazorJsonLocalization.Services;
 using SoloX.BlazorJsonLocalization.WebAssembly;
 using SoloX.CodeQuality.Test.Helpers.Http;
@@ -33,9 +33,9 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             Action<JsonLocalizationOptionsBuilder>? builderHandler = null)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
 
-            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
+            cultureInfoServiceMock.CurrentUICulture.Returns(cultureInfo);
 
             var services = new ServiceCollection();
             services.AddTestLogging(testOutputHelper);
@@ -51,7 +51,7 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
                     }
                 });
 
-            services.AddSingleton(cultureInfoServiceMock.Object);
+            services.AddSingleton(cultureInfoServiceMock);
             using var provider = services.BuildServiceProvider();
             var localizer = provider.GetRequiredService<IStringLocalizer<T>>();
 
@@ -90,9 +90,9 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
             Action<JsonLocalizationOptionsBuilder>? builderHandler = null)
         {
             var cultureInfo = CultureInfo.GetCultureInfo(cultureName);
-            var cultureInfoServiceMock = new Mock<ICultureInfoService>();
+            var cultureInfoServiceMock = Substitute.For<ICultureInfoService>();
 
-            cultureInfoServiceMock.SetupGet(s => s.CurrentUICulture).Returns(cultureInfo);
+            cultureInfoServiceMock.CurrentUICulture.Returns(cultureInfo);
 
             var services = new ServiceCollection();
             services.AddTestLogging(testOutputHelper);
@@ -133,7 +133,7 @@ namespace SoloX.BlazorJsonLocalization.ITests.Utils
                     }
                 });
 
-            services.AddSingleton(cultureInfoServiceMock.Object);
+            services.AddSingleton(cultureInfoServiceMock);
 
             var provider = services.BuildServiceProvider();
             await using (provider.ConfigureAwait(false))
