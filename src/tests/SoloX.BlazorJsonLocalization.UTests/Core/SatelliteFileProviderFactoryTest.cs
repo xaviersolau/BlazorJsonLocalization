@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.BlazorJsonLocalization.Core.Impl;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,13 +33,13 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var file = fileProvider.GetFileInfo(filePath);
 
-            file.Exists.Should().BeTrue();
+            file.Exists.ShouldBeTrue();
 
             var map = JsonSerializer.Deserialize<IDictionary<string, string>>(file.CreateReadStream());
 
-            map.Should().NotBeNull();
+            map.ShouldNotBeNull();
 
-            map["Test"].Should().Be(exprectedValue);
+            map["Test"].ShouldBe(exprectedValue);
         }
     }
 }

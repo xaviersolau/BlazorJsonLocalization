@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Solution;
 using SoloX.GeneratorTools.Core.Test.Helpers;
@@ -64,11 +64,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.ITests
 
                 var res = await generatorCommand.RunGeneratorCommandAsync([projectFile, "--registerEmbeddedResource"]);
 
-                res.Should().Be(0);
+                res.ShouldBe(0);
 
                 var processResult = solution.Build(configuration: configurationName);
 
-                processResult.ExitCode.Should().Be(0);
+                processResult.ExitCode.ShouldBe(0);
 
                 var objPath = Path.Combine(root, solutionName, projectName, "obj");
                 var resourcePath = Path.Combine(root, solutionName, projectName, "Resources");
@@ -82,7 +82,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.ITests
                     ];
 
                 generatedFiles.Select(File.Exists)
-                    .Should().NotContain(false, "All files must be generated in obj folder.");
+                    .ShouldNotContain(false, "All files must be generated in obj folder.");
 
                 IEnumerable<string> generatedResources = [
                     Path.Combine(resourcePath, $"Test.en.json"),
@@ -91,7 +91,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.ITests
                     ];
 
                 generatedResources.Select(File.Exists)
-                    .Should().NotContain(false, "All Json files must be generated in Resources folder.");
+                    .ShouldNotContain(false, "All Json files must be generated in Resources folder.");
 
                 IEnumerable<string> assemblyResourceFiles = [
                     Path.Combine(binaryPath, "fr", $"{projectName}.resources.dll"),
@@ -99,7 +99,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.ITests
                     ];
 
                 assemblyResourceFiles.Select(File.Exists)
-                    .Should().NotContain(false, "Satellite resource assemblies must be generated.");
+                    .ShouldNotContain(false, "Satellite resource assemblies must be generated.");
 
                 var assemblyFile = Path.Combine(binaryPath, $"{projectName}.dll");
 
@@ -107,7 +107,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.ITests
                 {
                     var generatedDecl = decResolver.Find("SampleProject.TestStringLocalizer");
 
-                    generatedDecl.Should().NotBeNull();
+                    generatedDecl.ShouldNotBeNull();
                 });
             }
             finally
