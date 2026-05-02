@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -75,7 +75,7 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
 
             var generatorResults = driver.GetRunResult();
 
-            generatorResults.GeneratedTrees.Length.Should().Be(2);
+            generatorResults.GeneratedTrees.Length.ShouldBe(2);
 
             var snapshotGenerator = new SnapshotWriter();
 
@@ -89,7 +89,7 @@ namespace SoloX.BlazorJsonLocalization.Generator.ITests
             foreach (var expectedJsonFile in expectedJsonFiles)
             {
                 var jsonFile = Path.Combine(projectFolder, expectedResourcePath, expectedJsonFile);
-                File.Exists(jsonFile).Should().BeTrue("File does not exist {0}", jsonFile);
+                File.Exists(jsonFile).ShouldBeTrue($"File does not exist {jsonFile}");
                 snapshotGenerator.Generate(expectedJsonFile, expectedJsonFile, w => w.Write(File.ReadAllText(jsonFile)));
             }
 

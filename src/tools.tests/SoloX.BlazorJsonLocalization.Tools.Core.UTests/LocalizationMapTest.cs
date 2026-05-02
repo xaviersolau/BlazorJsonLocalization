@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl.Localization;
 using System.Text.Json;
 
@@ -129,15 +129,15 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var mergedMap = targetMap.Merge(sourceMap, string.Empty, out var dirty);
 
-            dirty.Should().Be(expectedDirty);
+            dirty.ShouldBe(expectedDirty);
 
-            mergedMap.Should().NotBeNull();
+            mergedMap.ShouldNotBeNull();
 
 #pragma warning disable CA1869 // Cache and reuse 'JsonSerializerOptions' instances
             var output = JsonSerializer.Serialize(mergedMap, new JsonSerializerOptions { WriteIndented = true });
 #pragma warning restore CA1869 // Cache and reuse 'JsonSerializerOptions' instances
 
-            output.Should().Be(expected);
+            output.ShouldBe(expected);
         }
     }
 }

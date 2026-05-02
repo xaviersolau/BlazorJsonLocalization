@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Localization;
 using NSubstitute;
 using SoloX.BlazorJsonLocalization.Core.Impl;
@@ -62,7 +62,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var allStrings = localizer.GetAllStrings(false);
 
-            allStrings.Should().ContainSingle().Which.Should().Be(localizedString);
+            allStrings.ShouldHaveSingleItem().ShouldBe(localizedString);
         }
     }
 }

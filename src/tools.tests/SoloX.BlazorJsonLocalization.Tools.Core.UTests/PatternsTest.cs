@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Localization;
 using NSubstitute;
 using SoloX.BlazorJsonLocalization.Tools.Core.Patterns.Impl;
@@ -28,7 +28,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
         [Fact]
         public void IsShouldGetInterfaceImplementation()
         {
-            this.pattern.Should().NotBeNull();
+            this.pattern.ShouldNotBeNull();
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var value = processWithArg(argument);
 
-            value.Should().Be(expectedValue);
+            value.ShouldBe(expectedValue);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var value = process();
 
-            value.Should().Be(expectedValue);
+            value.ShouldBe(expectedValue);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
 
-            value.Should().Be(expectedValue);
+            value.ShouldBe(expectedValue);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeArgument;
 
-            value.Should().Be(expectedValue);
+            value.ShouldBe(expectedValue);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
 
             var value = this.pattern.MyObjectSubStringLocalizerProperty.SomeSubProperty;
 
-            value.Should().Be(expectedValue);
+            value.ShouldBe(expectedValue);
         }
     }
 }

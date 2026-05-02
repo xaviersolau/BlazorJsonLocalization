@@ -11,7 +11,7 @@ using Xunit;
 using SoloX.BlazorJsonLocalization.Services.Impl;
 using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 
 namespace SoloX.BlazorJsonLocalization.UTests.Services
 {
@@ -36,14 +36,14 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                 uri1,
                 handler);
 
-            loadedMap.Should().NotBeNull().And.BeSameAs(map);
+            loadedMap.ShouldNotBeNull().ShouldBeSameAs(map);
 
             var loadedMap2 = await httpCacheService.ProcessLoadingTask(
                 uri1,
                 handler);
 
-            loadedMap2.Should().NotBeNull().And.BeSameAs(map);
-            nbCall.Should().Be(1);
+            loadedMap2.ShouldNotBeNull().ShouldBeSameAs(map);
+            nbCall.ShouldBe(1);
         }
 
         [Fact]
@@ -68,15 +68,15 @@ namespace SoloX.BlazorJsonLocalization.UTests.Services
                     uri1,
                     handler).ConfigureAwait(false);
 
-            await action1.Should().ThrowAsync<NotSupportedException>();
+            await action1.ShouldThrowAsync<NotSupportedException>();
 
             var action2 = async () => await httpCacheService.ProcessLoadingTask(
                     uri1,
                     handler).ConfigureAwait(false);
 
-            await action2.Should().ThrowAsync<NotSupportedException>();
+            await action2.ShouldThrowAsync<NotSupportedException>();
 
-            nbCall.Should().Be(2);
+            nbCall.ShouldBe(2);
         }
     }
 }

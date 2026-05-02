@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.CodeQuality.Test.Helpers;
 using SoloX.CodeQuality.Test.Helpers.Solution;
 using SoloX.GeneratorTools.Core.Test.Helpers;
@@ -65,11 +65,11 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.E2ETests
             {
                 var actResult = solution.RunTool("localizationgen", $"{projectName}.csproj", projectName);
 
-                actResult.ExitCode.Should().Be(0);
+                actResult.ExitCode.ShouldBe(0);
 
                 var processResult = solution.Build(configuration: configurationName);
 
-                processResult.ExitCode.Should().Be(0);
+                processResult.ExitCode.ShouldBe(0);
 
                 var assemblyFile = Path.Combine(root, solutionName, projectName, "bin", configurationName, framework, $"{projectName}.dll");
 
@@ -77,7 +77,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Command.E2ETests
                 {
                     var generatedDecl = decResolver.Find("SampleProject.TestStringLocalizer");
 
-                    generatedDecl.Should().NotBeNull();
+                    generatedDecl.ShouldNotBeNull();
                 });
             }
             finally

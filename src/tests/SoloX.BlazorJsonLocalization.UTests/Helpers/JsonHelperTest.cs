@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.BlazorJsonLocalization.Helpers;
 using System;
 using System.IO;
@@ -30,9 +30,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 
             var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
-            map.Should().NotBeNull();
-            map.Should().HaveCount(1);
-            map.Should().ContainKey("test").WhoseValue.Should().Be("val1");
+            map.ShouldNotBeNull();
+            map.ShouldHaveSingleItem();
+            map.ShouldContainKeyAndValue("test", "val1");
         }
 
         [Theory]
@@ -49,9 +49,9 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 
             var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
-            map.Should().NotBeNull();
-            map.Should().HaveCount(1);
-            map.Should().ContainKey("test").WhoseValue.Should().Be($"val1{separator}val2");
+            map.ShouldNotBeNull();
+            map.ShouldHaveSingleItem();
+            map.ShouldContainKeyAndValue("test", $"val1{separator}val2");
         }
 
         [Fact]
@@ -71,11 +71,12 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 
             var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
-            map.Should().NotBeNull();
-            map.Should().HaveCount(3);
-            map.Should().ContainKey("test1").WhoseValue.Should().Be("val1");
-            map.Should().ContainKey("test2" + Key.Separator + "test21").WhoseValue.Should().Be("val21");
-            map.Should().ContainKey("test2" + Key.Separator + "test22").WhoseValue.Should().Be("val22");
+            map.ShouldNotBeNull();
+            map.Count.ShouldBe(3);
+
+            map.ShouldContainKeyAndValue("test1", "val1");
+            map.ShouldContainKeyAndValue("test2" + Key.Separator + "test21", "val21");
+            map.ShouldContainKeyAndValue("test2" + Key.Separator + "test22", "val22");
         }
 
         [Fact]
@@ -91,10 +92,10 @@ namespace SoloX.BlazorJsonLocalization.UTests.Helpers
 
             var map = await JsonHelper.DeserializeAsync(memoryStream, null);
 
-            map.Should().NotBeNull();
-            map.Should().HaveCount(2);
-            map.Should().ContainKey("test1").WhoseValue.Should().Be("val11" + Environment.NewLine + "val12");
-            map.Should().ContainKey("test2").WhoseValue.Should().Be("val21" + Environment.NewLine + "val22");
+            map.ShouldNotBeNull();
+            map.Count.ShouldBe(2);
+            map.ShouldContainKeyAndValue("test1", "val11" + Environment.NewLine + "val12");
+            map.ShouldContainKeyAndValue("test2", "val21" + Environment.NewLine + "val22");
         }
 
         private static MemoryStream MakeJsonStream(string json)

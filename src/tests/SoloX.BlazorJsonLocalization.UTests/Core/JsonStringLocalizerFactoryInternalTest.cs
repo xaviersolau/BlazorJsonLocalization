@@ -10,7 +10,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Shouldly;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -94,8 +94,8 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                     }
                 });
 
-            localizedStringRes.Should().NotBeNull();
-            localizedStringRes!.Value.Should().Be("test");
+            localizedStringRes.ShouldNotBeNull();
+            localizedStringRes!.Value.ShouldBe("test");
         }
 
         [Fact]

@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.BlazorJsonLocalization.Tools.Core.Impl;
 
 namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
@@ -33,7 +33,7 @@ namespace SoloX.BlazorJsonLocalization.Tools.Core.UTests
                 text = textReader.ReadToEnd();
             });
 
-            text.Should().NotBeNull().And.Be(someText);
+            text.ShouldNotBeNull().ShouldBe(someText);
         }
     }
 }
