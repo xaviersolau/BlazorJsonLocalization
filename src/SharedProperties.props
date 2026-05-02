@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <Version>3.0.0-alpha.2</Version>
+    <Version>3.0.0-alpha.3</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2021-2026 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
