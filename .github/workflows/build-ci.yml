@@ -6,9 +6,14 @@ on:
 
 jobs:
   build:
-    uses: xaviersolau/devops-workflows/.github/workflows/build-dotnet.yml@v1.1.0
+    uses: xaviersolau/devops-workflows/.github/workflows/build-dotnet.yml@v1.3.0
     with:
       run-pack: true
+      pack-folders: >
+        [
+          "src/libs",
+          "src/tools"
+        ]
       test-projects: >
         [
           "src/tests/SoloX.BlazorJsonLocalization.UTests",

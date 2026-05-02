@@ -38,7 +38,7 @@
 		<ResOutputFile>obj/reslist.output</ResOutputFile>
     </PropertyGroup>
 
-    <Exec Command="dotnet run --project $(GeneratorProject) -- SoloX.BlazorJsonLocalization.Generator.Sample.csproj --outputCode $(CsOutputFile) --outputResource $(ResOutputFile) --disableCompile" />
+    <Exec Command="dotnet run --project $(GeneratorProject) --configuration $(Configuration) -- SoloX.BlazorJsonLocalization.Generator.Sample.csproj --outputCode $(CsOutputFile) --outputResource $(ResOutputFile) --disableCompile" />
 
 	  <ReadLinesFromFile File="$(CsOutputFile)">
 		  <Output TaskParameter="Lines" ItemName="CsOutputs" />
