@@ -82,7 +82,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             var localizerFactoryInternalMock = Substitute.For<IJsonStringLocalizerFactoryInternal>();
 
-#pragma warning disable CA2012 // Use ValueTasks correctly
             localizerFactoryInternalMock
                 .LoadDataThroughStringLocalizerHierarchyAsync(
                     Arg.Any<IStringLocalizerInternal>(),
@@ -93,8 +92,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                     var localizer = ci.Arg<IStringLocalizerInternal>();
                     await localizer.LoadDataAsync().ConfigureAwait(false);
                 }));
-#pragma warning restore CA2012 // Use ValueTasks correctly
-
 
             localizerFactoryInternalMock
                 .FindThroughStringLocalizerHierarchy(

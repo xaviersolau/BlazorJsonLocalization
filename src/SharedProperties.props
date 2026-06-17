@@ -16,6 +16,8 @@
 
     <CodeQualityUpdateGitIgnore>true</CodeQualityUpdateGitIgnore>
 
+    <CodeQualityCharset>utf-8-bom</CodeQualityCharset>
+
     <Nullable>enable</Nullable>
 
     <CheckEolTargetFramework>false</CheckEolTargetFramework>

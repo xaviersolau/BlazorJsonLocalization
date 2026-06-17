@@ -168,7 +168,7 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             // Setup extension service
             var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
-#pragma warning disable CA2012 // Use ValueTasks correctly
+
             extensionServiceMock
                 .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
                 .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async ci =>
@@ -176,7 +176,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                     await Task.Delay(TimeSpan.FromMilliseconds(100)).ConfigureAwait(false);
                     return map;
                 }));
-#pragma warning restore CA2012 // Use ValueTasks correctly
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
@@ -358,7 +357,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
 
             if (isAsynchronous)
             {
-#pragma warning disable CA2012 // Use ValueTasks correctly
                 extensionServiceMock
                     .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
                     .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
@@ -373,7 +371,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                         await Task.Delay(100).ConfigureAwait(false);
                         return map2;
                     }));
-#pragma warning restore CA2012 // Use ValueTasks correctly
             }
             else
             {
@@ -440,7 +437,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
             // Setup extension service
             var extensionServiceMock = Substitute.For<IJsonLocalizationExtensionService>();
 
-#pragma warning disable CA2012 // Use ValueTasks correctly
             extensionServiceMock
                 .TryLoadAsync(extensionOptionsContainer.Options, Assembly, BaseName, CultureInfo)
                 .Returns((Func<CallInfo, ValueTask<IReadOnlyDictionary<string, string>?>>)(async (_) =>
@@ -455,7 +451,6 @@ namespace SoloX.BlazorJsonLocalization.UTests.Core
                     await Task.Delay(100).ConfigureAwait(false);
                     return map;
                 }));
-#pragma warning restore CA2012 // Use ValueTasks correctly
 
             // Setup extension resolver service.
             var extensionResolverServiceMock = SetupResolverServiceMock(
